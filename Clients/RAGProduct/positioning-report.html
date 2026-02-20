@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Positioning: Корпоративный AI-ассистент</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        header .methodology {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .section h3 {
+            color: var(--gray-700);
+            font-size: 1.1rem;
+            margin: 20px 0 12px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .status-danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+
+        .tag-hard {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+
+        .tag-soft {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        .tag-inferred {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .tag-claimed {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .positioning-statement {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid var(--primary);
+            padding: 25px 30px;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .positioning-statement strong {
+            color: var(--primary-dark);
+        }
+
+        .pitch-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .pitch-card .label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .pitch-card blockquote {
+            font-size: 1.1rem;
+            color: var(--gray-800);
+            font-style: italic;
+            margin: 0;
+            padding-left: 15px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .recommendation-box {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .recommendation-box h4 {
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .segment-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .segment-card .priority {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .priority-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .priority-secondary {
+            background: var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .segment-card h4 {
+            color: var(--gray-800);
+            margin-bottom: 15px;
+        }
+
+        .segment-detail {
+            margin: 10px 0;
+        }
+
+        .segment-detail .label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-bottom: 4px;
+        }
+
+        .assumptions-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .assumptions-list li {
+            padding: 10px 0 10px 30px;
+            position: relative;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .assumptions-list li:before {
+            content: "!";
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 20px;
+            height: 20px;
+            background: #fef3c7;
+            color: var(--warning);
+            border-radius: 50%;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            line-height: 20px;
+        }
+
+        .recommendations-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations-list li {
+            padding: 12px 0 12px 35px;
+            position: relative;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .recommendations-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            top: 12px;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .trend-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+
+        .trend-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            min-width: 250px;
+        }
+
+        .trend-impact {
+            color: var(--gray-600);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+
+            .trend-item {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .trend-name {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Корпоративный AI-ассистент</h1>
+        <div class="subtitle">Product Positioning Document</div>
+        <div class="methodology">По методологии April Dunford "Obviously Awesome"</div>
+    </header>
+
+    <div class="container">
+        <!-- Positioning Statement -->
+        <section class="section">
+            <h2>Positioning Statement</h2>
+            <div class="positioning-statement">
+                <strong>Для</strong> компаний от 50 сотрудников без сильной IT-экспертизы, <strong>которые</strong> хотят внедрить ИИ в работу, но не знают как начать,<br><br>
+                <strong>[Продукт]</strong> — это <strong>методология и инструмент внедрения корпоративного ИИ</strong>: <strong>мы внедряем AI-ассистента с доступом к данным компании и учим сотрудников использовать его так, чтобы делать больше за то же время</strong>.<br><br>
+                <strong>В отличие от</strong> обычных ChatGPT-обёрток и enterprise-решений для крупных компаний, <strong>[Продукт]</strong> <strong>даёт не просто софт, а готовую методологию внедрения: мы загружаем данные, настраиваем доступы и учим команду реально использовать ИИ — при этом внутренние документы не передаются на внешние ресурсы</strong>.
+            </div>
+        </section>
+
+        <!-- Elevator Pitches -->
+        <section class="section">
+            <h2>Elevator Pitches</h2>
+
+            <div class="pitch-card">
+                <div class="label">One-liner (15 слов)</div>
+                <blockquote>Корпоративный ChatGPT с доступом к вашим документам — без утечки данных на внешние сервисы.</blockquote>
+            </div>
+
+            <div class="pitch-card">
+                <div class="label">One paragraph (50 слов)</div>
+                <blockquote>AI-ассистент, который работает и с открытыми данными, и с документами компании — не передавая внутреннюю информацию наружу. Каждый сотрудник видит только то, что ему положено: HR не получит ответ из финансовых документов. Мы приходим с методологией: загружаем данные, настраиваем доступы и учим команду реально использовать ИИ.</blockquote>
+            </div>
+
+            <div class="pitch-card">
+                <div class="label">Extended (150 слов)</div>
+                <blockquote>Компании хотят внедрить ИИ, но не знают с чего начать. Нет айтишников, нет понимания, как это работает, нет времени разбираться. ChatGPT крутой, но туда нельзя загрузить внутренние документы — данные уйдут наружу.<br><br>
+                Мы решаем эти проблемы. Наш AI-ассистент работает и с открытыми данными интернета, и с закрытой документацией компании — при этом внутренние данные не передаются на внешние ресурсы. Можно спросить и «как оформить отпуск по нашему регламенту», и «какие тренды в нашей отрасли».<br><br>
+                При этом каждый видит только своё: HR не получит ответ из финансовых документов, стажёр не увидит стратегию. СБ и руководство спокойны — можно загружать чувствительные данные.<br><br>
+                Но главное — мы даём не просто инструмент, а методологию внедрения: загружаем базу знаний, настраиваем доступы и учим сотрудников работать с ИИ так, чтобы делать больше за то же время.</blockquote>
+            </div>
+        </section>
+
+        <!-- Gap Analysis -->
+        <section class="section">
+            <h2>Gap Analysis</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Категория</th>
+                        <th>Статус</th>
+                        <th>Комментарий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Возможности продукта</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>RAG, ролевой доступ, гибридный доступ (открытые + закрытые данные), чат, логирование</td>
+                    </tr>
+                    <tr>
+                        <td>Контекст клиента</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>50+ сотрудников, нет сильного IT, нужна помощь с внедрением ИИ</td>
+                    </tr>
+                    <tr>
+                        <td>Болевые точки</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>Не знают как внедрить ИИ, нет компетенций, хотят «делать больше за то же время»</td>
+                    </tr>
+                    <tr>
+                        <td>Дифференциация</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>Методология + инструмент (не просто софт), обучение сотрудников, защита данных</td>
+                    </tr>
+                    <tr>
+                        <td>Методология внедрения</td>
+                        <td><span class="status status-warning">Частично</span></td>
+                        <td>Упомянута как ключевой дифференциатор, но детально не описана</td>
+                    </tr>
+                    <tr>
+                        <td>Proof points</td>
+                        <td><span class="status status-danger">Отсутствует</span></td>
+                        <td>Нет метрик, кейсов, отзывов — критично для доказательства «делать больше»</td>
+                    </tr>
+                    <tr>
+                        <td>Бизнес-модель</td>
+                        <td><span class="status status-danger">Отсутствует</span></td>
+                        <td>Ценообразование не указано (софт + методология + обучение = ?)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Competitive Alternatives -->
+        <section class="section">
+            <h2>1. Competitive Alternatives</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Если вашего продукта не существует, что делают клиенты вместо этого?"</em></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Альтернатива</th>
+                        <th>Что делает адекватно</th>
+                        <th>Где проигрывает</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Публичный ChatGPT / Claude</strong><br><small style="color: var(--gray-600);">Бесплатные и платные версии</small></td>
+                        <td>Мощные LLM, хороший UX, работает сразу</td>
+                        <td>Нельзя загружать внутренние документы — данные уходят наружу; не знает специфику компании</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Ручной поиск + спрашивать коллег</strong><br><small style="color: var(--gray-600);">Папки, почта, «а спроси у Васи»</small></td>
+                        <td>Бесплатно, привычно</td>
+                        <td>Долго, знания в головах уходят с людьми, эксперты отвлекаются</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Enterprise-решения</strong><br><small style="color: var(--gray-600);">Microsoft Copilot, корпоративные RAG-системы</small></td>
+                        <td>Мощный функционал, интеграции</td>
+                        <td>Дорого, сложно, требует IT-команду, долгое внедрение, не для среднего бизнеса</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. «Сами разберёмся»</strong><br><small style="color: var(--gray-600);">Попытки внедрить ИИ своими силами</small></td>
+                        <td>Контроль, кастомизация</td>
+                        <td>Нет экспертизы, месяцы экспериментов, сотрудники не используют результат</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. Ничего не делать</strong></td>
+                        <td>Нет затрат, нет рисков</td>
+                        <td>Конкуренты уходят вперёд, потери времени, медленный онбординг</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Unique Attributes -->
+        <section class="section">
+            <h2>2. Unique Attributes</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Что есть у вас, чего нет у альтернатив?"</em></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Атрибут</th>
+                        <th>Описание</th>
+                        <th>Против кого</th>
+                        <th>Тип</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Методология внедрения</strong></td>
+                        <td>Не просто софт, а готовый процесс: загрузка данных → настройка → обучение сотрудников</td>
+                        <td>Все альтернативы</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Обучение работе с ИИ</strong></td>
+                        <td>Учим сотрудников реально использовать ИИ, чтобы делать больше за то же время</td>
+                        <td>ChatGPT, Enterprise-решения</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Гибридный доступ к данным</strong></td>
+                        <td>Работает и с открытыми данными (интернет), и с закрытыми (документы компании)</td>
+                        <td>Чистый ChatGPT, чистый RAG</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Защита внутренних данных</strong></td>
+                        <td>Внутренние документы не передаются на внешние ресурсы</td>
+                        <td>Публичные AI-сервисы</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ролевое разграничение доступа</strong></td>
+                        <td>HR не видит документы Финансов, и наоборот</td>
+                        <td>Все альтернативы</td>
+                        <td><span class="tag tag-soft">Мягкий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Доступность для среднего бизнеса</strong></td>
+                        <td>Не требует IT-команды, работает «из коробки» с сопровождением</td>
+                        <td>Enterprise-решения</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Value Map -->
+        <section class="section">
+            <h2>3. Value Map</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Какую ценность эти уникальные атрибуты создают для клиентов?"</em></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Атрибут</th>
+                        <th>Что даёт</th>
+                        <th>Почему важно</th>
+                        <th>Уверенность</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Методология внедрения</strong></td>
+                        <td>Не нужно разбираться самим</td>
+                        <td>Компания получает работающий ИИ без найма специалистов и месяцев экспериментов</td>
+                        <td><span class="tag tag-claimed">Claimed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Обучение сотрудников</strong></td>
+                        <td>Люди реально используют ИИ</td>
+                        <td>Инвестиция окупается — сотрудники делают больше за то же время</td>
+                        <td><span class="tag tag-claimed">Claimed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Гибридный доступ</strong></td>
+                        <td>Один инструмент для всего</td>
+                        <td>Не нужно переключаться между ChatGPT и внутренними системами</td>
+                        <td><span class="tag tag-inferred">Inferred</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Защита данных</strong></td>
+                        <td>Можно загружать чувствительные документы</td>
+                        <td>Руководство и СБ одобрят использование; нет риска утечки</td>
+                        <td><span class="tag tag-claimed">Claimed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ролевой доступ</strong></td>
+                        <td>Каждый видит только то, что ему положено</td>
+                        <td>HR не получит ответ из финансовых документов, стажёр не увидит стратегию — СБ и руководство спокойны, можно загружать чувствительные данные</td>
+                        <td><span class="tag tag-claimed">Claimed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Доступность</strong></td>
+                        <td>Работает без IT-команды</td>
+                        <td>Средний бизнес может использовать enterprise-уровень технологий</td>
+                        <td><span class="tag tag-claimed">Claimed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Target Segments -->
+        <section class="section">
+            <h2>4. Target Segments</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Кому эта уникальная ценность важнее всего?"</em></p>
+
+            <div class="segment-card">
+                <span class="priority priority-primary">Primary</span>
+                <h4>Средний бизнес без сильной IT-экспертизы (50-300 сотрудников)</h4>
+                <div class="segment-detail">
+                    <div class="label">Идентифицируемые признаки:</div>
+                    <div>50-300 сотрудников, нет штатных AI-специалистов, нет понимания как строить системы, руководство слышало про ИИ и хочет «что-то внедрить», разрозненная документация (папки, почта, головы сотрудников)</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Почему этот сегмент:</div>
+                    <div>Максимально ценят методологию + сопровождение; не могут сами разобраться с enterprise-решениями; готовы платить за «под ключ»</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Триггер покупки:</div>
+                    <div>Уход ключевого эксперта, медленный онбординг новичков, конкуренты уже используют ИИ, собственник прочитал про ChatGPT</div>
+                </div>
+            </div>
+
+            <div class="segment-card">
+                <span class="priority priority-secondary">Secondary</span>
+                <h4>Растущие компании с амбициями на масштабирование</h4>
+                <div class="segment-detail">
+                    <div class="label">Идентифицируемые признаки:</div>
+                    <div>Быстрый рост штата, много новых сотрудников, знания не успевают документироваться, есть бюджет на инструменты эффективности</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Почему этот сегмент:</div>
+                    <div>Острая боль с передачей знаний; понимают ценность «делать больше за то же время»</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Триггер покупки:</div>
+                    <div>Планы на расширение, жалобы на долгий онбординг, потеря информации при увольнениях</div>
+                </div>
+            </div>
+
+            <div class="segment-card">
+                <span class="priority priority-secondary">Secondary</span>
+                <h4>Компании с требованиями к безопасности данных</h4>
+                <div class="segment-detail">
+                    <div class="label">Идентифицируемые признаки:</div>
+                    <div>Работа с чувствительными данными, внутренние политики ИБ, регулируемые отрасли, запрет на использование публичных AI-сервисов</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Почему этот сегмент:</div>
+                    <div>Критично важно, что внутренние документы не уходят наружу; готовы платить премиум за безопасность</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Триггер покупки:</div>
+                    <div>Аудит ИБ, запрет от СБ на использование ChatGPT, требование регулятора</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Category -->
+        <section class="section">
+            <h2>5. Market Category</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Какая рамка восприятия делает вашу ценность очевидной?"</em></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Стратегия</th>
+                        <th>Название категории</th>
+                        <th>Плюсы</th>
+                        <th>Минусы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>A. Head-to-Head</td>
+                        <td>Корпоративный AI-ассистент</td>
+                        <td>Понятно, есть спрос</td>
+                        <td>Сравнение с Copilot — проиграете по функциям и бренду</td>
+                    </tr>
+                    <tr>
+                        <td>B. Niche</td>
+                        <td>AI-ассистент для среднего бизнеса</td>
+                        <td>Чётко отстраивает от enterprise, понятная ЦА</td>
+                        <td>«Средний бизнес» — размытое понятие</td>
+                    </tr>
+                    <tr>
+                        <td>C. New Category</td>
+                        <td>Методология внедрения корпоративного ИИ</td>
+                        <td>Уникально, акцент на процессе а не софте, оправдывает премиум</td>
+                        <td>Требует объяснения, новая категория = больше маркетинга</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendation-box">
+                <h4>Рекомендация: C. New Category — "Методология внедрения корпоративного ИИ"</h4>
+                <p>Ключевое отличие — не в софте (софт можно скопировать), а в методологии и сопровождении. Это сразу объясняет, почему продукт стоит дороже, чем «просто подписка на ChatGPT», и почему нужны именно вы, а не конкуренты. Категория «методология» позиционирует вас как экспертов, а не вендоров.</p>
+            </div>
+        </section>
+
+        <!-- Relevant Trends -->
+        <section class="section">
+            <h2>6. Relevant Trends</h2>
+            <div class="trend-item">
+                <div class="trend-name">«Все говорят про ИИ, но никто не знает как»</div>
+                <div class="trend-impact">Собственники и руководители хотят внедрить ИИ, но не понимают с чего начать — спрос на «под ключ»</div>
+            </div>
+            <div class="trend-item">
+                <div class="trend-name">Страх утечки данных через ChatGPT</div>
+                <div class="trend-impact">Компании запрещают сотрудникам использовать публичные AI — но альтернативы нет</div>
+            </div>
+            <div class="trend-item">
+                <div class="trend-name">Кадровый голод и текучка</div>
+                <div class="trend-impact">Знания уходят с людьми, онбординг медленный — острая потребность в сохранении knowledge base</div>
+            </div>
+            <div class="trend-item">
+                <div class="trend-name">Демократизация AI-инструментов</div>
+                <div class="trend-impact">Раньше корпоративный ИИ был только для enterprise, теперь средний бизнес тоже хочет и может</div>
+            </div>
+        </section>
+
+        <!-- Assumptions & Limitations -->
+        <section class="section">
+            <h2>Assumptions & Limitations</h2>
+
+            <h3>Допущения (требуют валидации)</h3>
+            <ul class="assumptions-list">
+                <li><strong>Ценность методологии</strong> — предполагаем, что компании готовы платить за «внедрение под ключ», а не только за софт</li>
+                <li><strong>Обучение = adoption</strong> — предполагаем, что обученные сотрудники реально будут использовать ИИ (а не забросят через неделю)</li>
+                <li><strong>«Делать больше за то же время»</strong> — нужны метрики, насколько именно повышается продуктивность</li>
+                <li><strong>Гибридный доступ важен</strong> — предполагаем, что клиентам нужны и открытые данные, и закрытые (а не только закрытые)</li>
+            </ul>
+
+            <h3>Что нужно описать / доработать</h3>
+            <ul class="recommendations-list">
+                <li><strong>Детально описать методологию</strong> — что именно входит: этапы, артефакты, обучающие материалы, метрики успеха</li>
+                <li><strong>Собрать proof points</strong> — кейсы, метрики «до/после», отзывы первых клиентов</li>
+                <li><strong>Определить ценообразование</strong> — софт + методология + обучение = какая модель? (подписка, проект, гибрид)</li>
+                <li><strong>Продумать масштабирование методологии</strong> — как учить сотрудников без вашего личного участия каждый раз</li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <p>Product Positioning Document | Методология April Dunford "Obviously Awesome"</p>
+    </footer>
+</body>
+</html>

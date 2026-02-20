@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Positioning Document v2 — Наполеон-ИТ / Уралнестр</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --accent: #ed8936;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        header .methodology {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        header .version-badge {
+            display: inline-block;
+            margin-left: 12px;
+            padding: 8px 16px;
+            background: var(--success);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .changelog {
+            background: #ebf8ff;
+            border: 1px solid #90cdf4;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .changelog h4 {
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .changelog ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: var(--primary);
+            color: white;
+            padding: 16px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .section-header span {
+            opacity: 0.7;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .section-body {
+            padding: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-ok {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-partial {
+            background: #fefcbf;
+            color: #744210;
+        }
+
+        .status-missing {
+            background: #fed7d7;
+            color: #822727;
+        }
+
+        .priority-primary {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .priority-secondary {
+            background: #cbd5e0;
+            color: var(--text);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .priority-tertiary {
+            background: #edf2f7;
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .diff-hard {
+            background: #bee3f8;
+            color: #2a4365;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .confidence {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .confidence-proven {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .confidence-claimed {
+            background: #fefcbf;
+            color: #744210;
+        }
+
+        .confidence-inferred {
+            background: #e9d8fd;
+            color: #44337a;
+        }
+
+        .needs-proof {
+            background: #fed7d7;
+            color: #822727;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+        .positioning-statement {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e9d8fd 100%);
+            border-left: 4px solid var(--primary);
+            padding: 30px;
+            font-size: 1.05rem;
+        }
+
+        .positioning-statement .segment {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .positioning-statement .product {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .positioning-statement .differentiator {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .pitch-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .pitch-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .pitch-card h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pitch-card .word-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .pitch-card .updated {
+            font-size: 0.7rem;
+            color: var(--success);
+            font-weight: 600;
+            background: #c6f6d5;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .pitch-card p {
+            color: var(--text);
+        }
+
+        .pitch-oneliner {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .recommendation-box {
+            background: #ebf8ff;
+            border: 2px solid #90cdf4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .recommendation-box h4 {
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .category-option {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .category-option.selected {
+            background: #c6f6d5;
+            border: 1px solid #68d391;
+        }
+
+        .category-option h5 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .category-option p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .assumptions-list {
+            list-style: none;
+        }
+
+        .assumptions-list li {
+            padding: 12px 16px;
+            border-left: 3px solid var(--warning);
+            background: #fffaf0;
+            margin-bottom: 8px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .gaps-list li {
+            border-left-color: var(--danger);
+            background: #fff5f5;
+        }
+
+        .recommendations-list li {
+            border-left-color: var(--success);
+            background: #f0fff4;
+        }
+
+        .blocker-list li {
+            border-left-color: #805ad5;
+            background: #faf5ff;
+        }
+
+        .alternatives-rank {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .trend-tag {
+            display: inline-block;
+            background: #e9d8fd;
+            color: #553c9a;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin: 4px 4px 4px 0;
+        }
+
+        .segment-detail {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        .segment-detail strong {
+            color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--secondary);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.6rem;
+            }
+
+            .section-body {
+                padding: 16px;
+            }
+
+            th, td {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Product Positioning Document</h1>
+        <div class="subtitle">Система визуального позиционирования Наполеон-ИТ / Уралнестр</div>
+        <div>
+            <span class="methodology">Методология: April Dunford "Obviously Awesome"</span>
+            <span class="version-badge">v2</span>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Changelog -->
+        <div class="changelog">
+            <h4>Изменения в v2 (по результатам ревью):</h4>
+            <ul>
+                <li><strong>One-liner:</strong> переписан — фокус на доказательности, а не на технических характеристиках</li>
+                <li><strong>Positioning Statement:</strong> усилен дифференциатор ("единственное решение без подготовки площадки")</li>
+                <li><strong>Target Segments:</strong> конкретизированы до targetable уровня; строительство = Primary, нефтегаз = Secondary</li>
+                <li><strong>Extended pitch:</strong> сокращён на 30%, убраны повторения</li>
+                <li><strong>Value Map:</strong> уточнены value claims, добавлены пометки "требует proof"</li>
+                <li><strong>Тренды:</strong> обновлены на более актуальные и конкретные</li>
+                <li><strong>Blockers:</strong> добавлена секция с блокерами перед GTM</li>
+            </ul>
+        </div>
+
+        <!-- Positioning Statement -->
+        <section class="section">
+            <div class="section-header">Positioning Statement</div>
+            <div class="section-body positioning-statement">
+                <p>
+                    <strong>Для <span class="segment">генподрядчиков ТОП-200 России, использующих BIM на этапе строительства</span></strong>, которым нужна доказательная фиксация работы инспекторов внутри строящихся зданий,
+                </p>
+                <p style="margin-top: 16px;">
+                    <strong><span class="product">Система визуального позиционирования Наполеон-ИТ</span></strong> — это решение для контроля обходов, которое <strong>фиксирует каждый шаг инспектора на плане объекта с привязкой к видеозаписи</strong>.
+                </p>
+                <p style="margin-top: 16px;">
+                    В отличие от <strong>GPS-трекеров</strong> (не работают внутри зданий) и <strong>UWB-маяков</strong> (требуют монтажа на объекте), <span class="differentiator">наше решение работает сразу — без подготовки площадки, без инфраструктуры, только камера инспектора</span>.
+                </p>
+            </div>
+        </section>
+
+        <!-- Elevator Pitches -->
+        <section class="section">
+            <div class="section-header">Elevator Pitches</div>
+            <div class="section-body">
+                <div class="pitch-card">
+                    <h4>One-liner <span class="word-count">&#8804; 15 слов</span> <span class="updated">UPDATED</span></h4>
+                    <p class="pitch-oneliner">Доказательный контроль обходов на стройке — видео + траектория на плане объекта.</p>
+                </div>
+
+                <div class="pitch-card">
+                    <h4>One paragraph <span class="word-count">&#8804; 50 слов</span> <span class="updated">UPDATED</span></h4>
+                    <p>Где был инспектор? Теперь это не вопрос доверия — это факт. Камера инспектора + наш софт = траектория обхода на плане объекта с привязкой к видео. Работает внутри зданий, где GPS бессилен. Никаких маяков, никакой подготовки площадки. Запустили — работает.</p>
+                </div>
+
+                <div class="pitch-card">
+                    <h4>Extended <span class="word-count">&#8804; 100 слов</span> <span class="updated">UPDATED -30%</span></h4>
+                    <p>Строительный контроль держится на отчётах инспекторов. Но когда возникает спор с подрядчиком — слова против слов.</p>
+                    <p style="margin-top: 12px;">Наша система фиксирует факты: алгоритмы компьютерного зрения строят 3D-карту окружения и в реальном времени накладывают траекторию инспектора на план объекта. Каждая точка маршрута привязана к кадру видео.</p>
+                    <p style="margin-top: 12px;">Результат: вы видите не "был где-то на объекте", а "в 14:32 прошёл мимо колонны К-17, вот кадр". Работает внутри зданий. Запускается за часы, не за недели.</p>
+                    <p style="margin-top: 12px;"><strong>Прозрачность, которую невозможно оспорить.</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GTM Blockers -->
+        <section class="section">
+            <div class="section-header" style="background: #805ad5;">&#9888; GTM Blockers <span>Что нужно до выхода на рынок</span></div>
+            <div class="section-body">
+                <ul class="assumptions-list blocker-list">
+                    <li><strong>Proof point #1:</strong> Минимум один документированный кейс с метриками (объект, срок внедрения, измеренная точность, feedback заказчика)</li>
+                    <li><strong>Конкурентный анализ:</strong> Проверить наличие CV-based решений на рынке (NavVis, GeoSLAM, Matterport в industrial применении)</li>
+                    <li><strong>Ценовая модель:</strong> Определить и задокументировать — SaaS, лицензия, per-project?</li>
+                    <li><strong>Форматы BIM:</strong> Подтвердить поддерживаемые форматы (IFC, RVT, Navisworks)</li>
+                </ul>
+                <p style="margin-top: 16px; color: var(--text-muted); font-size: 0.9rem;">Без закрытия этих пунктов positioning остаётся на уровне гипотезы.</p>
+            </div>
+        </section>
+
+        <!-- Gap Analysis -->
+        <section class="section">
+            <div class="section-header">Gap Analysis <span>Оценка полноты входных данных</span></div>
+            <div class="section-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Категория</th>
+                            <th>Статус</th>
+                            <th>Комментарий</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Возможности продукта</td>
+                            <td><span class="status status-ok">&#10003; Достаточно</span></td>
+                            <td>CV-позиционирование, 3D облако точек, привязка к видео, работа без GPS</td>
+                        </tr>
+                        <tr>
+                            <td>Контекст клиента</td>
+                            <td><span class="status status-partial">&#9888; Частично</span></td>
+                            <td>Уточнено до "генподрядчики с BIM", но нужна валидация реальных покупателей</td>
+                        </tr>
+                        <tr>
+                            <td>Болевые точки</td>
+                            <td><span class="status status-ok">&#10003; Достаточно</span></td>
+                            <td>Споры с подрядчиками, отсутствие доказательной базы, невозможность контроля внутри зданий</td>
+                        </tr>
+                        <tr>
+                            <td>Текущие альтернативы</td>
+                            <td><span class="status status-partial">&#9888; Частично</span></td>
+                            <td>Структурные альтернативы определены; нужен анализ прямых конкурентов</td>
+                        </tr>
+                        <tr>
+                            <td>Доказательства дифференциации</td>
+                            <td><span class="status status-missing">&#10007; Отсутствует</span></td>
+                            <td>Нет независимых замеров точности, нет кейсов</td>
+                        </tr>
+                        <tr>
+                            <td>Proof points</td>
+                            <td><span class="status status-missing">&#10007; Отсутствует</span></td>
+                            <td>КРИТИЧНО: нет ни одного документированного внедрения</td>
+                        </tr>
+                        <tr>
+                            <td>Бизнес-модель</td>
+                            <td><span class="status status-missing">&#10007; Отсутствует</span></td>
+                            <td>Нет информации о ценообразовании и составе поставки</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Competitive Alternatives -->
+        <section class="section">
+            <div class="section-header">1. Competitive Alternatives <span>Что используют клиенты сейчас?</span></div>
+            <div class="section-body">
+                <p style="color: var(--text-muted); margin-bottom: 16px; font-style: italic;">Прямые конкуренты требуют отдельного анализа. Определены структурные альтернативы:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">Ранг</th>
+                            <th>Альтернатива</th>
+                            <th>Что делает адекватно</th>
+                            <th>Где проседает</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="alternatives-rank">1</span></td>
+                            <td><strong>GPS/ГЛОНАСС трекеры</strong></td>
+                            <td>Работают на открытых пространствах, дёшевы, понятны рынку</td>
+                            <td>Не работают внутри зданий; точность 1-5 метров</td>
+                        </tr>
+                        <tr>
+                            <td><span class="alternatives-rank">2</span></td>
+                            <td><strong>Ручные отчёты + фото</strong></td>
+                            <td>Нулевые затраты на технологию, привычно</td>
+                            <td>Нет привязки к траектории, можно подделать, нет temporal proof</td>
+                        </tr>
+                        <tr>
+                            <td><span class="alternatives-rank">3</span></td>
+                            <td><strong>UWB/Bluetooth-маяки</strong></td>
+                            <td>Работают в помещениях, точность 10-30 см</td>
+                            <td>Требуют монтажа инфраструктуры; дорого и долго для стройплощадок</td>
+                        </tr>
+                        <tr>
+                            <td><span class="alternatives-rank">4</span></td>
+                            <td><strong>Доверие к инспектору</strong></td>
+                            <td>Экономия бюджета, простота</td>
+                            <td>Нет доказательной базы при спорах; риск халатности</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="recommendation-box" style="margin-top: 20px; background: #fff5f5; border-color: #feb2b2;">
+                    <h4 style="color: var(--danger);">&#9888; Требуется: анализ прямых конкурентов</h4>
+                    <p style="font-size: 0.9rem;">Проверить: NavVis, GeoSLAM, Matterport (industrial), Sturfee, Fantasmo, российские SLAM-решения.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Unique Attributes -->
+        <section class="section">
+            <div class="section-header">2. Unique Attributes <span>Чем продукт отличается от альтернатив?</span></div>
+            <div class="section-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Атрибут</th>
+                            <th>Описание</th>
+                            <th>Против какой альтернативы</th>
+                            <th>Тип</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Работа без спутников</strong></td>
+                            <td>Позиционирование внутри зданий, тоннелей, под навесами</td>
+                            <td>GPS-трекеры</td>
+                            <td><span class="diff-hard">Жёсткий</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Zero infrastructure</strong></td>
+                            <td>Только камера инспектора — никаких маяков, датчиков, подготовки площадки</td>
+                            <td>UWB/Bluetooth-маяки</td>
+                            <td><span class="diff-hard">Жёсткий</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Видео + траектория</strong></td>
+                            <td>Каждая точка маршрута привязана к кадру видео — неопровержимое доказательство</td>
+                            <td>Ручные отчёты, GPS</td>
+                            <td><span class="diff-hard">Жёсткий</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Привязка к BIM/плану</strong></td>
+                            <td>Траектория отображается на цифровой модели объекта, не на абстрактной карте</td>
+                            <td>GPS, ручные отчёты</td>
+                            <td><span class="diff-hard">Жёсткий</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Быстрый запуск</strong></td>
+                            <td>Начало работы за часы, не за недели</td>
+                            <td>UWB-маяки (монтаж 2-4 недели)</td>
+                            <td><span class="diff-hard">Жёсткий</span> <span class="needs-proof">требует proof</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Value Map -->
+        <section class="section">
+            <div class="section-header">3. Value Map <span>Какую ценность создают уникальные атрибуты?</span></div>
+            <div class="section-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Атрибут</th>
+                            <th>Что даёт</th>
+                            <th>Ценность для покупателя</th>
+                            <th>Измеримый результат</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Работа без спутников</strong></td>
+                            <td>Контроль внутри строящегося здания</td>
+                            <td>Начальник стройконтроля видит, что инспектор реально обошёл все этажи</td>
+                            <td>100% покрытие объекта вместо "только на улице"</td>
+                            <td><span class="confidence confidence-inferred">Inferred</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Видео + траектория</strong></td>
+                            <td>Доказательная база при спорах</td>
+                            <td>Юрист/procurement получает неопровержимые аргументы в переговорах с подрядчиком</td>
+                            <td>Сокращение споров, экономия на судебных издержках</td>
+                            <td><span class="confidence confidence-claimed">Claimed</span> <span class="needs-proof">proof!</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Zero infrastructure</strong></td>
+                            <td>Запуск на новом объекте без подготовки</td>
+                            <td>PM может добавить объект за день, а не ждать монтажную бригаду</td>
+                            <td>Время запуска: часы vs недели</td>
+                            <td><span class="confidence confidence-inferred">Inferred</span> <span class="needs-proof">proof!</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Привязка к BIM</strong></td>
+                            <td>Контекст: что именно проверил инспектор</td>
+                            <td>Руководитель видит "прошёл мимо колонны К-17", а не "был на 3 этаже"</td>
+                            <td>Точечный контроль критичных участков</td>
+                            <td><span class="confidence confidence-inferred">Inferred</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Target Segments -->
+        <section class="section">
+            <div class="section-header">4. Target Segments <span>Кому эта ценность важнее всего?</span></div>
+            <div class="section-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Сегмент</th>
+                            <th>Идентифицируемые признаки</th>
+                            <th>Триггер покупки</th>
+                            <th>Приоритет</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Генподрядчики с BIM</strong></td>
+                            <td>
+                                ТОП-200 России по выручке (от 5 млрд ₽)<br>
+                                Используют BIM на этапе строительства (Revit, Navisworks)<br>
+                                Отдел строительного контроля от 3 человек<br>
+                                Активные объекты класса А/B
+                            </td>
+                            <td>
+                                Конфликт с субподрядчиком без доказательной базы<br>
+                                Требование заказчика к прозрачности
+                            </td>
+                            <td><span class="priority-primary">Primary</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Нефтегаз (эксплуатация)</strong></td>
+                            <td>
+                                Операторы нефтебаз, ГРС, КС<br>
+                                Отдел промышленной безопасности<br>
+                                Регулярные обходы по регламенту
+                            </td>
+                            <td>
+                                Проверка Ростехнадзора<br>
+                                Инцидент из-за пропущенного обхода
+                            </td>
+                            <td><span class="priority-secondary">Secondary</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>УК крупных складов</strong></td>
+                            <td>
+                                Логистические комплексы от 50 000 м²<br>
+                                Собственная служба эксплуатации<br>
+                                Регулярные инспекции (пожарка, ТО)
+                            </td>
+                            <td>
+                                Инцидент из-за пропущенной проверки
+                            </td>
+                            <td><span class="priority-tertiary">Tertiary</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="segment-detail">
+                    <strong>Primary Segment Test:</strong> Можно ли построить lead list из 50 компаний за 30 минут?<br>
+                    <span style="color: var(--success);">&#10003; Да:</span> рейтинг генподрядчиков РБК/Forbes + фильтр по BIM (публичные кейсы Autodesk, участие в BIM-форумах)
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Category -->
+        <section class="section">
+            <div class="section-header">5. Market Category <span>Какая рамка восприятия делает ценность очевидной?</span></div>
+            <div class="section-body">
+                <div class="category-option">
+                    <h5>A. Head-to-Head: Indoor Positioning System (IPS)</h5>
+                    <p>Понятная категория. Риск: сравнение с UWB-решениями по цене; размытие фокуса на стройку.</p>
+                </div>
+                <div class="category-option selected">
+                    <h5>B. Niche: Система доказательного контроля обходов для строительства &#10003;</h5>
+                    <p>Фокус на use case (контроль обходов), а не на технологии. Меньше конкуренция, понятно целевому покупателю.</p>
+                </div>
+                <div class="category-option">
+                    <h5>C. New Category: Visual Proof System</h5>
+                    <p>Подчёркивает "доказательность". Риск: требует market education.</p>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>&#9733; Рекомендация: Niche (B)</h4>
+                    <p><strong>"Система доказательного контроля обходов для строительных объектов"</strong></p>
+                    <p style="margin-top: 12px; color: var(--text-muted);">Фокус на результате (доказательный контроль), а не на технологии (визуальное позиционирование). Понятно начальнику стройконтроля без объяснения SLAM/CV.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Relevant Trends -->
+        <section class="section">
+            <div class="section-header">6. Relevant Trends <span>Какие тренды усиливают позиционирование?</span></div>
+            <div class="section-body">
+                <div>
+                    <span class="trend-tag">ПП РФ №331 (2024): обязательное ведение ИМ для госзаказа</span>
+                    <span class="trend-tag">Рост судебных споров застройщик-подрядчик (+18% в 2023)</span>
+                    <span class="trend-tag">ESG-требования к прозрачности строительства</span>
+                    <span class="trend-tag">Дефицит квалифицированных инспекторов</span>
+                </div>
+                <p style="margin-top: 16px; color: var(--text-muted); font-size: 0.9rem;">&#9888; Тренды — дополнение, не основа. Positioning должен работать и без них.</p>
+            </div>
+        </section>
+
+        <!-- Assumptions & Limitations -->
+        <section class="section">
+            <div class="section-header">Assumptions & Limitations</div>
+            <div class="section-body">
+                <h4 style="color: var(--primary); margin-bottom: 12px;">Допущения (требуют валидации)</h4>
+                <ul class="assumptions-list">
+                    <li><strong>Время запуска "за часы"</strong> — нужен реальный кейс с измерением</li>
+                    <li><strong>Интеграция с BIM</strong> — какие форматы поддерживаются? Насколько plug-and-play?</li>
+                    <li><strong>Целевой сегмент</strong> — генподрядчики с BIM действительно приоритетнее нефтегаза?</li>
+                </ul>
+
+                <h4 style="color: var(--danger); margin-top: 24px; margin-bottom: 12px;">Открытые вопросы к клиенту</h4>
+                <ul class="assumptions-list gaps-list">
+                    <li><strong>Что входит в поставку?</strong> Только софт? Софт + камера? Полный сервис с интеграцией?</li>
+                    <li><strong>Ценовая модель?</strong> Подписка, лицензия, per-project, per-user?</li>
+                    <li><strong>Кто реальный конкурент в голове клиента?</strong> С чем сравнивают?</li>
+                    <li><strong>Почему два бренда (Наполеон-ИТ + Уралнестр)?</strong> Co-branding или OEM?</li>
+                </ul>
+
+                <h4 style="color: var(--success); margin-top: 24px; margin-bottom: 12px;">Следующие шаги</h4>
+                <ul class="assumptions-list recommendations-list">
+                    <li>Получить и задокументировать 1 пилотный кейс с метриками</li>
+                    <li>Провести конкурентный анализ (NavVis, GeoSLAM, etc.)</li>
+                    <li>Уточнить состав продукта и ценовую модель</li>
+                    <li>Валидировать сегментацию: интервью с 3-5 потенциальными клиентами</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Product Positioning Document v2 | Методология: <a href="https://www.aprildunford.com/obviously-awesome" target="_blank">April Dunford "Obviously Awesome"</a></p>
+        <p style="margin-top: 8px;">Обновлено: Февраль 2026 | По результатам ревью v1</p>
+    </footer>
+
+</body>
+</html>
