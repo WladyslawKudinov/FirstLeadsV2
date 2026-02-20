@@ -61,6 +61,89 @@ Flag anything missing that blocks monetization decisions. Use the same Decision 
 
 ---
 
+### Step 0.5: Pricing Philosophy — "HOW Should This Be Sold?"
+
+**This step is mandatory and happens BEFORE any mechanical model-building.** The goal is to think strategically about pricing as a TOOL for achieving business goals — not just "how much" but "what is the pricing designed to DO?"
+
+#### A. Product Stage Assessment
+
+First, assess the product's maturity by scanning the positioning doc's Value Map for confidence ratings:
+
+| Stage | Signal from Positioning Doc | Pricing Implications |
+|---|---|---|
+| **Pre-traction** (0 proof points, all "Claimed"/"Inferred") | No metrics, no case studies, no testimonials. All value claims are theoretical. | MUST include: pilot pricing, money-back guarantee or risk-reversal, early adopter incentives. Standard pricing will fail — nobody pays full price for unproven value. |
+| **Early traction** (1-3 proof points, mix of "Proven"/"Claimed") | Some metrics exist but limited. A few reference customers. | Should include: case-study-backed pricing, introductory rates with path to standard pricing, outcome-sharing options. |
+| **Proven product** (3+ proof points, majority "Proven") | Clear ROI data, multiple testimonials, measurable outcomes. | Can use: standard tiered pricing, value-based pricing with confidence, premium positioning. |
+
+**State the detected stage explicitly.** Example: "Позиционирование показывает 0 подтверждённых метрик, все ценностные утверждения — 'Claimed' или 'Inferred'. Продукт на стадии pre-traction. Стандартная тарифная модель без механизмов снижения риска не будет работать."
+
+#### B. Pricing Strategy Alternatives (Decision Card)
+
+Propose **3-4 fundamentally different pricing approaches**. These are NOT "3 tiers vs 4 tiers" — they are radically different philosophies of how to exchange value for money.
+
+For each approach, answer:
+- What is the core logic? (What are you selling — access? transformation? outcomes? capability?)
+- How does this reinforce positioning? (Reference the positioning doc's category and differentiation)
+- What buyer behavior does it incentivize? (Land-and-expand? All-in commitment? Viral adoption?)
+- What GTM mechanics does it create? (Self-serve? Sales-led? Partner-led? Community-led?)
+- What are the risks?
+
+**Example approaches** (use as inspiration, not a checklist — generate approaches specific to this product):
+
+| Approach | Core Logic | Best When |
+|---|---|---|
+| **Sell transformation** | Price = package of software + implementation + training. Sold as a project with ongoing support. | Product requires behavior change, methodology is the differentiator, buyer wants outcome not tool |
+| **Sell subscription** | Price = monthly/annual per-seat or per-company. Standard SaaS model. | Product is self-serve, value is immediate, low switching costs |
+| **Sell outcomes** | Price = tied to measurable results (per qualified lead, per resolved ticket, per X achieved). | Proven ROI, measurable metrics, high trust |
+| **Freemium → upsell** | Free tier drives adoption, paid tier unlocks advanced features. | PLG motion, viral potential, network effects, low COGS per user |
+| **Land-and-expand** | Low entry price for one team/department, expand to whole organization. | Complex products, enterprise buyers, long sales cycles |
+| **Pilot → convert** | Time-limited paid pilot with defined success criteria, converts to full contract. | Pre-traction, unproven value, risk-averse buyers |
+
+**Present as a Decision Card:**
+
+```
+Что решаем: Стратегический подход к ценообразованию — не «сколько», а «как» продавать.
+
+Вариант A: [Name] — [description]
+  Плюс: [...]. Минус: [...].
+  Усиливает позиционирование: [how it connects to positioning strategy]
+
+Вариант B: [Name] — [description]
+  Плюс: [...]. Минус: [...].
+  Усиливает позиционирование: [how]
+
+Вариант C: [Name] — [description]
+  Плюс: [...]. Минус: [...].
+  Усиливает позиционирование: [how]
+
+Рекомендация: Вариант [X], потому что [reasoning tied to product stage, positioning, and segments].
+
+Приоритет: 🔴 Blocker — все последующие шаги зависят от этого выбора.
+```
+
+**The client must see and approve the pricing philosophy BEFORE you build the details.** In the document, present this Decision Card prominently. All subsequent steps (Delivery Model, Revenue Model, Tiers, Prices) implement the chosen philosophy.
+
+#### C. Stage-Appropriate Mechanisms
+
+Based on the product stage (from A) and chosen strategy (from B), identify which mechanisms MUST be included:
+
+**Pre-traction mechanisms (include if 0 proof points):**
+- 🔴 Pilot program: [X weeks] at [discount]% with defined success criteria
+- 🔴 Risk-reversal: money-back guarantee, "pay only if [metric] improves," or deferred payment
+- 🟡 Early adopter incentives: founding customer pricing, case study discount, locked-in rate
+- 🟡 Land-and-expand: start with 1 team, expand on proven value
+
+**Early traction mechanisms (include if 1-3 proof points):**
+- 🟡 Case-study pricing: discount in exchange for published case study + metrics
+- 🟡 Introductory rate: lower initial price with contractual increase after [X months]
+- 🟢 Outcome-sharing: partial pricing tied to measurable results
+
+**These mechanisms are NOT optional suggestions.** If the product is pre-traction and the agent doesn't include pilot pricing and risk-reversal, the strategy is incomplete.
+
+**Output:** Product stage assessment + Pricing philosophy Decision Card with 3-4 approaches + list of mandatory stage-appropriate mechanisms.
+
+---
+
 ### Step 1: Delivery Model
 
 > "What are you actually delivering?"
@@ -292,7 +375,7 @@ Scope: [derived from positioning — what onboarding involves]
 Price calculation:
   Hours × [ВАША ЦЕНА: ваша ставка ₽/час] = базовая стоимость
   + маржа [ВАША ЦЕНА: целевая маржа %] = цена внедрения
-  
+
   Рекомендуемый диапазон: ₽X — ₽Y
   🔲 Ваша цена внедрения: [ВАША ЦЕНА]
 ```
@@ -309,6 +392,8 @@ Produce a markdown document with the following structure. The main body should b
 ## Резюме
 
 Один абзац: рекомендуемая модель, почему, что клиенту нужно финализировать.
+
+**Стадия продукта:** [Pre-traction / Early traction / Proven] — [1 sentence explaining why]
 
 ### Рекомендуемые цены
 
@@ -335,19 +420,36 @@ Produce a markdown document with the following structure. The main body should b
 
 ---
 
-## 1. Модель поставки
+## 1. Стратегия ценообразования (Decision Card)
+
+**Стадия продукта:** [Pre-traction / Early traction / Proven] — [reasoning from Value Map confidence ratings]
+
+**Варианты подхода:**
+
+Вариант A: [Name] — [brief description + how it reinforces positioning]
+Вариант B: [Name] — [brief description + how it reinforces positioning]
+Вариант C: [Name] — [brief description + how it reinforces positioning]
+
+**Рекомендация:** Вариант [X], потому что [reasoning]
+
+**Обязательные механизмы для данной стадии:**
+[List of pilot/risk-reversal/early-adopter mechanisms with priority flags]
+
+---
+
+## 2. Модель поставки
 
 **Рекомендация:** [Model name]
 **Обоснование:** [2-3 sentences tied to positioning doc]
 **Что это значит для продаж:** [Practical implication]
 
-## 2. Модель дохода
+## 3. Модель дохода
 
 **Метрика ценности:** [What customers pay per]
 **Модель:** [Revenue model name]
 **Обоснование:** [Why this model, tied to target segments and value map]
 
-## 3. Архитектура тарифов
+## 4. Архитектура тарифов
 
 | | [Tier 1 name] | [Tier 2 name] ⭐ Рекомендуемый | [Tier 3 name] |
 |---|---|---|---|
@@ -362,7 +464,7 @@ Produce a markdown document with the following structure. The main body should b
 - [Feature X] в среднем тарифе потому что [reasoning from positioning]
 - [Feature Y] только в Enterprise потому что [reasoning]
 
-## 4. Стоимость внедрения (если применимо)
+## 5. Стоимость внедрения (если применимо)
 
 [Implementation scope table: stages, hours, what's included]
 
@@ -373,7 +475,7 @@ Produce a markdown document with the following structure. The main body should b
 | **Рекомендуемый диапазон** | — | ₽X-Y | ₽X-Y |
 | 🔲 **Ваша цена** | [ВАША ЦЕНА] | [ВАША ЦЕНА] | [ВАША ЦЕНА] |
 
-## 5. Допущения и риски
+## 6. Допущения и риски
 
 [What assumptions the strategy depends on, what would change the recommendation]
 
@@ -469,6 +571,12 @@ Produce a markdown document with the following structure. The main body should b
 10. **Gaps become Decision Cards.** Same format as the positioning agent: Что не хватает → Почему блокирует → Варианты A/B/C → Рекомендация → Что нужно от вас → Приоритет (🔴/🟡/🟢). The client should never see a gap without a recommended path forward.
 
 11. **The Appendix is critical.** The "Как заполнить плейсхолдеры" section is where the client actually does their work. For each placeholder, provide: what the number is, where to find it (their accounting, their CTO, their sales calls), a reasonable default range if they're stuck, and what happens to the strategy if this number is very different from expected.
+
+12. **Think before you build.** NEVER skip the Pricing Philosophy step (Step 0.5). The Pricing Strategy Decision Card is the most important output of this document — it determines everything else. If you jump straight to "3 тарифа: Старт/Рост/Корпоративный" without first asking "should we even be selling tiers?", you've failed. A product that sells transformation might need project-based pricing. A product that sells outcomes might need pay-per-result. The tier model is ONE option, not the default.
+
+13. **Product stage dictates pricing mechanics.** A pre-traction product (0 proof points, all "Claimed"/"Inferred") CANNOT use the same pricing strategy as a proven product. If the positioning doc shows zero "Proven" value claims, your pricing strategy MUST include pilot pricing and risk-reversal mechanisms. Presenting standard tiers without entry mechanisms for an unproven product is a critical error — no rational buyer pays full subscription price for unverified value.
+
+14. **Don't parrot the positioning doc.** Your job is to THINK about the positioning data, not copy it. The Appendix can reproduce extracted data for reference, but your main sections must show original analysis. If the positioning doc says "Hybrid model (software + implementation)" — don't just echo that classification. Ask: what does that mean for pricing? Should the software and implementation be priced separately? Together? Should implementation be free to reduce friction? Should it be premium to signal quality?
 
 ---
 

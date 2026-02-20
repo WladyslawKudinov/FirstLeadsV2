@@ -55,6 +55,58 @@ For every ⚠️ Partial or ❌ Missing item, you MUST generate a Decision Card 
 
 ---
 
+### Step 0.5: Product Deep-Dive — "What Is This Business REALLY About?"
+
+**This step is mandatory and happens BEFORE any framework application.** The goal is to develop a genuine understanding of the product — not parrot the client's marketing language, but articulate the deeper transformation this product enables. Without this step, all subsequent analysis will be mechanically correct but substantively shallow.
+
+**You must write the following sections in your own words, NOT by copying client materials:**
+
+#### A. Reformulation
+Describe the product in your own words as if explaining it to a smart friend who knows nothing about it. Do NOT use the client's taglines, marketing copy, or product description verbatim. If you catch yourself copying their language, stop and rewrite.
+
+#### B. Transformation Map
+Answer: **What transformation does the customer undergo?**
+
+```
+State A (before): [Describe the customer's world without this product — be specific about what's broken, missing, or painful. Not "they have a problem" but what their Tuesday looks like.]
+
+→ Transformation: [What specifically changes? What does the product make possible that wasn't possible before?]
+
+State B (after): [Describe the customer's world after successful adoption. What's different about their Tuesday now?]
+```
+
+#### C. The Hard Part
+Answer: **What is genuinely hard about what this product does? What can't a competitor replicate in 1-3 months?**
+
+Consider:
+- Domain expertise baked into the product (methodology, training programs, proprietary frameworks)
+- Data or network effects that compound over time
+- Integration depth that creates switching costs
+- Combination of software + human expertise that's hard to unbundle
+- Category creation — teaching the market a new way to think
+
+If you can't identify something genuinely hard to copy, **say so explicitly**. This is a critical positioning gap.
+
+#### D. The "Aha Moment"
+Answer: **When does the customer realize they NEED this?** Not "when do they buy" but what event, frustration, or realization triggers the search?
+
+Examples of good aha moments: "The CEO asks 'why don't we use AI yet?' and nobody has an answer." / "They try ChatGPT for work, it hallucinates, and they realize they need something trained on their own data." / "A competitor ships an AI feature and they panic."
+
+#### E. Hidden Value Propositions
+Answer: **What value does this product deliver that the client themselves may not articulate?**
+
+Clients often describe their product by its features or technology. Your job is to surface the value they take for granted. Common patterns:
+- The product is really selling a **capability upgrade** (from "can't do X" to "can do X"), not a tool
+- The product is really selling **risk reduction** (from "terrified of X" to "X is handled"), not features
+- The product is really selling **organizational transformation** (from "old way" to "new way"), not software
+- The product bundles **education + implementation**, but only talks about the software part
+
+**Output:** A 1-2 page narrative covering sections A-E. This narrative becomes the foundation for ALL subsequent steps. When filling in Dunford's framework, constantly reference back to this deep-dive — if your Competitive Alternatives, Unique Attributes, or Value Map contradict the deep-dive insights, something is wrong.
+
+**Critical rule:** If the deep-dive reveals that the product's TRUE differentiator is different from what the client emphasizes, note the discrepancy explicitly. Example: "Client emphasizes technical features (RAG, hybrid access). Deep-dive reveals the real differentiator is methodology + training — the product is a bridge from 'no AI' to 'AI-powered organization,' not a 'corporate ChatGPT.'"
+
+---
+
 ### Step 1: Competitive Alternatives
 
 > "If your product didn't exist, what would customers do instead?"
@@ -91,7 +143,29 @@ For each attribute:
 
 **Critical rule:** An attribute is only "unique" relative to specific alternatives. If you can't tie it to a Step 1 alternative, it doesn't belong here.
 
-**Output:** A prioritized list of unique attributes with alternative-linkage.
+#### Strategic Differentiation Narrative (MANDATORY)
+
+After listing the attributes, write a **narrative section** (not a table) that answers these four questions. This is where you connect features to strategic advantage. Reference your Deep-Dive insights.
+
+**1. "Why is this impossible to copy?"**
+For the top 1-2 differentiators, explain what makes them defensible. Is it domain expertise accumulated over years? A methodology that requires human training? Data that compounds with usage? A combination of capabilities that's individually copyable but collectively unique? Be specific — "our AI is better" is not defensible. "Our AI is trained on 5 years of [domain] methodology that took [X] to develop and requires certified trainers to deploy" is.
+
+**2. "Why can't the customer go back after trying us?"**
+Describe switching costs — not just technical (data lock-in, integrations) but operational (team trained on new workflow), strategic (decisions made based on product's outputs), and psychological (anxiety of going back to the old way). If there are no meaningful switching costs, flag this as a positioning risk.
+
+**3. "What does this change in their business?"**
+Connect to the Transformation Map from the Deep-Dive. This isn't about features — it's about the before/after. A product that "provides RAG search" changes nothing. A product that "transforms a company from 'can't use AI' to 'AI-native operations'" changes the game.
+
+**4. Moat Analysis**
+Classify the defensibility using standard moat types:
+- **Network effects** — does the product get better as more people use it? How?
+- **Data accumulation** — does usage generate proprietary data that improves the product?
+- **Switching costs** — how painful is it to leave? (see question 2)
+- **Expertise lock-in** — does using the product build skills that are specific to it?
+- **Process embedding** — does the product become part of how the company operates?
+- **None identified** — if no moat exists, say so. This is critical information for positioning strategy.
+
+**Output:** A prioritized list of unique attributes with alternative-linkage, PLUS a 0.5-1 page strategic differentiation narrative covering the four questions above.
 
 ---
 
@@ -126,14 +200,35 @@ For each value claim:
 Define the customer segments that would value your product's unique attributes the most. These are your "best-fit" customers — not everyone who COULD use the product, but those who would LOVE it.
 
 For each segment, specify:
-- **Identifiable characteristics** — how you'd find them (industry, company size, role, behavior, tech stack, situation)
+- **Market** — specific industry or vertical (e.g., "юридические компании", "production manufacturing")
+- **Company Profile** — observable characteristics: size (employee count range), revenue range, tech maturity signals (e.g., "уже используют CRM", "нет IT-отдела"), geographic signals
+- **Problem** — the specific pain or trigger that makes this segment need YOUR product (from Deep-Dive's Transformation Map and Aha Moment)
 - **Why this segment** — which specific value from Step 3 resonates most and why
 - **Buying trigger** — what event or situation makes them actively look for a solution
+- **How to find them** — concrete sourcing instructions: what to search on LinkedIn/HH.ru, what Telegram channels they're in, what conferences they attend, what keywords to filter by
 - **Segment priority** — Primary (go after first) / Secondary / Tertiary
 
-**Critical rule:** Segments must be defined by **observable, targetable traits**, not vague descriptions like "innovative companies" or "tech-savvy users." If you can't build a lead list from the description, it's not specific enough.
+#### Mandatory Specificity Test (EVERY segment must pass ALL three)
 
-**Output:** Prioritized target segments with identifiable characteristics and value-linkage.
+**Test 1 — The 50-Company Test:** Can a sales rep find 50 companies matching this segment description on LinkedIn, HH.ru, or Rusprofile within 30 minutes? If not → too vague, redo.
+
+**Test 2 — The Three-Dimensional Test:** Segment = Market × Company Profile × Problem. ALL THREE dimensions must be present.
+- ❌ "Средний бизнес 50-300 сотрудников" — demographics only, fails. EVERY industry has companies this size.
+- ❌ "Растущие компании с амбициями на масштабирование" — aspirational, not observable. Can't filter LinkedIn by "ambition."
+- ❌ "Компании с требованиями к безопасности данных" — feature preference, not a segment. This describes a buying criterion, not a group of companies.
+- ✅ "Юридические компании (50-200 чел.) с 3+ офисами, которые тратят 10+ часов/нед на поиск по внутренним документам" — Market (legal) × Profile (size + multi-office) × Problem (document search pain).
+
+**Test 3 — The "Why NOW" Test:** Can you explain why this segment would buy THIS YEAR, not "someday"? Link to a specific trigger from the Deep-Dive's Aha Moment.
+
+**If a segment fails any test, do NOT include it.** Instead, either refine it until it passes or create a Decision Card asking the client to help sharpen the segment definition. It is better to have 2 sharp segments than 5 vague ones.
+
+**Banned segment patterns** (never use these as standalone segments):
+- Pure size bands: "малый бизнес", "средний бизнес", "enterprise"
+- Aspirational traits: "инновационные", "растущие", "технологичные"
+- Feature preferences: "компании, которым нужна безопасность", "компании, которые ценят интеграции"
+- Universal descriptions: "компании, которые хотят повысить эффективность"
+
+**Output:** Prioritized target segments that pass all three tests, with identifiable characteristics, value-linkage, and concrete sourcing instructions.
 
 ---
 
@@ -188,13 +283,33 @@ Produce a markdown document with the following structure:
 
 [Table of information categories, availability status, and flagged assumptions]
 
+## Product Deep-Dive
+
+### Reformulation
+[Product described in agent's own words — NOT client's marketing language]
+
+### Transformation Map
+[State A → Transformation → State B]
+
+### The Hard Part
+[What's genuinely hard to copy and why]
+
+### The "Aha Moment"
+[What triggers the customer to search for this solution]
+
+### Hidden Value Propositions
+[Value the client may not articulate but the product delivers]
+
 ## Positioning Canvas
 
 ### 1. Competitive Alternatives
 [Ranked list with assessments]
 
-### 2. Unique Attributes  
+### 2. Unique Attributes
 [Prioritized list linked to alternatives]
+
+#### Strategic Differentiation Narrative
+[Why impossible to copy → Why customer can't go back → What it changes → Moat analysis]
 
 ### 3. Value Map
 [Attribute → Value chains with confidence ratings]
@@ -293,6 +408,8 @@ materials for async access."
 7. **Positioning statement must be falsifiable.** The final positioning statement should be specific enough that a competitor could NOT use the same statement truthfully. If they could, it's not differentiated enough — revise or flag.
 
 8. **Confidence over completeness.** A positioning document that's honest about its gaps is infinitely more useful than one that papers over them with assumptions. When in doubt, be explicit about uncertainty.
+
+9. **Deep-Dive before frameworks.** NEVER skip the Product Deep-Dive (Step 0.5). If you find yourself filling in Dunford's framework slots mechanically without referencing the Deep-Dive insights, stop and re-read your Deep-Dive. Every Unique Attribute, Value claim, and Segment must be consistent with the Transformation Map and Hard Part analysis. If the Deep-Dive says the real differentiator is methodology+training but your Unique Attributes table lists 4 technical features and 1 methodology item, something is wrong — go back and fix it.
 
 9. **Gaps become decisions, not homework.** The "What's Missing" section is the most important part of the deliverable for the client. NEVER output a flat list of gaps like "определить ценообразование" — the client will freeze and abandon the document. Every gap MUST be a Decision Card with options, trade-offs, a recommendation, and a specific ask. Your job is to lead the client by the hand: present 2-3 concrete options (derived from your positioning analysis), recommend one with reasoning, and tell the client exactly what data you need from them to finalize. The client should be able to respond with "выбираю вариант B, вот данные" — not sit wondering "а что делать-то?"
 
