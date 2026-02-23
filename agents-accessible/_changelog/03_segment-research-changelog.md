@@ -1,5 +1,104 @@
 # Segment Research Agent — Changelog
 
+## v5 — 2026-02-23
+
+**Client-Facing Output + FirstLeads Context** — полная перестройка под реальный use case.
+
+### Проблема
+
+Клиент не понимал output: beachhead, bowling pin, [E]/[H], C1-C10 — всё это framework jargon, который клиенту не нужен. Entry points были нереалистичными ("посетите конференцию через 6 месяцев"). Агент не понимал контекст FirstLeads — что мы делаем аутрич за клиента.
+
+### Решение
+
+**1. FirstLeads Context (новая секция в начале)**
+
+Добавлен блок, объясняющий роль FirstLeads:
+- **We do:** research, segmentation, offer packaging, outreach, lead qualification
+- **Client does NOT:** contact anyone, attend conferences, run validation
+- Entry points = каналы холодного аутрича (email, calls, LinkedIn), НЕ "attend conference"
+- Validation = test through outreach in 1-3 weeks, НЕ through interviews over months
+- C10 переименован: Founder access → **Outreach accessibility** [E]
+
+**2. Output Audiences: Two Layers**
+
+Каждый phase теперь производит ДВА слоя:
+- **Internal layer:** для оператора — полная методология, [E]/[H], C1-C10
+- **Client layer:** для клиента — БЕЗ жаргона, БЕЗ английских слов, БЕЗ [E]/[H]
+
+**3. Translation Table (internal → client)**
+
+| Internal | Client-facing (Russian) |
+|---|---|
+| Beachhead | Приоритет 1 — начинаем с этого сегмента |
+| Fast Follow | Приоритет 2 — следующий после первого |
+| Bowling Pin Sequence | Последовательность выхода на сегменты |
+| ICP Card | Карточка целевого сегмента |
+| [E] — Evidence-based | Подтверждено исследованием |
+| [H] — Hypothesis | Требует проверки на рынке |
+
+**4. Simplified Scoring Table**
+
+Клиент видит простую таблицу:
+```
+| Сегмент | Приоритет | Что подтверждено | Что нужно проверить |
+```
+
+Полная матрица C1-C10 перемещена в **Приложение: Детали оценки (внутренний документ)** — оператор может удалить перед отправкой.
+
+**5. Entry Points переписаны**
+
+Вместо "Events / Communities / Publications" теперь реальные каналы аутрича:
+- **Email-аутрич:** где найти контакты ЛПР
+- **Холодные звонки:** приёмные, прямые номера
+- **LinkedIn:** активность ЛПР, типичные должности
+- **Отраслевые базы:** реестры СРО, zakupki.gov.ru, 2GIS
+- **Telegram-каналы:** для context research, НЕ для прямых продаж
+
+Явный запрет: "НЕ писать 'посетить конференцию'"
+
+**6. Killed Segments — полное описание**
+
+Rule 15: если исследовано 9 сегментов и отклонено 4, описать ВСЕ 4. Каждый — 3-5 предложений объяснения.
+
+**7. Language Section — 5 правил**
+
+1. No English words в client-facing (кроме CRM, SaaS, IT, NFC)
+2. No unexplained abbreviations — расшифровывать на первое упоминание
+3. No framework jargon в client-facing
+4. Internal appendix может использовать English terms
+5. All labels in Russian
+
+Rule 16: все аббревиатуры расшифровываются — "КИИ (критическая информационная инфраструктура)"
+
+**8. Validation Timeline**
+
+План теперь в неделях, не кварталах:
+```
+## План FirstLeads на ближайшие 1-3 недели
+| Неделя | Сегмент | Действие | Цель | Результат |
+```
+
+**Миссия:** упаковать оффер и протестировать через прямой аутрич за 1-3 недели.
+
+### Структурные изменения
+
+- Добавлен блок **FirstLeads Context** в начало
+- Добавлена секция **Output Audiences** с Translation Table
+- Phase 2/3 output переписан: client-facing main + internal appendix
+- ICP Card → **Карточка сегмента** (шаблон полностью на русском)
+- Entry Points → **Каналы выхода на клиентов** (конкретные каналы аутрича)
+- Rules: добавлены 15 (all segments accounted) и 16 (no unexplained abbreviations)
+
+### Что сохранено
+
+- [E]/[H] epistemological scoring (в internal appendix)
+- Challenge Response Protocol
+- Moore Beachhead Criteria (10 критериев)
+- Blocker Rules
+- Inputs for Offer Agent (переведены лейблы на русский)
+
+---
+
 ## v4 — 2026-02-20
 
 **Epistemological Scoring [E]/[H]** — полная перестройка системы скоринга и challenge response.
