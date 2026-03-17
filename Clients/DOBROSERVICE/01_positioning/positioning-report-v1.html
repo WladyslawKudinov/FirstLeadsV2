@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Positioning: ДОБРОСЕРВИС Digital (v1)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        header .methodology { margin-top: 20px; font-size: 0.9rem; opacity: 0.8; }
+        header .version {
+            margin-top: 10px; font-size: 0.85rem;
+            background: rgba(255,255,255,0.2);
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .section h3 { color: var(--gray-700); font-size: 1.1rem; margin: 20px 0 12px 0; }
+        .section h4 { color: var(--gray-700); font-size: 1rem; margin: 16px 0 8px 0; }
+        .section p { margin-bottom: 12px; }
+
+        /* One-pager */
+        .one-pager {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 2px solid var(--success);
+        }
+        .one-pager h2 { color: var(--success); border-bottom-color: var(--success); }
+
+        .op-numbers {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 16px; margin: 20px 0;
+        }
+        .op-num {
+            background: white; border-radius: 8px; padding: 16px;
+            text-align: center;
+        }
+        .op-num .val { font-size: 1.8rem; font-weight: 700; color: var(--success); }
+        .op-num .label { font-size: 0.8rem; color: var(--gray-600); margin-top: 4px; }
+
+        .positioning-statement {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid var(--primary);
+            padding: 25px 30px;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+        .positioning-statement strong { color: var(--primary-dark); }
+
+        .pitch-card {
+            background: var(--gray-50); border-radius: 8px;
+            padding: 20px; margin: 15px 0;
+        }
+        .pitch-card .label {
+            font-size: 0.85rem; color: var(--gray-600);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+        }
+        .pitch-card blockquote {
+            font-size: 1.05rem; color: var(--gray-800);
+            font-style: italic; margin: 0; padding-left: 15px;
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+        }
+        .executive-summary h2 { color: var(--warning); border-bottom-color: #f59e0b; }
+
+        .decision-summary-list { list-style: none; padding: 0; margin: 20px 0; }
+        .decision-summary-item {
+            display: flex; align-items: flex-start; gap: 15px;
+            padding: 15px; margin: 10px 0;
+            background: white; border-radius: 8px;
+            text-decoration: none; color: var(--gray-800);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .decision-summary-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .decision-summary-badge {
+            flex-shrink: 0; padding: 6px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+        }
+        .badge-blocker { background: #fee2e2; color: var(--danger); }
+        .badge-important { background: #fef3c7; color: var(--warning); }
+        .badge-nice { background: #d1fae5; color: var(--success); }
+        .badge-info { background: #dbeafe; color: var(--primary); }
+        .decision-summary-content { flex: 1; }
+        .decision-summary-title { font-weight: 600; margin-bottom: 4px; }
+        .decision-summary-desc { font-size: 0.9rem; color: var(--gray-600); }
+        .decision-summary-arrow { color: var(--gray-300); font-size: 1.2rem; }
+
+        /* Deep Dive */
+        .deep-dive {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 2px solid var(--success);
+        }
+        .deep-dive h2 { color: var(--success); border-bottom-color: var(--success); }
+
+        .state-box { padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .state-before { background: #fef2f2; border-left: 4px solid var(--danger); }
+        .state-after { background: #f0fdf4; border-left: 4px solid var(--success); }
+        .transformation-arrow { text-align: center; font-size: 1.5rem; color: var(--success); margin: 10px 0; }
+
+        .narrative-box {
+            background: var(--gray-50); border-radius: 8px; padding: 20px;
+            margin: 15px 0; border-left: 4px solid var(--primary);
+        }
+        .narrative-box h4 { color: var(--primary); margin-bottom: 10px; }
+
+        .use-case-list { list-style: none; padding: 0; }
+        .use-case-list li { padding: 8px 0 8px 25px; position: relative; }
+        .use-case-list li:before { content: "\2192"; position: absolute; left: 0; color: var(--primary); }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95rem; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--gray-200); }
+        th { background: var(--gray-100); font-weight: 600; color: var(--gray-700); }
+        tr:hover { background: var(--gray-50); }
+
+        .status {
+            display: inline-block; padding: 4px 10px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 500;
+        }
+        .status-success { background: #d1fae5; color: var(--success); }
+        .status-warning { background: #fef3c7; color: var(--warning); }
+        .status-danger { background: #fee2e2; color: var(--danger); }
+
+        .tag {
+            display: inline-block; padding: 3px 8px; border-radius: 4px;
+            font-size: 0.8rem; margin: 2px;
+        }
+        .tag-hard { background: #dbeafe; color: var(--primary); }
+        .tag-soft { background: var(--gray-200); color: var(--gray-600); }
+        .tag-proven { background: #d1fae5; color: var(--success); }
+        .tag-claimed { background: #e0e7ff; color: #4338ca; }
+        .tag-inferred { background: #fef3c7; color: var(--warning); }
+
+        .recommendation-box {
+            background: #ecfdf5; border: 1px solid #a7f3d0;
+            border-radius: 8px; padding: 20px; margin: 20px 0;
+        }
+        .recommendation-box h4 { color: var(--success); margin-bottom: 10px; }
+
+        /* Segments */
+        .segment-card {
+            background: var(--gray-50); border-radius: 8px;
+            padding: 20px; margin: 15px 0;
+        }
+        .segment-card .priority {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; margin-bottom: 10px;
+        }
+        .priority-primary { background: var(--primary); color: white; }
+        .priority-secondary { background: var(--gray-300); color: var(--gray-700); }
+        .segment-card h4 { color: var(--gray-800); margin-bottom: 15px; }
+        .segment-detail { margin: 10px 0; }
+        .segment-detail .label { font-size: 0.85rem; color: var(--gray-600); margin-bottom: 4px; }
+
+        /* Trends */
+        .trend-item {
+            display: flex; gap: 15px; padding: 15px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .trend-item:last-child { border-bottom: none; }
+        .trend-name { font-weight: 600; color: var(--gray-800); min-width: 280px; }
+        .trend-impact { color: var(--gray-600); }
+
+        /* Decision Cards */
+        .decision-card {
+            background: white; border: 2px solid var(--gray-200);
+            border-radius: 12px; padding: 25px; margin: 20px 0;
+        }
+        .decision-card.blocker { border-left: 5px solid var(--danger); }
+        .decision-card.important { border-left: 5px solid var(--warning); }
+        .decision-card.nice-to-have { border-left: 5px solid var(--success); }
+        .decision-card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px;
+        }
+        .decision-card-title { font-size: 1.2rem; font-weight: 600; color: var(--gray-800); }
+        .priority-badge {
+            padding: 5px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600;
+        }
+        .priority-blocker { background: #fee2e2; color: var(--danger); }
+        .priority-important { background: #fef3c7; color: var(--warning); }
+        .priority-nice { background: #d1fae5; color: var(--success); }
+        .decision-section { margin: 15px 0; }
+        .decision-section-title {
+            font-size: 0.85rem; font-weight: 600; color: var(--gray-600);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+        }
+        .decision-section-content { color: var(--gray-700); line-height: 1.6; }
+        .option-card {
+            background: var(--gray-50); border-radius: 8px;
+            padding: 15px; margin: 10px 0;
+        }
+        .option-card.recommended { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .option-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .option-letter {
+            width: 28px; height: 28px; background: var(--primary); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.9rem;
+        }
+        .option-card.recommended .option-letter { background: var(--success); }
+        .option-name { font-weight: 600; color: var(--gray-800); }
+        .option-recommended-badge {
+            background: var(--success); color: white;
+            padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600;
+        }
+        .option-description { color: var(--gray-600); margin: 8px 0; padding-left: 38px; }
+        .option-pros-cons {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px; padding-left: 38px; margin-top: 10px;
+        }
+        .option-pros, .option-cons { font-size: 0.9rem; }
+        .option-pros span { font-weight: 600; color: var(--success); }
+        .option-cons span { font-weight: 600; color: var(--danger); }
+
+        .recommendation-highlight {
+            background: #ecfdf5; border: 1px solid #a7f3d0;
+            border-radius: 8px; padding: 15px 20px; margin: 15px 0;
+        }
+        .recommendation-highlight strong { color: var(--success); }
+
+        .action-required {
+            background: #eff6ff; border: 1px solid #bfdbfe;
+            border-radius: 8px; padding: 15px 20px; margin: 15px 0;
+        }
+        .action-required-title { font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+
+        .assumptions-list { list-style: none; padding: 0; }
+        .assumptions-list li {
+            padding: 10px 0 10px 30px; position: relative;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .assumptions-list li:before {
+            content: "!"; position: absolute; left: 0; top: 10px;
+            width: 20px; height: 20px; background: #fef3c7;
+            color: var(--warning); border-radius: 50%; text-align: center;
+            font-weight: bold; font-size: 0.8rem; line-height: 20px;
+        }
+
+        footer {
+            text-align: center; padding: 40px 20px;
+            color: var(--gray-600); font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .section { padding: 20px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+            .op-numbers { grid-template-columns: repeat(2, 1fr); }
+            .trend-item { flex-direction: column; gap: 5px; }
+            .trend-name { min-width: auto; }
+            .option-pros-cons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ДОБРОСЕРВИС Digital</h1>
+        <div class="subtitle">Product Positioning Document</div>
+        <div class="methodology">По методологии April Dunford "Obviously Awesome"</div>
+        <div class="version">Version 1.0 &middot; 12 марта 2026</div>
+    </header>
+
+    <div class="container">
+
+        <!-- ONE-PAGER -->
+        <section class="section one-pager">
+            <h2>Резюме позиционирования</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>Полностью цифровая программа поддержки сотрудников для промышленного среднего бизнеса в регионах</em></p>
+
+            <div class="op-numbers">
+                <div class="op-num">
+                    <div class="val">150-500K</div>
+                    <div class="label">руб./год</div>
+                </div>
+                <div class="op-num">
+                    <div class="val">9</div>
+                    <div class="label">направлений поддержки</div>
+                </div>
+                <div class="op-num">
+                    <div class="val">4-7&times;</div>
+                    <div class="label">дешевле конкурентов</div>
+                </div>
+                <div class="op-num">
+                    <div class="val">0</div>
+                    <div class="label">конкурентов в нише</div>
+                </div>
+            </div>
+
+            <h3>Positioning Statement (PR/GR-заход, приоритет 1)</h3>
+            <div class="positioning-statement">
+                <strong>Для</strong> PR/GR-директоров промышленных предприятий Свердловской области (500-1500 чел.),
+                <strong>которым</strong> нужен инфоповод и признание от власти без собственных разработок,<br>
+                <strong>ДОБРОСЕРВИС Digital</strong> — это <strong>готовая социальная программа поддержки сотрудников</strong>,
+                которая даёт <strong>участие в госпроекте + PR-контент + аналитику за 150-500 тыс./год</strong>.<br>
+                <strong>В отличие от</strong> полноценных EAP-провайдеров (Понимаю за 600K-1M, Corporate Health за 500K+),
+                ДОБРОСЕРВИС — <strong>полностью цифровой, в 4-7x дешевле, подключается за дни без тендера</strong>.
+            </div>
+
+            <h3>Positioning Statement (HR-заход, приоритет 2)</h3>
+            <div class="positioning-statement">
+                <strong>Для</strong> HR-директоров промышленных предприятий (500-1500 чел.),
+                <strong>которым</strong> нужно снизить текучесть без бюджета на собственную соцпрограмму,<br>
+                <strong>ДОБРОСЕРВИС Digital</strong> — это <strong>готовая программа поддержки сотрудников (9 направлений)</strong>,
+                которая даёт <strong>полноценный соцпакет по цене корпоративного питания — от 300 руб./сотрудник/год</strong>.<br>
+                <strong>В отличие от</strong> штатного психолога (1.2-1.8 млн/год, 1 направление) или бездействия,
+                ДОБРОСЕРВИС <strong>покрывает 9 направлений на 19-летней базе знаний ЕЮС</strong> (Северсталь, Газпромбанк, Лента — клиенты).
+            </div>
+
+            <h3>Elevator Pitches</h3>
+            <div class="pitch-card">
+                <div class="label">PR/GR — однострочник</div>
+                <blockquote>Готовый GR-инфоповод и соцпрограмма для сотрудников — подключение за дни, от 150 тыс./год.</blockquote>
+            </div>
+            <div class="pitch-card">
+                <div class="label">HR — однострочник</div>
+                <blockquote>Цифровая программа поддержки сотрудников: 9 направлений, от 300 руб./чел./год, без тендера.</blockquote>
+            </div>
+            <div class="pitch-card">
+                <div class="label">Расширенный (PR/GR)</div>
+                <blockquote>Промышленные предприятия на 500-1500 человек в регионах тратят на ДМС миллионы, но у сотрудников нет поддержки по юридическим, финансовым и психологическим вопросам. Собственную программу разработать — дорого и долго. Полноценные EAP (типа «Понимаю») стоят от 600 тыс. и требуют тендера.<br><br>
+                ДОБРОСЕРВИС Digital — полностью цифровая программа поддержки за 150-500 тыс./год. 9 направлений: робот-юрист, психолог-бот, финансовый консультант, гайды по жизненным ситуациям. Основана на 19-летней базе знаний ЕЮС — тех самых специалистов, которые обслуживают Северсталь, Газпромбанк и Ленту. Подключение за дни, без тендера. Бонус — участие в госпрограмме повышения качества труда с признанием от губернатора.</blockquote>
+            </div>
+
+            <h3>Сегменты</h3>
+            <table>
+                <thead>
+                    <tr><th>Сегмент</th><th>ЛПР</th><th>Приоритет</th><th>Что подтверждено</th><th>Что проверяем</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Промышленность Свердловской обл., 500-1500 чел.</strong></td>
+                        <td>PR/GR-директор</td>
+                        <td><span class="status status-success">Приоритет 1</span></td>
+                        <td>40-60 компаний, 0 конкурентов, GR-повод, цена под тендер</td>
+                        <td>PR/GR быстрее принимает решение чем HR</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Промышленность Свердловской обл., 500-1500 чел.</strong></td>
+                        <td>HR-директор</td>
+                        <td><span class="status status-success">Приоритет 1</span></td>
+                        <td>Дефицит 100K рабочих, травматизм +14.7%, 59% расширяют well-being</td>
+                        <td>HR готов тратить при урезанном бюджете</td>
+                    </tr>
+                    <tr>
+                        <td>Строительство Свердловской обл., 200-1000 чел.</td>
+                        <td>Генеральный</td>
+                        <td><span class="status status-warning">Приоритет 2</span></td>
+                        <td>Травматизм, низкая квалификация</td>
+                        <td>ГД готов тратить на соцпрограмму</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendation-box">
+                <h4>Стратегия: A/B-тест на одних и тех же компаниях</h4>
+                <p>Те же самые предприятия, два разных ЛПР. Цель: первые ответы, discovery-звонки, приглашения на конференцию 24.03.</p>
+            </div>
+        </section>
+
+        <!-- EXECUTIVE SUMMARY / DECISIONS -->
+        <section class="section executive-summary">
+            <h2>Требуется ваше решение</h2>
+            <p style="margin-bottom: 20px; color: var(--gray-700);">Позиционирование готово на ~80%. Для запуска аутрича нужны ответы на 6 вопросов — они вынесены в <a href="questions-for-client.html" style="color: var(--warning); font-weight: 600;">отдельный документ</a>.</p>
+
+            <ul class="decision-summary-list">
+                <a href="questions-for-client.html" class="decision-summary-item">
+                    <span class="decision-summary-badge badge-blocker">Блокер</span>
+                    <div class="decision-summary-content">
+                        <div class="decision-summary-title">Спецификация облегчённой версии</div>
+                        <div class="decision-summary-desc">Какие боты, гайды, направления входят?</div>
+                    </div>
+                    <span class="decision-summary-arrow">&rarr;</span>
+                </a>
+                <a href="questions-for-client.html" class="decision-summary-item">
+                    <span class="decision-summary-badge badge-blocker">Блокер</span>
+                    <div class="decision-summary-content">
+                        <div class="decision-summary-title">КП / презентация</div>
+                        <div class="decision-summary-desc">Нечего отправить после первого контакта</div>
+                    </div>
+                    <span class="decision-summary-arrow">&rarr;</span>
+                </a>
+                <a href="questions-for-client.html" class="decision-summary-item">
+                    <span class="decision-summary-badge badge-important">Важно</span>
+                    <div class="decision-summary-content">
+                        <div class="decision-summary-title">Тест-драйв или прямая продажа? Кто закрывает? Proof points? Тарифы?</div>
+                        <div class="decision-summary-desc">Ещё 4 вопроса в документе</div>
+                    </div>
+                    <span class="decision-summary-arrow">&rarr;</span>
+                </a>
+            </ul>
+        </section>
+
+        <!-- GAP ANALYSIS -->
+        <section class="section">
+            <h2>Gap Analysis</h2>
+            <table>
+                <thead><tr><th>Категория</th><th>Статус</th><th>Комментарий</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>Возможности продукта</td>
+                        <td><span class="status status-warning">Частично</span></td>
+                        <td>Цифровая, без живых людей, ~80% функционала Enterprise. Ждём точную спецификацию</td>
+                    </tr>
+                    <tr>
+                        <td>Контекст клиента</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>Созвон дал полную картину: целевые размеры, отрасли, стратегию</td>
+                    </tr>
+                    <tr>
+                        <td>Боли и триггеры</td>
+                        <td><span class="status status-warning">Частично</span></td>
+                        <td>Гипотезы есть, подтверждённых триггеров нет — продаж облегчённой версии не было</td>
+                    </tr>
+                    <tr>
+                        <td>Конкуренты</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>10 прямых конкурентов исследовано. Ни один не в нашей нише</td>
+                    </tr>
+                    <tr>
+                        <td>Уникальные атрибуты</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>8 атрибутов, все привязаны к конкретным конкурентам, все подтверждены</td>
+                    </tr>
+                    <tr>
+                        <td>Доказательства</td>
+                        <td><span class="status status-warning">Частично</span></td>
+                        <td>Enterprise-кейсы есть (LTV 90%+). Для облегчённой версии — ноль</td>
+                    </tr>
+                    <tr>
+                        <td>Бизнес-модель</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>150-500K/год, под тендерный порог. Облегчённая → полная версия (5-7 млн)</td>
+                    </tr>
+                    <tr>
+                        <td>Сегменты</td>
+                        <td><span class="status status-success">Достаточно</span></td>
+                        <td>7 гипотез → 3 живых сегмента, 3 убиты, 1 отложен. 40-60 компаний в P1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- PRODUCT DEEP-DIVE -->
+        <section class="section deep-dive">
+            <h2>Product Deep-Dive</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>Глубокое понимание продукта — основа позиционирования</em></p>
+
+            <h3>A. Переформулировка продукта</h3>
+            <p>ДОБРОСЕРВИС Digital — <strong>полностью цифровая</strong> программа поддержки сотрудников. Без живых специалистов. Комбинация базы знаний, накопленной за 19 лет работы ЕЮС (Европейская юридическая служба), и технических решений: робот-юрист, психолог-бот, гайды, ЛК HR с аналитикой.</p>
+            <p>Покрывает ~80% задач полной Enterprise-версии (с живыми специалистами за 5-7 млн/год). Исключение: ситуации, требующие живого человека.</p>
+
+            <div class="narrative-box">
+                <h4>Ключевой контекст</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Материнская компания — ЕЮС</strong>, 19 лет на рынке дистанционных юристов, врачей, психологов, финансистов</li>
+                    <li><strong>White-label монополия:</strong> почти все страховые и московские EAP-продукты работают на движке ЕЮС</li>
+                    <li><strong>Enterprise ДОБРОСЕРВИС:</strong> 1.5 млн сотрудников, LTV 90%+, десятки клиентов (Северсталь, Газпромбанк, Лента)</li>
+                    <li><strong>Облегчённая версия</strong> — цифровой tripwire-продукт для массового сегмента, быстрый цикл, переход в Enterprise</li>
+                </ul>
+            </div>
+
+            <h3>B. Transformation Map</h3>
+            <div class="state-box state-before">
+                <strong>Состояние А (до):</strong><br>
+                Промышленная компания 500-1500 чел. в регионе. Текучесть, выгорание, травматизм. HR-бюджет урезан, всё экономят. Единственный социнструмент — ДМС. Собственную программу поддержки разработать — дорого и непонятно как. Полноценный ДОБРОСЕРВИС за 5-7 млн не проходит по бюджету, тендер на полгода. Итог: проблема игнорируется.
+            </div>
+            <div class="transformation-arrow">&darr;</div>
+            <div class="state-box state-after">
+                <strong>Состояние Б (после):</strong><br>
+                Компания подключает цифровую платформу за 150-500 тыс./год. Без тендера. Запуск за дни. Сотрудники: приложение с ботами, базой знаний, гайдами по всем жизненным ситуациям. HR: дашборд с аналитикой. PR/GR: инфоповод + коммуникация с властью. Компания при минимальных затратах (от 300 руб./сотрудник/год) имеет полноценную «программу благополучия» в своём EVP.
+            </div>
+
+            <h3>C. The Hard Part — что сложно скопировать</h3>
+            <div class="narrative-box">
+                <h4>Что создаёт защитный барьер</h4>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>19-летняя база знаний ЕЮС</strong> — миллионы обработанных юридических, медицинских, психологических кейсов. Робот-юрист и психолог-бот работают на этих данных. Конкурент не может это воспроизвести, даже с хорошим AI</li>
+                    <li><strong>White-label инфраструктура</strong> — почти весь рынок EAP в РФ на движке ЕЮС. Новому конкуренту нужно не только построить продукт, но и убедить страховщиков переключиться</li>
+                    <li><strong>GR-связка</strong> — «Единая Россия», губернаторы, региональные пилоты. Стартап не может воспроизвести</li>
+                </ul>
+            </div>
+
+            <div class="narrative-box" style="border-left-color: var(--danger);">
+                <h4 style="color: var(--danger);">Главная уязвимость</h4>
+                <p>Без живых людей отличие от «ChatGPT для HR» неочевидно. Позиционирование должно объяснить: почему бот ЕЮС лучше, чем бот конкурента. Ответ — качество базы знаний (19 лет, миллионы кейсов), но это нужно доказать.</p>
+                <p style="margin-top: 10px;"><strong>Что легко скопировать:</strong> UI приложения, чат-бот с GPT, базовые гайды, набор направлений.</p>
+            </div>
+
+            <h3>D. Триггеры покупки</h3>
+            <p><strong>Подтверждённые (Enterprise):</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>Потеря кадров, HR понимает что retention-инструментов нет</li>
+                <li>Конференции: «у других есть, а у нас нет»</li>
+                <li>LTV 90%+ — кто подключился, не уходит</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Гипотезы (цифровая версия):</strong></p>
+            <ul style="margin-left: 20px;">
+                <li><strong>PR/GR-повод</strong> — госинициатива → можно участвовать дёшево и получить признание (Андрей считает главным триггером)</li>
+                <li><strong>Экономия на соцпакете</strong> — нужна программа, бюджета на разработку нет → готовое за 350 тыс.</li>
+                <li><strong>Формальный комплаенс</strong> — нужно показать well-being в отчётности</li>
+            </ul>
+
+            <h3>E. Скрытые ценностные предложения</h3>
+            <ul class="use-case-list">
+                <li><strong>Вход в Enterprise-экосистему.</strong> Облегчённая версия — входной продукт. Главная ценность для ДОБРОСЕРВИС — переход клиента в полную подписку за 5-7 млн. Для аутрича мы продаём лёгкую версию</li>
+                <li><strong>Готовая соцпрограмма «из коробки».</strong> Для среднего бизнеса, который экономит на всём — единственный способ иметь well-being за 3500 руб./сотрудник/год</li>
+                <li><strong>GR-инструмент.</strong> Госпроект ЕР + письмо губернатору + признание. Для PR/GR-директора — «нулевой продукт», не нужно ничего создавать</li>
+                <li><strong>Аналитика как доказательство.</strong> HR-дашборд = обоснование инвестиции перед руководством. Без данных — «потратили деньги непонятно на что»</li>
+            </ul>
+        </section>
+
+        <!-- 1. COMPETITIVE ALTERNATIVES -->
+        <section class="section">
+            <h2>1. Competitive Alternatives</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Если вашего продукта не существует, что делают клиенты вместо этого?"</em></p>
+
+            <div class="narrative-box">
+                <h4>Контекст: рынок EAP в РФ</h4>
+                <p>Проникновение EAP ~57% в крупном бизнесе. Средняя стоимость 1200-2000 руб./сотрудник/год. ROI программ: 54%. Но: <strong>все 10 выявленных конкурентов работают через живых специалистов и целят в Enterprise/IT в Москве.</strong> Промышленный mid-market в регионах — <strong>полностью пуст.</strong></p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr><th>Альтернатива</th><th>Что делает адекватно</th><th>Где проигрывает</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. «Понимаю»</strong><br><small style="color: var(--gray-600);">Лидер рынка EAP в РФ, живые + платформа</small></td>
+                        <td>6+ направлений, платформа, крупные клиенты</td>
+                        <td>600K-1M/год (в 4-7x дороже). Москва/IT. Требует тендера. Не работает в регионах с промышленностью</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Corporate Health / Inbalansy</strong><br><small style="color: var(--gray-600);">Живые специалисты, международные</small></td>
+                        <td>Международный опыт, 3-4 направления</td>
+                        <td>500K+ для 500 чел. Фокус на крупном бизнесе. Нет GR-обвязки, нет облегчённой версии</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Alter / Ясно / YouTalk</strong><br><small style="color: var(--gray-600);">Маркетплейсы психологов</small></td>
+                        <td>Известные бренды, pay-per-use</td>
+                        <td>Только психология (1 из 9 направлений). ~1.2M руб. при 20% утилизации. IT/стартапы</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Штатный психолог</strong><br><small style="color: var(--gray-600);">Найм специалиста в штат</small></td>
+                        <td>Живой контакт, знание контекста</td>
+                        <td>480K-1.44M/год, 1 направление, нет анонимности, нет аналитики, нет масштабирования</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. ДМС с психологом</strong><br><small style="color: var(--gray-600);">Расширенная мед. страховка</small></td>
+                        <td>Привычно, понятно</td>
+                        <td>30-50K/сотрудника (в 100x дороже per capita). Психология — 1% обращений. Не заменяет EAP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>6. «Ничего не делать»</strong><br><small style="color: var(--gray-600);">Главный конкурент</small></td>
+                        <td>0 руб. явных затрат</td>
+                        <td>Потери: 63 часа продуктивности/мес. на сотрудника с проблемой. Текучесть, выгорание, травматизм</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendation-box">
+                <h4>Ключевые выводы</h4>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Ни один конкурент не занимает промышленный mid-market в регионах</strong> — все целят в Enterprise/IT в Москве</li>
+                    <li><strong>Ни один конкурент не предлагает полностью автоматизированный EAP</strong> — все через живых специалистов</li>
+                    <li><strong>ДОБРОСЕРВИС в 4-7x дешевле</strong> ближайшего конкурента при более широком покрытии (9 vs 6 направлений)</li>
+                    <li><strong>Цена под тендерный порог</strong> — уникальное преимущество, убирает барьер закупки</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 2. UNIQUE ATTRIBUTES -->
+        <section class="section">
+            <h2>2. Unique Attributes</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Что есть у вас, чего нет у альтернатив?"</em></p>
+
+            <table>
+                <thead><tr><th>Атрибут</th><th>Описание</th><th>Уникален относительно</th><th>Тип</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Полная автоматизация</strong></td>
+                        <td>Без живых специалистов — боты + база знаний + гайды</td>
+                        <td>Все конкуренты (Понимаю, Corporate Health, Inbalansy, Alter, Ясно)</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>9 направлений</strong></td>
+                        <td>Юрист, психолог, финансы, медицина, карьера, ЖКХ и др. в одном приложении</td>
+                        <td>Alter/Ясно (1), Corporate Health (3-4), Понимаю (6+)</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Цена 150-500K</strong></td>
+                        <td>Под тендерный порог — решение за дни, не месяцы</td>
+                        <td>Все EAP-конкуренты (600K-1M+)</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>19-летняя база знаний ЕЮС</strong></td>
+                        <td>Миллионы обработанных кейсов — робот работает на реальных данных</td>
+                        <td>Все (Понимаю с ~2018, Alter/Ясно — без базы)</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>White-label инфраструктура</strong></td>
+                        <td>Страховые компании уже на движке ЕЮС</td>
+                        <td>Все конкуренты (никто не контролирует инфраструктуру страховых)</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>GR/PR-обвязка</strong></td>
+                        <td>Госпроект ЕР + письмо губернатору + признание от власти</td>
+                        <td>Все конкуренты (ни один не имеет GR-связки)</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Enterprise-кейсы</strong></td>
+                        <td>Северсталь, Газпромбанк, Лента — именно промышленные гиганты РФ</td>
+                        <td>Alter/Ясно (IT), Corporate Health (международные)</td>
+                        <td><span class="tag tag-hard">Жёсткий</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Per capita 300-1000 руб./год</strong></td>
+                        <td>В 4-7x дешевле ближайшего конкурента</td>
+                        <td>Понимаю (1200-2000), Alter (~2400), Ясно (~2520)</td>
+                        <td><span class="tag tag-soft">Мягкий</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Strategic Differentiation Narrative</h3>
+
+            <div class="narrative-box">
+                <h4>1. Почему это невозможно скопировать?</h4>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>19 лет данных ЕЮС</strong> — Понимаю с ~2018, Alter/Ясно — B2C-маркетплейсы без собственной базы. Миллионы обработанных кейсов не воспроизвести</li>
+                    <li><strong>White-label монополия</strong> — страховые уже на движке ЕЮС. Новому конкуренту нужно не только построить продукт, но и убедить страховщиков переключиться</li>
+                    <li><strong>GR-связка</strong> — Единая Россия, губернаторы, региональные пилоты. Стартап не воспроизведёт</li>
+                </ul>
+            </div>
+
+            <div class="narrative-box">
+                <h4>2. Почему клиент не вернётся к альтернативам?</h4>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Данные:</strong> HR-аналитика накапливает историю — переключение = потеря данных</li>
+                    <li><strong>GR:</strong> если начал участвовать в госпроекте, выходить неудобно (публичное обязательство)</li>
+                    <li><strong>Enterprise:</strong> если перешёл в полную версию (5-7 млн) — зависимость от живых специалистов ЕЮС</li>
+                </ul>
+            </div>
+
+            <div class="narrative-box">
+                <h4>3. Moat Analysis</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Data accumulation:</strong> 19 лет — невоспроизводимый массив знаний</li>
+                    <li><strong>Platform lock-in:</strong> страховые компании на движке ЕЮС</li>
+                    <li><strong>Government partnership:</strong> GR-связка с партией и губернаторами</li>
+                    <li><strong>Price barrier:</strong> конкуренты не могут снизить цену до 500K — у них живые специалисты</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. VALUE MAP -->
+        <section class="section">
+            <h2>3. Value Map</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Какую ценность эти уникальные атрибуты создают для клиентов?"</em></p>
+
+            <table>
+                <thead><tr><th>Атрибут</th><th>Что даёт</th><th>Почему важно</th><th>Уверенность</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>База знаний ЕЮС</strong></td>
+                        <td>Бот/гайды решают 80% типовых ситуаций 24/7</td>
+                        <td>Мгновенный ответ сотруднику без живого человека</td>
+                        <td><span class="tag tag-claimed">Claimed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Цена под тендер</strong></td>
+                        <td>Решение принимается за дни</td>
+                        <td>Убирает главный барьер — закупочную процедуру. До 500 тыс. = решение директора</td>
+                        <td><span class="tag tag-proven">Proven</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>GR/PR-обвязка</strong></td>
+                        <td>Готовый инфоповод, коммуникация с властью, признание</td>
+                        <td>Для PR/GR — «нулевой продукт», не нужно ничего создавать с нуля</td>
+                        <td><span class="tag tag-proven">Proven</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Enterprise-кейсы</strong></td>
+                        <td>Северсталь, Газпромбанк, Лента используют</td>
+                        <td>Снижает risk perception: «если они пользуются — мы тоже можем»</td>
+                        <td><span class="tag tag-proven">Proven</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Готовая соцпрограмма</strong></td>
+                        <td>Всё в одном приложении, подключение за дни</td>
+                        <td>Единственный способ иметь well-being для среднего бизнеса без бюджета</td>
+                        <td><span class="tag tag-claimed">Claimed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>HR-аналитика</strong></td>
+                        <td>Данные для обоснования перед руководством</td>
+                        <td>Без данных — «потратили деньги непонятно на что»</td>
+                        <td><span class="tag tag-inferred">Inferred</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Per capita «как корпоративное питание»</strong></td>
+                        <td>3500 руб./сотрудник/год — в 10x дешевле штатного психолога</td>
+                        <td>«Это не инвестиция, это расходник» — не требует серьёзного обоснования</td>
+                        <td><span class="tag tag-proven">Proven</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="narrative-box" style="border-left-color: var(--danger);">
+                <h4 style="color: var(--danger);">Ключевая проблема Value Map</h4>
+                <p>Все измеримые результаты (снижение текучести, больничных, выгорания) — от Enterprise-версии с живыми специалистами. <strong>Для облегчённой версии результатов пока НЕТ.</strong> Это первый тест. Нужно собрать proof points по итогам первых подключений.</p>
+            </div>
+        </section>
+
+        <!-- 4. TARGET SEGMENTS -->
+        <section class="section">
+            <h2>4. Target Segments</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Кому эта уникальная ценность важнее всего?"</em></p>
+            <p style="margin-bottom: 10px;">Исследовано <strong>7 сегментных гипотез</strong>. 3 сегмента живы, 3 убиты с доказательствами, 1 отложен.</p>
+            <p style="margin-bottom: 20px; padding: 12px; background: #eff6ff; border-radius: 8px; font-size: 0.9rem;">
+                <strong>Макросигнал:</strong> Дефицит 100 тыс. рабочих в Свердловской области. Травматизм +14.7% г/г. 73% предприятий Свердловской области внедряют ESG-практики. 59% компаний расширяют well-being. Конференция 24.03 в ЕКБ — первая точка продаж.
+            </p>
+
+            <h3>Приоритеты сегментов</h3>
+            <table>
+                <thead>
+                    <tr><th>Сегмент</th><th>Приоритет</th><th>Что подтверждено</th><th>Что нужно проверить</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Промышленность Свердловской обл. → PR/GR</strong></td>
+                        <td><span class="status status-success">Приоритет 1</span></td>
+                        <td>40-60 компаний, 0 конкурентов, GR-повод, СОСПП (500+)</td>
+                        <td>PR/GR быстрее принимает решение</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Промышленность Свердловской обл. → HR</strong></td>
+                        <td><span class="status status-success">Приоритет 1</span></td>
+                        <td>Дефицит 100K рабочих, +14.7% травматизм, 59% well-being</td>
+                        <td>HR готов тратить при урезанном бюджете</td>
+                    </tr>
+                    <tr>
+                        <td>Строительство Свердловской обл. → ГД</td>
+                        <td><span class="status status-warning">Приоритет 2</span></td>
+                        <td>Травматизм, охрана труда</td>
+                        <td>ГД готов платить за соцпрограмму</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- P1: PR/GR -->
+            <div class="segment-card">
+                <span class="priority priority-primary">Приоритет 1 (A/B-тест)</span>
+                <h4>Промышленные предприятия Свердловской области → PR/GR-директор</h4>
+                <div class="segment-detail">
+                    <div class="label">JTBD:</div>
+                    <div>«Когда появляется госинициатива по повышению качества труда, я хочу быстро подключить готовое решение, чтобы получить признание от губернатора и PR-инфоповод без собственных разработок.»</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Профиль:</div>
+                    <div>Металлургия, машиностроение, трубное производство, приборостроение. 500-1500 чел. Свердловская область. Члены СОСПП (500+ организаций) или Уральской ТПП (900+ членов).</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Почему покупают:</div>
+                    <div>
+                        <ol style="margin: 5px 0 0 20px; padding: 0;">
+                            <li style="margin-bottom: 8px;"><strong>Есть государственный проект — нужно участвовать.</strong> Госпроект «Единая Россия» по повышению качества труда. Письмо губернатору, признание на уровне области. PR/GR-директор получает готовый инфоповод без собственных разработок. &rarr; ДОБРОСЕРВИС = готовая обвязка: продукт + коммуникация с властью + PR-контент.</li>
+                            <li style="margin-bottom: 8px;"><strong>Конференция 24 марта — нужно показать результат.</strong> Событие в Екатеринбурге, промышленные компании региона. Кто подключился до конференции — может выступить с кейсом. &rarr; Триггер: «подключитесь сейчас — выступите на конференции».</li>
+                            <li><strong>73% предприятий Свердловской области уже внедряют ESG.</strong> Программа поддержки сотрудников = часть ESG-стратегии. Без ДОБРОСЕРВИС — нет инструмента, есть только декларация. &rarr; 150-500 тыс. = конкретный пункт в ESG-отчётности.</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Конкурентный ландшафт:</div>
+                    <div><strong>Нулевая конкуренция.</strong> Ни один EAP-провайдер не работает с промышленным mid-market в Свердловской области. Понимаю — Москва/IT. Corporate Health — Enterprise. Alter/Ясно — B2C-маркетплейсы.</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Размер сегмента:</div>
+                    <div>40-60 предприятий нужного размера (500-1500 чел.) в Свердловской области. 90+ если до 2000 чел.</div>
+                </div>
+            </div>
+
+            <!-- P1 (B): HR -->
+            <div class="segment-card">
+                <span class="priority priority-primary">Приоритет 1 (A/B-тест)</span>
+                <h4>Промышленные предприятия Свердловской области → HR-директор</h4>
+                <div class="segment-detail">
+                    <div class="label">JTBD:</div>
+                    <div>«Когда текучесть растёт, а бюджет урезан, я хочу внедрить готовую программу поддержки, чтобы снизить увольнения без собственной разработки.»</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Почему покупают:</div>
+                    <div>
+                        <ol style="margin: 5px 0 0 20px; padding: 0;">
+                            <li style="margin-bottom: 8px;"><strong>Дефицит 100 тыс. рабочих в Свердловской области.</strong> Текучесть растёт, найм дорожает. HR нужен инструмент удержания, но бюджет урезан. &rarr; ДОБРОСЕРВИС = готовая соцпрограмма за «погрешность в налогах».</li>
+                            <li style="margin-bottom: 8px;"><strong>Травматизм +14.7% г/г.</strong> Выгорание и стресс — 2-я причина увольнений (34% по HH.ru). HR обязан что-то делать, но разработать своё — нереально. &rarr; Готовое решение: 9 направлений, подключение за дни.</li>
+                            <li><strong>59% компаний расширяют well-being.</strong> Тренд на благополучие сотрудников — HR должен показать руководству результат. &rarr; ДОБРОСЕРВИС + аналитика = конкретный KPI для HR.</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Почему это Приоритет 1, но вторая гипотеза:</div>
+                    <div>HR медленнее принимает решения, бюджет урезан, нет той же urgency что у PR/GR. Тестируем параллельно на тех же компаниях — данные покажут.</div>
+                </div>
+            </div>
+
+            <!-- P2 -->
+            <div class="segment-card">
+                <span class="priority priority-secondary">Приоритет 2</span>
+                <h4>Строительные компании Свердловской обл. → Генеральный директор</h4>
+                <div class="segment-detail">
+                    <div class="label">Профиль:</div>
+                    <div>Строительные компании 200-1000 чел. Свердловская область. Высокий травматизм, низкая квалификация рабочих.</div>
+                </div>
+                <div class="segment-detail">
+                    <div class="label">Почему Приоритет 2:</div>
+                    <div>Более низкая оценка (30/50). Нет HR-структуры для внедрения. ГД занят, порог входа выше. Отложен до получения первых результатов по P1.</div>
+                </div>
+            </div>
+
+            <div class="recommendation-box">
+                <h4>Стратегия выхода</h4>
+                <p style="font-family: monospace; line-height: 2;">
+                    <strong>Приоритет 1 (A/B-тест):</strong> PR/GR-директор + HR-директор → те же самые компании<br>
+                    &nbsp;&nbsp;&rarr; <strong>Приоритет 2 (после P1):</strong> Строительство → через ГД
+                </p>
+                <p style="margin-top: 10px;">Те же предприятия, два ЛПР. Цель: первые ответы, discovery-звонки, приглашения на конференцию 24.03.</p>
+            </div>
+
+            <h3>Отклонённые и отложенные сегменты</h3>
+            <table>
+                <thead><tr><th>Сегмент</th><th>Статус</th><th>Причина</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Горнодобыча</strong></td>
+                        <td><span class="status status-danger">Убит</span></td>
+                        <td>Компании слишком крупные (5000+ чел.) — это рынок Enterprise-версии за 5-7 млн. Цифровая версия неинтересна: у них бюджет есть, нужны живые специалисты. FL не может пройти закупку крупной горнодобывающей компании.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Пищевая промышленность</strong></td>
+                        <td><span class="status status-danger">Убит</span></td>
+                        <td>Слабая боль well-being в отрасли. Нет GR-связки (пищевая промышленность не входит в фокус госпроекта по качеству труда). Маржинальность ниже металлургии — меньше готовность тратить на «необязательное».</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Транспорт</strong></td>
+                        <td><span class="status status-danger">Убит</span></td>
+                        <td>Нет HR-структуры на уровне среднего бизнеса. Вахтовый режим — сотрудники в разъездах, не будут пользоваться приложением. Нет стабильного «рабочего места» для внедрения digital-продукта.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Химическая промышленность</strong></td>
+                        <td><span class="status status-warning">Отложен</span></td>
+                        <td>Менее 20 компаний нужного размера (500-1500) в Свердловской области. Недостаточно для полноценной FL-кампании. Вернуться при расширении на Урал/Сибирь.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 5. MARKET CATEGORY -->
+        <section class="section">
+            <h2>5. Market Category</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;"><em>"Какая рамка восприятия делает вашу ценность очевидной?"</em></p>
+
+            <div class="narrative-box">
+                <h4>Контекст</h4>
+                <p>Рынок EAP <strong>НЕ сформирован</strong> для среднего бизнеса. Крупные компании знают про EAP. Средние — нет. White-label означает: то, что средние видят (если видят) — это перелицованный ДОБРОСЕРВИС через страховые.</p>
+            </div>
+
+            <table>
+                <thead><tr><th>Стратегия</th><th>Фрейминг</th><th>Плюсы</th><th>Минусы</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>A. Head-to-Head</td>
+                        <td>EAP-платформа</td>
+                        <td>Понятно для HR-профессионалов</td>
+                        <td>Средний бизнес в регионах не знает слово «EAP»</td>
+                    </tr>
+                    <tr>
+                        <td>B. Niche (PR/GR)</td>
+                        <td>Участие в госпрограмме повышения качества труда</td>
+                        <td>Уникально, GR-связка как дифференциатор</td>
+                        <td>Узкий фрейминг, привязан к политической конъюнктуре</td>
+                    </tr>
+                    <tr>
+                        <td>C. Niche (HR)</td>
+                        <td>Готовая программа поддержки сотрудников</td>
+                        <td>Понятно без терминологии, акцент на «готовое решение»</td>
+                        <td>Не уникально как фрейминг</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendation-box">
+                <h4>Рекомендация: два разных фрейминга для двух ЛПР</h4>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Для PR/GR (P1):</strong> «Участие в государственной программе повышения качества труда — бесплатное PR-сопровождение + признание от власти»</li>
+                    <li><strong>Для HR (P2):</strong> «Готовая программа поддержки сотрудников — подключение за неделю, от 150 тыс./год»</li>
+                </ul>
+                <p style="margin-top: 10px; color: var(--gray-600);">Два разных позиционирования для двух ЛПР. A/B-тест покажет, какой фрейминг работает.</p>
+            </div>
+        </section>
+
+        <!-- 6. RELEVANT TRENDS -->
+        <section class="section">
+            <h2>6. Relevant Trends</h2>
+            <div class="trend-item">
+                <div class="trend-name">Дефицит кадров → фокус на удержание</div>
+                <div class="trend-impact">HH.ru: выгорание и стресс — 2-я причина увольнений (34%). 100 тыс. дефицит рабочих в Свердловской области. Компании вынуждены инвестировать в удержание</div>
+            </div>
+            <div class="trend-item">
+                <div class="trend-name">Государственное внимание к качеству труда</div>
+                <div class="trend-impact">Госпроект «Единая Россия» по внедрению технологий повышения качества труда. Письма губернаторам. Конференция 24.03 в ЕКБ</div>
+            </div>
+            <div class="trend-item">
+                <div class="trend-name">Сокращение бюджетов → спрос на «готовое»</div>
+                <div class="trend-impact">Разработать свою соцпрограмму — дорого. Компании ищут готовые решения. ДОБРОСЕРВИС = «из коробки» за 350 тыс.</div>
+            </div>
+            <div class="trend-item">
+                <div class="trend-name">HR-бюджет режут первым</div>
+                <div class="trend-impact">HR не может защитить новую статью расходов → нужен другой бюджетодержатель. PR/GR-директор как альтернативный ЛПР — инсайт Андрея</div>
+            </div>
+        </section>
+
+        <!-- MONETISATION -->
+        <section class="section">
+            <h2>Монетизация</h2>
+
+            <h3>Модель ценообразования</h3>
+            <table>
+                <thead><tr><th>Размер компании</th><th>Цена/год</th><th>Per capita</th><th>Закупочная процедура</th></tr></thead>
+                <tbody>
+                    <tr><td>100-1000 сотрудников</td><td>от 150 тыс. руб.</td><td>150-3500 руб./чел.</td><td>Без тендера, решение директора</td></tr>
+                    <tr><td>Свыше 1000 сотрудников</td><td>500 тыс. руб. (потолок)</td><td>50-500 руб./чел.</td><td>Без тендера, решение директора</td></tr>
+                    <tr><td>Enterprise (полная версия)</td><td>5-7 млн руб.</td><td>—</td><td>Тендер, цикл до года</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Ценовой якорь</h3>
+            <table>
+                <thead><tr><th>Альтернатива</th><th>Стоимость</th><th>ДОБРОСЕРВИС Digital</th></tr></thead>
+                <tbody>
+                    <tr><td>ДОБРОСЕРВИС Enterprise</td><td>5-7 млн/год</td><td>В 10-40x дешевле</td></tr>
+                    <tr><td>Штатный психолог</td><td>~1.2-1.8 млн/год</td><td>В 3-10x дешевле + 8 направлений сверху</td></tr>
+                    <tr><td>Alter/Ясно (маркетплейс)</td><td>~1.2M при 20% утилизации</td><td>В 4-7x дешевле, 9 направлений vs 1</td></tr>
+                    <tr><td>Понимаю (EAP)</td><td>600K-1M</td><td>В 4-7x дешевле, без тендера</td></tr>
+                    <tr><td>Ничего не делать</td><td>0 руб. (явные)</td><td>150-500 тыс. = «погрешность в налогах»</td></tr>
+                </tbody>
+            </table>
+
+            <div class="narrative-box">
+                <h4>Стратегическая логика</h4>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Потолок 500 тыс. = под тендерный порог.</strong> Решение за дни, а не месяцы</li>
+                    <li><strong>Облегчённая → полная версия.</strong> Входной продукт — воронка в полную подписку (5-7 млн)</li>
+                    <li><strong>«Погрешность в налогах».</strong> Настолько мало, что не требует серьёзного обоснования</li>
+                    <li><strong>Подключаются все + родственники.</strong> Нет лимита пользователей → усиление perceived value</li>
+                    <li><strong>Тест-драйв vs. прямая продажа</strong> — не решено, тестируем оба варианта</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- ASSUMPTIONS -->
+        <section class="section">
+            <h2>Допущения (требуют валидации аутричем)</h2>
+            <ul class="assumptions-list">
+                <li><strong>PR/GR быстрее принимает решение, чем HR</strong> — гипотеза Андрея, ключевая для всей стратегии. Тестируем A/B</li>
+                <li><strong>«Дёшево = плохо»</strong> — цена 4-7x ниже рынка может вызвать недоверие. Слушаем возражения на звонках</li>
+                <li><strong>GR-повод как триггер покупки</strong> — госпроект реально ускоряет решение? Или «ещё одно письмо»?</li>
+                <li><strong>80% покрытие задач без живых специалистов</strong> — заявка клиента. Насколько целевая аудитория это примет?</li>
+                <li><strong>Компании 500-1500 знают, что такое EAP</strong> — если не знают, нужен другой фрейминг (именно поэтому не используем термин «EAP»)</li>
+            </ul>
+        </section>
+
+        <!-- OPEN QUESTIONS -->
+        <section class="section" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
+            <h2 style="color: var(--warning); border-bottom-color: #f59e0b;">Открытые вопросы</h2>
+            <p style="color: var(--gray-700); margin-bottom: 15px;">Вопросы для Андрея / команды вынесены в отдельный документ: <a href="questions-for-client.html" style="color: var(--primary); font-weight: 600;">questions-for-client.html</a></p>
+        </section>
+
+        <!-- OPERATIONAL PLAN -->
+        <section class="section">
+            <h2>Операционный план FL</h2>
+
+            <table>
+                <thead><tr><th>#</th><th>Задача</th><th>Срок</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>Согласовать позиционирование (этот документ) с Андреем</td><td>13-14.03</td></tr>
+                    <tr><td>2</td><td>Подготовить 2 one-pager'а (PR/GR + HR)</td><td>14-15.03</td></tr>
+                    <tr><td>3</td><td>Собрать таргет-лист: промышленные компании Свердловской обл. 500-1500 чел.</td><td>14-17.03</td></tr>
+                    <tr><td>4</td><td>Написать 2 скрипта (PR/GR-заход + HR-заход)</td><td>15-17.03</td></tr>
+                    <tr><td>5</td><td>Начать аутрич (email + звонки)</td><td>17-18.03</td></tr>
+                    <tr><td>6</td><td><strong>Конференция в ЕКБ (Точка кипения)</strong></td><td><strong>24.03</strong></td></tr>
+                </tbody>
+            </table>
+
+            <h3>Сценарии результата контакта</h3>
+            <ul style="margin-left: 20px;">
+                <li><strong>«Да, интересно»</strong> → передаём как тёплый лид Андрею/селзам</li>
+                <li><strong>«Интересно, но не уверены»</strong> → приглашение на конференцию 24.03</li>
+                <li><strong>«Нет»</strong> → фиксируем возражение, причину, идём дальше</li>
+            </ul>
+
+            <div class="recommendation-box" style="margin-top: 20px;">
+                <h4>Ключевой тест</h4>
+                <p><strong>Кто реагирует быстрее и конвертируется лучше — HR или PR/GR?</strong><br>Это определит всю дальнейшую стратегию продаж облегчённой версии ДОБРОСЕРВИС.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Product Positioning Document v1.0 | Методология April Dunford "Obviously Awesome" | 12 марта 2026</p>
+        <p style="margin-top: 5px;">Следующий шаг: Offer Architect → Entry Strategist → GTM Compiler</p>
+    </footer>
+</body>
+</html>

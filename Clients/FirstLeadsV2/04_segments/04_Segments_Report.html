@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04 Segments Report | FirstLeads</title>
+    <style>
+        :root {
+            --primary: #1a365d; --secondary: #2c5282; --accent: #ed8936;
+            --success: #38a169; --warning: #d69e2e; --danger: #e53e3e;
+            --bg: #f7fafc; --card-bg: #ffffff; --text: #2d3748;
+            --text-muted: #718096; --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 40px 20px; }
+
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        header .badges { margin-top: 16px; }
+        header .badge { display: inline-block; padding: 8px 20px; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.9rem; margin: 0 4px; }
+        header .badge.final { background: var(--accent); font-weight: 600; }
+
+        /* Executive summary */
+        .exec { background: linear-gradient(135deg, #1a365d, #2c5282); border-radius: 12px; padding: 32px; margin-bottom: 24px; color: white; }
+        .exec h2 { font-size: 1.3rem; margin-bottom: 16px; }
+        .exec p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 8px; }
+        .rank-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+        .rank-card { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 14px 16px; }
+        .rank-card.p1 { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); }
+        .rank-card h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; margin-bottom: 6px; }
+        .rank-card .name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+        .rank-card .score { font-size: 1.4rem; font-weight: 700; }
+        .rank-card .detail { font-size: 0.8rem; opacity: 0.8; margin-top: 4px; }
+
+        /* TOC */
+        .toc { background: var(--card-bg); border-radius: 8px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .toc h3 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
+        .toc ol { columns: 2; column-gap: 32px; padding-left: 20px; }
+        .toc li { font-size: 0.9rem; padding: 2px 0; }
+        .toc a { color: var(--text); text-decoration: none; }
+        .toc a:hover { color: var(--secondary); }
+
+        /* Sections */
+        .section { background: var(--card-bg); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; overflow: hidden; }
+        .section-header { padding: 16px 24px; font-size: 1.1rem; font-weight: 600; color: white; }
+        .section-body { padding: 24px; }
+
+        .sh-blue { background: linear-gradient(135deg, #2c5282, #3182ce); }
+        .sh-red { background: linear-gradient(135deg, #9b2c2c, #e53e3e); }
+        .sh-gold { background: linear-gradient(135deg, #744210, #d69e2e); }
+        .sh-gray { background: linear-gradient(135deg, #4a5568, #718096); }
+        .sh-dark { background: var(--primary); }
+        .sh-kill { background: linear-gradient(135deg, #742a2a, #9b2c2c); }
+
+        /* Tags */
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; vertical-align: middle; }
+        .tag-e { background: #c6f6d5; color: #22543d; }
+        .tag-h-high { background: #fefcbf; color: #744210; }
+        .tag-h-mid { background: #fed7d7; color: #742a2a; }
+        .tag-p1 { background: var(--accent); color: white; }
+        .tag-p2 { background: #bee3f8; color: #2a4365; }
+        .tag-p3 { background: #e2e8f0; color: #4a5568; }
+
+        /* Cards */
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+        .card-grid.three { grid-template-columns: repeat(3, 1fr); }
+        .info-card { background: #f7fafc; border-radius: 8px; padding: 14px 16px; border: 1px solid var(--border); }
+        .info-card.full { grid-column: 1 / -1; }
+        .info-card h5 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; }
+        .info-card p, .info-card ul { font-size: 0.9rem; line-height: 1.5; }
+        .info-card ul { list-style: none; padding: 0; }
+        .info-card li { padding: 3px 0; }
+        .info-card li::before { content: "→ "; opacity: 0.4; }
+
+        /* Tables */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 16px 0; }
+        .data-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .data-table tr:hover { background: #f7fafc; }
+        .data-table .score-cell { font-weight: 700; font-size: 1rem; }
+        .data-table .highlight-row { background: #f0fff4; }
+
+        /* Score display */
+        .score-big { display: inline-block; font-size: 2rem; font-weight: 700; color: var(--secondary); margin-right: 12px; vertical-align: middle; }
+        .score-breakdown { display: inline-block; vertical-align: middle; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* Validation plan */
+        .val-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 12px 0; }
+        .val-table th { background: #2c7a7b; color: white; padding: 8px 12px; text-align: left; font-size: 0.76rem; text-transform: uppercase; }
+        .val-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+
+        /* Downstream data */
+        .downstream { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+        .ds-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .ds-card h5 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--secondary); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--border); }
+        .ds-card p, .ds-card ul { font-size: 0.88rem; line-height: 1.5; }
+        .ds-card ul { padding-left: 16px; }
+        .ds-card li { margin-bottom: 4px; }
+
+        /* Alert boxes */
+        .alert { border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+        .alert-warning { background: #fffbeb; border: 1px solid #f6e05e; }
+        .alert-info { background: #ebf8ff; border: 1px solid #90cdf4; }
+        .alert-danger { background: #fff5f5; border: 1px solid #feb2b2; }
+        .alert h4 { font-size: 0.92rem; margin-bottom: 6px; }
+        .alert p { font-size: 0.9rem; }
+
+        /* Kill section */
+        .kill-item { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+        .kill-item h4 { color: var(--danger); font-size: 0.95rem; margin-bottom: 8px; }
+        .kill-item p { font-size: 0.9rem; margin-bottom: 4px; }
+
+        .merge-item { background: #ebf8ff; border: 1px solid #90cdf4; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; font-size: 0.88rem; }
+
+        /* Sequence */
+        .sequence { display: flex; align-items: center; gap: 0; margin: 20px 0; flex-wrap: wrap; }
+        .seq-item { background: var(--secondary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
+        .seq-arrow { font-size: 1.4rem; color: var(--text-muted); padding: 0 12px; }
+
+        /* Scoring matrix */
+        .matrix { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 16px 0; }
+        .matrix th { background: var(--primary); color: white; padding: 8px 6px; text-align: center; font-size: 0.72rem; }
+        .matrix th:first-child { text-align: left; padding-left: 12px; }
+        .matrix td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: center; }
+        .matrix td:first-child { text-align: left; padding-left: 12px; font-weight: 600; }
+        .matrix .s5 { background: #c6f6d5; font-weight: 700; }
+        .matrix .s4 { background: #e6ffed; }
+        .matrix .s3 { background: #fefcbf; }
+        .matrix .s2 { background: #fed7d7; font-weight: 700; }
+        .matrix .total { font-weight: 700; font-size: 0.9rem; }
+
+        hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+        .sub { font-size: 0.88rem; color: var(--text-muted); }
+
+        @media (max-width: 768px) {
+            .rank-grid, .card-grid, .card-grid.three, .downstream { grid-template-columns: 1fr; }
+            .toc ol { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Segmentation Report</h1>
+    <div class="subtitle">FirstLeads — Target Segments Analysis</div>
+    <div class="badges">
+        <span class="badge">04_Segments_Report</span>
+        <span class="badge final">Final</span>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- Executive Summary -->
+<div class="exec">
+    <h2>Summary</h2>
+    <p>Исследовано 8 сегментных гипотез по 5 JTBDs. После валидации: 3 подтверждены [E], объединены в <strong>4 финальных сегмента</strong>, 1 убит (VC-backed — слишком мал).</p>
+    <p><strong>Priority 1: Сегмент A — B2B SaaS в точке продуктового решения</strong> (43/50). Самый большой, самый релевантный ЛПР, самая сильная evidence база.</p>
+    <div class="rank-grid">
+        <div class="rank-card p1">
+            <h4>Priority 1</h4>
+            <div class="name">A: B2B SaaS продуктовое решение</div>
+            <div class="score">43/50</div>
+            <div class="detail">~400-700 cos | CPO</div>
+        </div>
+        <div class="rank-card">
+            <h4>Priority 2</h4>
+            <div class="name">B: SaaS конкурентные вертикали</div>
+            <div class="score">37/50</div>
+            <div class="detail">~250-400 cos | CPO/CEO</div>
+        </div>
+        <div class="rank-card">
+            <h4>Priority 2</h4>
+            <div class="name">C: AI/ML поиск рынка</div>
+            <div class="score">36/50</div>
+            <div class="detail">~150-250 cos | CEO/CTO</div>
+        </div>
+        <div class="rank-card">
+            <h4>Priority 3</h4>
+            <div class="name">D: IT-сервис → продукт</div>
+            <div class="score">31/50</div>
+            <div class="detail">~150-300 cos | CEO/CTO</div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+    <h3>Содержание</h3>
+    <ol>
+        <li><a href="#killed">Убитые и слитые сегменты</a></li>
+        <li><a href="#seg-a">P1: B2B SaaS — продуктовое решение</a></li>
+        <li><a href="#seg-b">P2: B2B SaaS — конкурентные вертикали</a></li>
+        <li><a href="#seg-c">P2: AI/ML — поиск рынка</a></li>
+        <li><a href="#seg-d">P3: IT-сервис → продукт</a></li>
+        <li><a href="#sequence">Последовательность и матрица</a></li>
+    </ol>
+</div>
+
+<!-- ==================== KILLED ==================== -->
+<div class="section" id="killed">
+    <div class="section-header sh-kill">Убитые и слитые сегменты</div>
+    <div class="section-body">
+        <div class="kill-item">
+            <h4>5.1 VC-backed B2B tech (Series A-B) — УБИТ</h4>
+            <p><strong>1.</strong> Размер: 24 публичные B2B Software сделки за 2024. ~40-80 компаний — не сегмент, а список имён. <span class="tag tag-e">[E]</span></p>
+            <p><strong>2.</strong> Timing: Series A-B уже имеют customers. Им нужно масштабирование, не валидация. <span class="tag tag-e">[E]</span></p>
+            <p><strong>3.</strong> Рынок сжат: $91-177M за 2024 год. Ставка ЦБ 21%. <span class="tag tag-e">[E]</span></p>
+            <p class="sub" style="margin-top:8px;">Применение: PR/reference-канал, не целевой сегмент.</p>
+        </div>
+
+        <div class="merge-item"><strong>1.1</strong> B2B SaaS замедление → <strong>Слит в A</strong>. ~60-80 компаний — слишком мал. SaaS растёт +38-40%.</div>
+        <div class="merge-item"><strong>1.2</strong> AI/ML продуктизация → <strong>Слит в C</strong>. Неотличим от 4.1 на практике.</div>
+        <div class="merge-item"><strong>2.2</strong> IT-сервис с паттернами → <strong>Слит в D</strong>. Неотличим от 4.2.</div>
+        <div class="merge-item"><strong>4.1</strong> AI/ML горизонтальная → <strong>Слит в C</strong>. 340+ стартапов, UXSSR validates market.</div>
+        <div class="merge-item"><strong>4.2</strong> IT-аутсорсинг → продукт → <strong>Слит в D</strong>. Тренд массовый, но боль не острая.</div>
+    </div>
+</div>
+
+<!-- ==================== SEGMENT A ==================== -->
+<div class="section" id="seg-a">
+    <div class="section-header sh-blue">
+        <span class="tag tag-p1" style="margin-right:8px;">P1</span>
+        Сегмент A: B2B SaaS в точке продуктового решения
+    </div>
+    <div class="section-body">
+
+        <div style="margin-bottom:20px;">
+            <span class="score-big">43/50</span>
+            <span class="score-breakdown">E: 31/35 — high confidence<br>H: 12/15 — needs validation</span>
+        </div>
+
+        <div class="alert alert-info">
+            <h4>JTBD</h4>
+            <p>«Когда мы стоим перед решением о новом продуктовом направлении, мы хотим быстро проверить рыночный спрос реальными покупателями, чтобы принять go/no-go на данных, а не на мнениях.»</p>
+        </div>
+
+        <h3 style="margin:20px 0 12px; font-size:1.05rem;">Reachability Card</h3>
+
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>B2B SaaS / платформы, 30-150 чел <span class="tag tag-e">[E]</span></li>
+                    <li>80-500M руб/год <span class="tag tag-e">[E]</span></li>
+                    <li>50+ клиентов, CPO / Head of Product <span class="tag tag-e">[E]</span></li>
+                    <li>Продуктовая команда 3-10 чел <span class="tag tag-e">[E]</span></li>
+                    <li>Москва, Санкт-Петербург <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Decision-Maker</h5>
+                <ul>
+                    <li>CPO / Head of Product / VP Product <span class="tag tag-e">[E]</span></li>
+                    <li>Reports to: CEO / Founder <span class="tag tag-e">[E]</span></li>
+                    <li>Active: LinkedIn, Telegram (GoPractice 26K, No Flame 30K) <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Problem & Trigger</h5>
+                <ul>
+                    <li>3+ клиентов спросили одно и то же <span class="tag tag-e">[E]</span></li>
+                    <li>Или: рост замедлился <span class="tag tag-e">[E]</span></li>
+                    <li>Custdev = мнения, не buying signals <span class="tag tag-e">[E]</span></li>
+                    <li>YouScan: $500K loss <span class="tag tag-e">[E]</span></li>
+                    <li>Budget: 500K-3M/год на research <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-card full" style="margin:12px 0;">
+            <h5>FL Outreach Channels</h5>
+            <div class="card-grid" style="margin:8px 0 0;">
+                <div>
+                    <strong style="font-size:0.82rem;">Company List Sources</strong>
+                    <ul>
+                        <li>HighTime Media — 94 SaaS (hightime.media)</li>
+                        <li>Smart Ranking — fintech 100, HR-tech 85, martech 50</li>
+                        <li>CNews, Digirate, saas-rating.ru</li>
+                        <li>HH.ru — 200-400 вакансий CPO/PM</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="font-size:0.82rem;">Contact & Outreach</strong>
+                    <ul>
+                        <li>LinkedIn: CPO активны, acceptance 20-40%</li>
+                        <li>Email: Hunter.io, response 3-8%</li>
+                        <li>Telegram warm-up: GoPractice, No Flame, Hire ProProduct</li>
+                        <li>Cold calls: прямые номера с сайтов/2GIS</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h4 style="margin:16px 0 8px; font-size:0.95rem;">Example Companies</h4>
+        <table class="data-table">
+            <thead><tr><th>Company</th><th>Size</th><th>Why they fit</th><th>Pain signal</th><th>DM</th></tr></thead>
+            <tbody>
+                <tr><td><strong>SKAI</strong></td><td>~50-100</td><td>CPO не мог аргументировать roadmap</td><td>После AJTBD: выручка +75%</td><td>CPO</td></tr>
+                <tr><td><strong>YouScan</strong></td><td>~100-150</td><td>Потерял $500K на неудачном запуске</td><td>Публичный кейс</td><td>CPO</td></tr>
+                <tr><td><strong>Deeplay</strong></td><td>AI/SaaS</td><td>Ищет CPO «для новой стратегии»</td><td>Вакансия HH.ru</td><td>CPO (ищут)</td></tr>
+                <tr><td><strong>МТС Cloud</strong></td><td>Platform</td><td>Ищет CPO для трансформации</td><td>Вакансия HH.ru</td><td>CPO (ищут)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="alert" style="background:#f0fff4; border-color:#9ae6b4;">
+            <h4 style="color:var(--success);">Reachability: YES ✓</h4>
+            <p>Рейтинги HighTime, Smart Ranking, Digirate = готовые списки. CPO через LinkedIn за минуты. Проходит 50-Company Test.</p>
+        </div>
+
+        <h3 style="margin:20px 0 12px; font-size:1.05rem;">Scoring Detail</h3>
+
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Criterion</th><th>Score</th><th>Type</th><th>Evidence / Reasoning</th></tr></thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer exists</td><td class="score-cell">5</td><td><span class="tag tag-e">[E]</span></td><td>CPO идентифицирован, бюджет 500K-3M/год, HH.ru вакансии Deeplay, МТС Cloud</td></tr>
+                <tr><td>C2</td><td>Compelling reason to buy</td><td class="score-cell">4</td><td><span class="tag tag-h-high">[H-high]</span></td><td>YouScan $500K loss. SKAI CPO: «сложно аргументировать». <em>VQ: % CPO на discovery call?</em></td></tr>
+                <tr><td>C3</td><td>Whole product deliverable</td><td class="score-cell">4</td><td><span class="tag tag-h-high">[H-high]</span></td><td>FL полный цикл совпадает с потребностью. Rejection analysis уникален. <em>VQ: ценен ли rejection analysis?</em></td></tr>
+                <tr><td>C4</td><td>No entrenched competitor</td><td class="score-cell">5</td><td><span class="tag tag-e">[E]</span></td><td>Категория пуста в РФ. Custdev = мнения. Strogo/Polza = лидген. Никто не делает outreach-валидацию.</td></tr>
+                <tr><td>C5</td><td>Partners & allies</td><td class="score-cell">3</td><td><span class="tag tag-e">[E]</span></td><td>Нет формальных партнёров. Потенциально: ProductStar, GoPractice, ProductCamp.</td></tr>
+                <tr><td>C6</td><td>Distribution channel</td><td class="score-cell">5</td><td><span class="tag tag-e">[E]</span></td><td>Cold email + LinkedIn + Telegram. CPO активны. Рейтинги для list-building. Все каналы FL-доступны.</td></tr>
+                <tr><td>C7</td><td>Pricing fits budget</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>Custdev 33K-550K, найм PM 200-400K/мес. FL 150-350K = средний сегмент. Budget line существует.</td></tr>
+                <tr><td>C8</td><td>Segment size</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>~400-700 компаний. HighTime 94, Smart Ranking 100+ per vertical. Достаточно для pipeline.</td></tr>
+                <tr><td>C9</td><td>Reference value</td><td class="score-cell">4</td><td><span class="tag tag-h-high">[H-high]</span></td><td>SaaS CPOs связаны — GoPractice, ProductCamp, vc.ru. <em>VQ: публичный кейс?</em></td></tr>
+                <tr><td>C10</td><td>Outreach accessibility</td><td class="score-cell">5</td><td><span class="tag tag-e">[E]</span></td><td>CPO на LinkedIn. Компании в рейтингах. Email через Hunter.io. 200-400 вакансий CPO/PM на HH.ru.</td></tr>
+            </tbody>
+        </table>
+
+        <p class="sub"><strong>Blockers:</strong> Нет. Все [E] ≥ 3.</p>
+
+        <h3 style="margin:20px 0 12px; font-size:1.05rem;">Downstream Data</h3>
+
+        <div class="downstream">
+            <div class="ds-card">
+                <h5>For Offers Agent</h5>
+                <ul>
+                    <li><strong>DM:</strong> CPO / Head of Product. Заботится: evidence для roadmap, политическая защита, скорость</li>
+                    <li><strong>Ideal outcome:</strong> «Из 147 компаний 7 заинтересованы, 2 готовы к пилоту. 84% не ответили, 9% отказали по X»</li>
+                    <li><strong>Pain:</strong> 7/10 — реальна, но не ургентна без триггера</li>
+                    <li><strong>Alternative:</strong> custdev 33K-550K (мнения); найм PM 200-400K/мес</li>
+                    <li><strong>Objections:</strong> «У нас есть discovery process»; «Это лидген?»; «Вы понимаете наш продукт?»</li>
+                    <li><strong>Proof points:</strong> Ноль подтверждённых кейсов FL</li>
+                </ul>
+            </div>
+            <div class="ds-card">
+                <h5>For GTM Agent</h5>
+                <ul>
+                    <li><strong>Channels:</strong> cold email (primary), LinkedIn (secondary), Telegram warm-up (tertiary)</li>
+                    <li><strong>Lists:</strong> HighTime, Smart Ranking, CNews, Digirate, saas-rating.ru, HH.ru</li>
+                    <li><strong>Timing:</strong> Перед квартальным/годовым планированием (сен-окт, дек-янв)</li>
+                    <li><strong>Examples:</strong> SKAI, YouScan, Deeplay, МТС Cloud + рейтинги</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 style="margin:20px 0 12px; font-size:1.05rem;">Validation Plan</h3>
+
+        <table class="val-table">
+            <thead><tr><th>Hypothesis</th><th>Question</th><th>How FL tests</th><th>«Yes»</th><th>«No»</th></tr></thead>
+            <tbody>
+                <tr><td>C2: Pain acute</td><td>% CPO на discovery call?</td><td>50 emails → response + call rate</td><td>&gt;5% response, &gt;2% calls</td><td>&lt;2% → messaging problem</td></tr>
+                <tr><td>C3: Deliverable fit</td><td>Rejection analysis ценен?</td><td>Discovery calls: спросить напрямую</td><td>&gt;60% «да»</td><td>&lt;40% → переупаковать</td></tr>
+                <tr><td>Messaging</td><td>Какой фрейм конвертирует?</td><td>A/B: «валидация через продажи» vs «go/no-go за месяц»</td><td>Winner → scale</td><td>Тестировать другие</td></tr>
+            </tbody>
+        </table>
+
+        <div class="alert alert-info">
+            <p><strong>Plan:</strong> 50 emails + 20 LinkedIn over 1-2 weeks. Goal: 5+ responses, 2+ discovery calls.</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== SEGMENT B ==================== -->
+<div class="section" id="seg-b">
+    <div class="section-header sh-red">
+        <span class="tag tag-p2" style="margin-right:8px;">P2</span>
+        Сегмент B: B2B SaaS в конкурентных вертикалях
+    </div>
+    <div class="section-body">
+
+        <div style="margin-bottom:20px;">
+            <span class="score-big">37/50</span>
+            <span class="score-breakdown">E: 28/35 — moderate confidence<br>H: 9/15 — needs validation</span>
+        </div>
+
+        <div class="alert alert-info">
+            <h4>JTBD</h4>
+            <p>«Когда конкурент делает ход в смежное пространство, мы хотим быстро проверить реальность рынка, чтобы решить — следовать, контратаковать или игнорировать — на данных, а не на панике.»</p>
+        </div>
+
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>Fintech top-100, HR-tech top-85, martech top-50, legaltech <span class="tag tag-e">[E]</span></li>
+                    <li>30-150 чел, 100-500M руб/год <span class="tag tag-e">[E]</span></li>
+                    <li>5+ прямых конкурентов <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Evidence</h5>
+                <ul>
+                    <li>Ростелеком + Calltouch + Mango <span class="tag tag-e">[E]</span></li>
+                    <li>VK Tech +133.4% в HR-tech <span class="tag tag-e">[E]</span></li>
+                    <li>Яндекс 360 ×1.5 до 12.4 млрд <span class="tag tag-e">[E]</span></li>
+                    <li>CI-инструменты ≠ buying signals <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Key Numbers</h5>
+                <ul>
+                    <li>~250-400 компаний</li>
+                    <li>CI budget: 100-500K/год</li>
+                    <li>ЛПР: CPO / CEO</li>
+                    <li>Smart Ranking = ready lists</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="alert alert-warning">
+            <h4>Критическое ограничение: скорость</h4>
+            <p>Паника = 2-3 дня. FL outreach = 2-4 недели. <strong>Решение:</strong> позиционировать не как «экстренную реакцию», а как «стратегический инструмент». Proactive, не reactive.</p>
+        </div>
+
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Criterion</th><th>Score</th><th>Type</th><th>Evidence / Reasoning</th></tr></thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>CPO/CEO, Smart Ranking + CNews lists. Budget менее чёткий.</td></tr>
+                <tr><td>C2</td><td>Reason to buy</td><td class="score-cell">3</td><td><span class="tag tag-h-mid">[H-mid]</span></td><td>Speed mismatch. Нужен reframe. <em>VQ: купят proactive?</em></td></tr>
+                <tr><td>C3</td><td>Whole product</td><td class="score-cell">3</td><td><span class="tag tag-h-mid">[H-mid]</span></td><td>Framing нужна адаптация. CI ≠ validation. <em>VQ: формат подходит?</em></td></tr>
+                <tr><td>C4</td><td>No competitor</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>CI-инструменты — другая категория. Outreach-based validation — никто.</td></tr>
+                <tr><td>C5</td><td>Partners</td><td class="score-cell">3</td><td><span class="tag tag-e">[E]</span></td><td>Нет конкретных. Smart Ranking потенциально.</td></tr>
+                <tr><td>C6</td><td>Distribution</td><td class="score-cell">5</td><td><span class="tag tag-e">[E]</span></td><td>LinkedIn, cold email, Telegram. Рейтинги по вертикалям. Trigger monitoring через vc.ru.</td></tr>
+                <tr><td>C7</td><td>Pricing</td><td class="score-cell">3</td><td><span class="tag tag-e">[E]</span></td><td>CI 100-500K/год. FL вписывается, но не привычная категория.</td></tr>
+                <tr><td>C8</td><td>Size</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>~250-400 через Smart Ranking + CNews verticals.</td></tr>
+                <tr><td>C9</td><td>Reference</td><td class="score-cell">3</td><td><span class="tag tag-h-mid">[H-mid]</span></td><td>Competitive cases — деликатная тема. <em>VQ: поделятся публично?</em></td></tr>
+                <tr><td>C10</td><td>Outreach</td><td class="score-cell">5</td><td><span class="tag tag-e">[E]</span></td><td>CPO/CEO через LinkedIn. Рейтинги. Trigger-based outreach.</td></tr>
+            </tbody>
+        </table>
+
+        <table class="val-table">
+            <thead><tr><th>Hypothesis</th><th>Question</th><th>How FL tests</th><th>«Yes»</th><th>«No»</th></tr></thead>
+            <tbody>
+                <tr><td>Proactive msg</td><td>Купят без конкретного trigger?</td><td>30 emails с proactive framing</td><td>&gt;3% response</td><td>&lt;2% → only reactive</td></tr>
+                <tr><td>Speed reframe</td><td>Примут «3 недели» vs «2 дня»?</td><td>Messaging тест</td><td>«3 нед нормально»</td><td>Нужен sprint version</td></tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- ==================== SEGMENT C ==================== -->
+<div class="section" id="seg-c">
+    <div class="section-header sh-gold">
+        <span class="tag tag-p2" style="margin-right:8px;">P2</span>
+        Сегмент C: AI/ML компании в поиске рынка
+    </div>
+    <div class="section-body">
+
+        <div style="margin-bottom:20px;">
+            <span class="score-big">36/50</span>
+            <span class="score-breakdown">E: 25/35 — moderate confidence<br>H: 11/15 — needs validation</span>
+        </div>
+
+        <div class="alert alert-info">
+            <h4>JTBD</h4>
+            <p>«Когда мы построили технологию, но не знаем, какому рынку продавать, мы хотим протестировать вертикали реальными офферами, чтобы сфокусировать разработку.»</p>
+        </div>
+
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>AI/ML, NLP/CV/analytics <span class="tag tag-e">[E]</span></li>
+                    <li>15-80 чел, 30-300M руб <span class="tag tag-e">[E]</span></li>
+                    <li>Техфаундер, нет CPO <span class="tag tag-e">[E]</span></li>
+                    <li>Гранты/инвестиции <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Evidence</h5>
+                <ul>
+                    <li>9/10 AI-стартапов fail — нет рынка <span class="tag tag-e">[E]</span></li>
+                    <li>UXSSR продаёт PMF-услугу <span class="tag tag-e">[E]</span></li>
+                    <li>340+ AI-стартапов РФ <span class="tag tag-e">[E]</span></li>
+                    <li>Yandex AI Startup Lab validates <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Key Numbers</h5>
+                <ul>
+                    <li>~150-250 целевых</li>
+                    <li>ЛПР: CEO / CTO (не CPO!)</li>
+                    <li>Budget: 1-7% от раунда</li>
+                    <li>Другой messaging vs A</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="alert alert-warning">
+            <h4>Другой GTM</h4>
+            <p>Другой ЛПР (CEO/CTO vs CPO), messaging («найдём рынок» vs «данные для roadmap»), уровень зрелости (первый PMF vs расширение). Исследование: объединение с A размоет позиционирование.</p>
+        </div>
+
+        <h4 style="margin:16px 0 8px; font-size:0.95rem;">Example Companies</h4>
+        <table class="data-table">
+            <thead><tr><th>Company</th><th>Why they fit</th><th>Signal</th></tr></thead>
+            <tbody>
+                <tr><td><strong>CyberPhysics</strong></td><td>Из Сколтеха → предиктивная аналитика для промышленности</td><td>50M от Skolkovo Ventures</td></tr>
+                <tr><td><strong>Just AI</strong></td><td>Горизонтальная NLP → банки/e-commerce</td><td>Оценка 3.5 млрд</td></tr>
+                <tr><td><strong>VisionLabs</strong></td><td>Горизонтальное CV → биометрия для банков</td><td>Вертикализация</td></tr>
+                <tr><td><strong>AGIMA.AI</strong></td><td>Из заказной разработки в AI-продукт</td><td>Продуктизация</td></tr>
+            </tbody>
+        </table>
+
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Criterion</th><th>Score</th><th>Type</th><th>Key point</th></tr></thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>CEO/CTO через Сколково, ФРИИ. Buyer = CEO, может не делегировать</td></tr>
+                <tr><td>C2</td><td>Reason to buy</td><td class="score-cell">4</td><td><span class="tag tag-h-high">[H-high]</span></td><td>#1 причина провала. UXSSR validates market. <em>VQ: FL vs free accelerators?</em></td></tr>
+                <tr><td>C3</td><td>Whole product</td><td class="score-cell">3</td><td><span class="tag tag-h-mid">[H-mid]</span></td><td>Multi-vertical testing нужен. <em>VQ: 3-4 вертикали за месяц?</em></td></tr>
+                <tr><td>C4</td><td>No competitor</td><td class="score-cell">3</td><td><span class="tag tag-e">[E]</span></td><td>UXSSR (1-3M), акселераторы (бесплатно). Не пустая категория.</td></tr>
+                <tr><td>C5</td><td>Partners</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>Сколково, ФРИИ, Yandex AI Lab — потенциальные referral.</td></tr>
+                <tr><td>C6</td><td>Distribution</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>Сколково/ФРИИ базы, Telegram (ODS), LinkedIn.</td></tr>
+                <tr><td>C7</td><td>Pricing</td><td class="score-cell">3</td><td><span class="tag tag-e">[E]</span></td><td>Split: pre-seed нет, post-seed — 1-7% бюджета.</td></tr>
+                <tr><td>C8</td><td>Size</td><td class="score-cell">3</td><td><span class="tag tag-e">[E]</span></td><td>~150-250. Меньше A/B, достаточно для фокуса.</td></tr>
+                <tr><td>C9</td><td>Reference</td><td class="score-cell">4</td><td><span class="tag tag-h-high">[H-high]</span></td><td>AI community tight-knit. <em>VQ: будут рекомендовать?</em></td></tr>
+                <tr><td>C10</td><td>Outreach</td><td class="score-cell">4</td><td><span class="tag tag-e">[E]</span></td><td>Founders через LinkedIn, Telegram, Сколково. Мелкие — сложнее.</td></tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- ==================== SEGMENT D ==================== -->
+<div class="section" id="seg-d">
+    <div class="section-header sh-gray">
+        <span class="tag tag-p3" style="margin-right:8px;">P3</span>
+        Сегмент D: IT-сервисные компании → продукт
+    </div>
+    <div class="section-body">
+
+        <div style="margin-bottom:20px;">
+            <span class="score-big">31/50</span>
+            <span class="score-breakdown">E: 23/35 — moderate confidence<br>H: 8/15 — needs validation</span>
+        </div>
+
+        <div class="alert alert-info">
+            <h4>JTBD</h4>
+            <p>«Когда мы видим повторяющийся паттерн в проектах и хотим сделать продукт, мы хотим проверить спрос до инвестиции 5-30M руб в MVP.»</p>
+        </div>
+
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>IT-аутсорсинг, интеграция <span class="tag tag-e">[E]</span></li>
+                    <li>30-200 чел, 100-500M руб <span class="tag tag-e">[E]</span></li>
+                    <li>CEO/CTO = decision-maker <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card" style="border-color:#c6f6d5;">
+                <h5>Strengths</h5>
+                <ul>
+                    <li>Самый платёжеспособный: 0.3-0.7% выручки</li>
+                    <li>Тренд массовый (Korusconsulting, Garpix)</li>
+                    <li>~150-300 в активной фазе</li>
+                </ul>
+            </div>
+            <div class="info-card" style="border-color:#feb2b2;">
+                <h5>Weaknesses</h5>
+                <ul>
+                    <li>Боль НЕ острая — аутсорсинг кормит</li>
+                    <li>«Мы сами умеем» менталитет</li>
+                    <li>Telegram фрагментирован</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="alert alert-danger">
+            <h4>Potential Blocker: C2 = 2 [H-mid]</h4>
+            <p>Compelling reason to buy — слабый. Боль стратегическая, не операционная. Default: «построим MVP сами». Не hard kill, но серьёзное concern.</p>
+        </div>
+
+        <h4 style="margin:16px 0 8px; font-size:0.95rem;">Example Companies</h4>
+        <table class="data-table">
+            <thead><tr><th>Company</th><th>Size</th><th>Signal</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Korusconsulting</strong></td><td>100-200</td><td>3 продукта из проектов (АВАНДОК, БУСТРЕЙД, КОНЦРИТ)</td></tr>
+                <tr><td><strong>Garpix</strong></td><td>30-80</td><td>Load System, 3D Scan из заказной разработки</td></tr>
+                <tr><td><strong>Sinergo</strong></td><td>50-100</td><td>«1С:Горнодобывающая промышленность»</td></tr>
+                <tr><td><strong>Napoleon IT</strong></td><td>100-200</td><td>Computer vision из проектного опыта</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== SEQUENCE & MATRIX ==================== -->
+<div class="section" id="sequence">
+    <div class="section-header sh-dark">Последовательность и полная матрица</div>
+    <div class="section-body">
+
+        <h3 style="margin-bottom:16px; font-size:1.05rem;">Segment Sequence</h3>
+        <div class="sequence">
+            <div class="seq-item" style="background:var(--secondary);">A: SaaS продуктовое решение</div>
+            <div class="seq-arrow">→</div>
+            <div class="seq-item" style="background:var(--danger);">B: SaaS конкурентные</div>
+            <div class="seq-arrow">→</div>
+            <div class="seq-item" style="background:var(--warning);">C: AI/ML рынок</div>
+            <div class="seq-arrow">→</div>
+            <div class="seq-item" style="background:#718096;">D: IT-сервис → продукт</div>
+        </div>
+
+        <div class="card-grid" style="margin-top:20px;">
+            <div class="info-card">
+                <h5>A → B</h5>
+                <p>Одни компании, разные триггеры. Кейсы из A переносятся в B. Messaging адаптируется.</p>
+            </div>
+            <div class="info-card">
+                <h5>B → C</h5>
+                <p>SaaS CPO reference → social proof для AI CEO. FL набрал опыт формулировки гипотез.</p>
+            </div>
+            <div class="info-card">
+                <h5>C → D</h5>
+                <p>IT-аутсорс — самый «холодный». Лучше приходить с кейсами из A/B/C.</p>
+            </div>
+            <div class="info-card">
+                <h5>Открытые вопросы</h5>
+                <p>A+B = один сегмент? C параллельно или после A? D таргетировать или opportunistic?</p>
+            </div>
+        </div>
+
+        <h3 style="margin:28px 0 16px; font-size:1.05rem;">Full Scoring Matrix</h3>
+        <table class="matrix">
+            <thead>
+                <tr>
+                    <th>Сегмент</th>
+                    <th>C1<br><small>[E]</small></th>
+                    <th>C2<br><small>[H]</small></th>
+                    <th>C3<br><small>[H]</small></th>
+                    <th>C4<br><small>[E]</small></th>
+                    <th>C5<br><small>[E]</small></th>
+                    <th>C6<br><small>[E]</small></th>
+                    <th>C7<br><small>[E]</small></th>
+                    <th>C8<br><small>[E]</small></th>
+                    <th>C9<br><small>[H]</small></th>
+                    <th>C10<br><small>[E]</small></th>
+                    <th>Total</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="highlight-row">
+                    <td><strong>A: SaaS продукт</strong></td>
+                    <td class="s5">5</td><td class="s4">4</td><td class="s4">4</td><td class="s5">5</td><td class="s3">3</td><td class="s5">5</td><td class="s4">4</td><td class="s4">4</td><td class="s4">4</td><td class="s5">5</td>
+                    <td class="total">43/50</td><td><small>E:31/35 H:12/15</small></td>
+                </tr>
+                <tr>
+                    <td><strong>B: SaaS конкурент</strong></td>
+                    <td class="s4">4</td><td class="s3">3</td><td class="s3">3</td><td class="s4">4</td><td class="s3">3</td><td class="s5">5</td><td class="s3">3</td><td class="s4">4</td><td class="s3">3</td><td class="s5">5</td>
+                    <td class="total">37/50</td><td><small>E:28/35 H:9/15</small></td>
+                </tr>
+                <tr>
+                    <td><strong>C: AI/ML рынок</strong></td>
+                    <td class="s4">4</td><td class="s4">4</td><td class="s3">3</td><td class="s3">3</td><td class="s4">4</td><td class="s4">4</td><td class="s3">3</td><td class="s3">3</td><td class="s4">4</td><td class="s4">4</td>
+                    <td class="total">36/50</td><td><small>E:25/35 H:11/15</small></td>
+                </tr>
+                <tr>
+                    <td><strong>D: IT-сервис</strong></td>
+                    <td class="s3">3</td><td class="s2">2</td><td class="s3">3</td><td class="s4">4</td><td class="s3">3</td><td class="s3">3</td><td class="s4">4</td><td class="s3">3</td><td class="s3">3</td><td class="s3">3</td>
+                    <td class="total">31/50</td><td><small>E:23/35 H:8/15</small></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="sub" style="margin-top:8px;">Score: 5 = strong evidence; 4 = good indicators; 3 = insufficient data; 2 = weak/concerns; 1 = blocker.<br>
+        Green = 5, Light green = 4, Yellow = 3, Red = 2.</p>
+
+    </div>
+</div>
+
+</div>
+</body>
+</html>

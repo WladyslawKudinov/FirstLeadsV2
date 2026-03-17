@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01 JTBD Hypothesis | Refined | FirstLeads Segments</title>
+    <style>
+        :root {
+            --primary: #1a365d; --secondary: #2c5282; --accent: #ed8936;
+            --success: #38a169; --warning: #d69e2e; --danger: #e53e3e;
+            --bg: #f7fafc; --card-bg: #ffffff; --text: #2d3748;
+            --text-muted: #718096; --border: #e2e8f0;
+            --teal: #2c7a7b; --purple: #553c9a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        header { background: linear-gradient(135deg, var(--teal) 0%, #38b2ac 100%); color: white; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        header .badge { display: inline-block; margin-top: 16px; padding: 8px 20px; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.9rem; }
+        header .badge.turn { background: var(--accent); font-weight: 600; margin-left: 8px; }
+
+        .delta-box { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 12px; padding: 28px; margin-bottom: 24px; color: white; }
+        .delta-box h2 { font-size: 1.3rem; margin-bottom: 16px; }
+        .delta-box p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 8px; }
+        .delta-stats { display: flex; gap: 16px; margin-top: 16px; }
+        .delta-stat { flex: 1; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 14px 18px; text-align: center; }
+        .delta-stat .num { font-size: 1.8rem; font-weight: 700; }
+        .delta-stat .label { font-size: 0.8rem; opacity: 0.8; margin-top: 4px; }
+
+        .section { background: var(--card-bg); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px; overflow: hidden; }
+        .section-header { padding: 16px 24px; font-size: 1.1rem; font-weight: 600; color: white; }
+        .section-body { padding: 24px; }
+
+        .fate-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0 0 8px; }
+        .fate-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .fate-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .fate-table tr:hover { background: #f7fafc; }
+
+        .fate-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; }
+        .fate-confirmed { background: #c6f6d5; color: #22543d; }
+        .fate-merged { background: #bee3f8; color: #2a4365; }
+        .fate-killed { background: #fed7d7; color: #742a2a; }
+
+        .kill-box { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .kill-box h4 { color: var(--danger); margin-bottom: 10px; }
+        .kill-box ol { padding-left: 20px; }
+        .kill-box li { margin-bottom: 8px; font-size: 0.92rem; }
+
+        .seg-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+        .seg-header h3 { font-size: 1.15rem; }
+        .status-pill { display: inline-block; padding: 4px 12px; border-radius: 14px; font-size: 0.78rem; font-weight: 600; }
+        .status-e { background: #c6f6d5; color: #22543d; }
+        .status-partial { background: #fefcbf; color: #744210; }
+
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0; }
+        .info-card { background: #f7fafc; border-radius: 8px; padding: 14px 16px; border: 1px solid var(--border); }
+        .info-card h5 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; }
+        .info-card p, .info-card ul { font-size: 0.9rem; line-height: 1.5; }
+        .info-card ul { list-style: none; padding: 0; }
+        .info-card li { padding: 2px 0; }
+        .info-card li::before { content: "• "; color: var(--secondary); }
+
+        .detail-section { margin-bottom: 20px; }
+        .detail-section h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--secondary); }
+        .detail-section p, .detail-section ul { font-size: 0.92rem; line-height: 1.6; }
+        .detail-section ul { padding-left: 20px; }
+        .detail-section li { margin-bottom: 4px; }
+
+        .evidence-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
+        .tag-e { background: #c6f6d5; color: #22543d; }
+        .tag-h { background: #fefcbf; color: #744210; }
+
+        .summary-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 16px 0; }
+        .summary-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; font-size: 0.78rem; text-transform: uppercase; }
+        .summary-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .summary-table tr:hover { background: #f7fafc; }
+
+        .obs-box { background: #ebf8ff; border: 1px solid #90cdf4; border-radius: 10px; padding: 20px; margin-top: 8px; }
+        .obs-box h3 { font-size: 1rem; margin-bottom: 12px; color: #2a4365; }
+        .obs-box ol { padding-left: 20px; }
+        .obs-box li { margin-bottom: 10px; font-size: 0.92rem; line-height: 1.6; }
+
+        .upgrade { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; background: #c6f6d5; color: #22543d; font-weight: 600; }
+
+        hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>01 — JTBD Hypothesis (Refined)</h1>
+    <div class="subtitle">FirstLeads | Validated & Refined After Research</div>
+    <span class="badge">Target Segments Agent</span>
+    <span class="badge turn">Turn 2</span>
+</header>
+
+<div class="container">
+
+<!-- Delta -->
+<div class="delta-box">
+    <h2>Что изменилось после исследования</h2>
+    <p>Ключевой инсайт: <strong>самые сильные JTBD связаны не с кризисом, а с возможностями</strong>. Компании с деньгами, командой и конкретным вопросом «строить или нет?» — лучший клиент.</p>
+    <div class="delta-stats">
+        <div class="delta-stat"><div class="num">8</div><div class="label">Исходных гипотез</div></div>
+        <div class="delta-stat"><div class="num">4</div><div class="label">Финальных сегмента</div></div>
+        <div class="delta-stat"><div class="num">3</div><div class="label">Подтверждены [E]</div></div>
+        <div class="delta-stat"><div class="num">1</div><div class="label">Убит</div></div>
+    </div>
+</div>
+
+<!-- Fate Table -->
+<div class="section">
+    <div class="section-header" style="background: var(--primary);">Судьба всех 8 исходных гипотез</div>
+    <div class="section-body">
+        <table class="fate-table">
+            <thead><tr><th>#</th><th>Исходная гипотеза</th><th>Судьба</th><th>Причина</th></tr></thead>
+            <tbody>
+                <tr><td>1.1</td><td>B2B SaaS замедление</td><td><span class="fate-badge fate-merged">Слит → A</span></td><td>~60-80 компаний — слишком мал. SaaS растёт +38-40%. Стал вторичным триггером</td></tr>
+                <tr><td>1.2</td><td>AI/ML продуктизация</td><td><span class="fate-badge fate-merged">Слит → C</span></td><td>Неотличим от 4.1 на практике</td></tr>
+                <tr><td>2.1</td><td>B2B SaaS клиентские запросы</td><td><span class="fate-badge fate-confirmed">Подтверждён → A</span></td><td>Самый сильный. Кейсы SKAI (+75%), YouScan ($500K loss)</td></tr>
+                <tr><td>2.2</td><td>IT-сервис с паттернами</td><td><span class="fate-badge fate-merged">Слит → D</span></td><td>Неотличим от 4.2</td></tr>
+                <tr><td>3.1</td><td>Конкурентные вертикали</td><td><span class="fate-badge fate-confirmed">Подтверждён → B</span></td><td>M&A, запуски — хорошо документированы</td></tr>
+                <tr><td>4.1</td><td>AI/ML горизонтальная</td><td><span class="fate-badge fate-merged">Слит → C</span></td><td>340+ стартапов, UXSSR validates market</td></tr>
+                <tr><td>4.2</td><td>IT-аутсорсинг → продукт</td><td><span class="fate-badge fate-merged">Слит → D</span></td><td>Тренд массовый, но боль не острая</td></tr>
+                <tr><td>5.1</td><td>VC-backed B2B tech</td><td><span class="fate-badge fate-killed">Убит</span></td><td>24 сделки за 2024, ~40-80 компаний, неверный timing</td></tr>
+            </tbody>
+        </table>
+
+        <div class="kill-box">
+            <h4>Убитый: 5.1 VC-backed B2B tech (Series A-B)</h4>
+            <ol>
+                <li><strong>Размер слишком мал.</strong> 24 публичные B2B Software сделки за 2024. ~40-80 компаний — не сегмент, а список имён.</li>
+                <li><strong>Неверный timing.</strong> Series A-B уже имеют paying customers. Им нужно масштабирование, не валидация.</li>
+                <li><strong>Рынок сжат.</strong> $91-177M за весь 2024. Ставка ЦБ 21%. Активность минимальна.</li>
+            </ol>
+            <p style="font-size: 0.88rem; margin-top: 8px; color: var(--text-muted);">Применение: PR/reference-канал, не целевой сегмент.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Segment A -->
+<div class="section">
+    <div class="section-header" style="background: linear-gradient(135deg, #2c5282, #3182ce);">
+        Сегмент A: B2B SaaS в точке продуктового решения
+        <span style="float:right; font-size:0.85rem; opacity:0.9;">Поглотил: 1.1 + 2.1</span>
+    </div>
+    <div class="section-body">
+        <div class="seg-header">
+            <span class="status-pill status-e">Подтверждён [E]</span>
+            <span class="upgrade">Был [H-high] → [E]</span>
+        </div>
+
+        <div class="detail-section" style="margin-top:16px;">
+            <h4>JTBD</h4>
+            <p style="font-style:italic; background:#f0f4ff; padding:12px 16px; border-radius:8px; border-left:4px solid var(--secondary);">«Когда мы стоим перед решением о новом продуктовом направлении, мы хотим быстро проверить рыночный спрос реальными покупателями, чтобы принять go/no-go на данных, а не на мнениях.»</p>
+        </div>
+
+        <div class="three-col">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>B2B SaaS, 30-150 чел <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>80-500M руб/год <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>50+ клиентов, CPO/Head of Product <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Продуктовая команда 3-10 чел <span class="evidence-tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Problem Context</h5>
+                <ul>
+                    <li>Повторяющиеся запросы от клиентов <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Или: рост замедлился <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Custdev даёт мнения, не buying signals <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>YouScan: $500K loss на неудачном запуске <span class="evidence-tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Key Numbers</h5>
+                <ul>
+                    <li>~400-700 компаний в РФ</li>
+                    <li>500K-3M руб/год на research</li>
+                    <li>ЛПР: CPO / Head of Product</li>
+                    <li>Легко находимы через рейтинги</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Triggers</h4>
+            <ul>
+                <li><strong>Primary:</strong> 3+ клиентов спросили одно и то же <span class="evidence-tag tag-e">[E]</span></li>
+                <li><strong>Secondary:</strong> рост замедлился, CEO спрашивает «что дальше?» <span class="evidence-tag tag-e">[E]</span></li>
+                <li><strong>Tertiary:</strong> планирование roadmap / OKR cycle <span class="evidence-tag tag-h">[H-high]</span></li>
+            </ul>
+        </div>
+
+        <div class="detail-section">
+            <h4>Что мы ещё не знаем</h4>
+            <ul>
+                <li>Какой % из 400-700 компаний стоит перед решением СЕЙЧАС?</li>
+                <li>Как реагируют CPO на «outreach-валидация» vs привычный «custdev»?</li>
+                <li>Conversion rate холодного аутрича к CPO?</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Segment B -->
+<div class="section">
+    <div class="section-header" style="background: linear-gradient(135deg, #9b2c2c, #e53e3e);">
+        Сегмент B: B2B SaaS в конкурентных вертикалях
+        <span style="float:right; font-size:0.85rem; opacity:0.9;">Из: 3.1</span>
+    </div>
+    <div class="section-body">
+        <div class="seg-header">
+            <span class="status-pill status-e">Подтверждён [E]</span>
+            <span class="upgrade">Был [H-mid] → [E]</span>
+        </div>
+
+        <div class="detail-section" style="margin-top:16px;">
+            <h4>JTBD</h4>
+            <p style="font-style:italic; background:#fff5f5; padding:12px 16px; border-radius:8px; border-left:4px solid var(--danger);">«Когда конкурент делает ход в смежное пространство, мы хотим быстро проверить реальность рынка, чтобы решить — следовать, контратаковать или игнорировать — на данных, а не на панике.»</p>
+        </div>
+
+        <div class="three-col">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>Fintech, HR-tech, martech, legaltech <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>30-150 чел, 100-500M руб/год <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>5+ прямых конкурентов <span class="evidence-tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Evidence</h5>
+                <ul>
+                    <li>Ростелеком + Calltouch/Mango <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>VK Tech +133.4% (HR-tech) <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Яндекс 360 ×1.5 <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>CI-инструменты не дают buying signals <span class="evidence-tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Key Numbers</h5>
+                <ul>
+                    <li>~250-400 компаний</li>
+                    <li>100-500K руб/год на CI</li>
+                    <li>ЛПР: CPO / CEO</li>
+                    <li>Легко находимы (Smart Ranking)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section" style="background:#fff5f5; padding:16px; border-radius:8px; border:1px solid #feb2b2;">
+            <h4 style="color:var(--danger);">Критическое ограничение: скорость</h4>
+            <p>Паника после конкурентного хода = ответ за 2-3 дня. FL outreach = 2-4 недели.<br>
+            <strong>Решение:</strong> позиционировать не как «экстренную реакцию», а как «стратегический инструмент». Выходить ПРОАКТИВНО — «вы в конкурентной вертикали, давайте проверим направление ДО хода конкурента».</p>
+        </div>
+    </div>
+</div>
+
+<!-- Segment C -->
+<div class="section">
+    <div class="section-header" style="background: linear-gradient(135deg, #744210, #d69e2e);">
+        Сегмент C: AI/ML компании в поиске рынка
+        <span style="float:right; font-size:0.85rem; opacity:0.9;">Объединил: 1.2 + 4.1</span>
+    </div>
+    <div class="section-body">
+        <div class="seg-header">
+            <span class="status-pill status-e">Подтверждён [E]</span>
+            <span class="upgrade">Был [H-high]/[H-mid] → [E]</span>
+        </div>
+
+        <div class="detail-section" style="margin-top:16px;">
+            <h4>JTBD</h4>
+            <p style="font-style:italic; background:#fffff0; padding:12px 16px; border-radius:8px; border-left:4px solid var(--warning);">«Когда мы построили технологию, но не знаем, какому рынку продавать, мы хотим протестировать вертикали реальными офферами, чтобы сфокусировать разработку.»</p>
+        </div>
+
+        <div class="three-col">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>AI/ML, NLP/CV/analytics <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>15-80 чел, 30-300M руб <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Техфаундер, нет CPO <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Грантовое/инвестиционное финансирование <span class="evidence-tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Evidence</h5>
+                <ul>
+                    <li>9/10 AI-стартапов проваливаются — нет рынка <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>UXSSR продаёт PMF-услугу <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>340+ AI-стартапов, 700 проектов в Сколково <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Yandex AI Startup Lab: «самый сложный — не технология, а переход к продукту» <span class="evidence-tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Key Numbers</h5>
+                <ul>
+                    <li>~150-250 целевых компаний</li>
+                    <li>ЛПР: CEO / CTO (не CPO!)</li>
+                    <li>Бюджет: 1-7% от раунда/гранта</li>
+                    <li>Другой messaging vs Сегмент A</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section" style="background:#fffff0; padding:16px; border-radius:8px; border:1px solid #f6e05e;">
+            <h4 style="color:#744210;">Отличие от Сегмента A</h4>
+            <p>Другой ЛПР (CEO/CTO vs CPO), другой messaging («найдём рынок» vs «данные для roadmap»), другой уровень зрелости (первый PMF vs расширение). Исследование: «попытка объединить — размоет позиционирование».</p>
+        </div>
+    </div>
+</div>
+
+<!-- Segment D -->
+<div class="section">
+    <div class="section-header" style="background: linear-gradient(135deg, #4a5568, #718096);">
+        Сегмент D: IT-сервисные компании → продукт
+        <span style="float:right; font-size:0.85rem; opacity:0.9;">Объединил: 2.2 + 4.2</span>
+    </div>
+    <div class="section-body">
+        <div class="seg-header">
+            <span class="status-pill status-partial">Частично подтверждён</span>
+        </div>
+
+        <div class="three-col" style="margin-top:16px;">
+            <div class="info-card">
+                <h5>Company Profile</h5>
+                <ul>
+                    <li>IT-аутсорсинг, интеграция, заказная разработка <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>30-200 чел, 100-500M руб <span class="evidence-tag tag-e">[E]</span></li>
+                    <li>Нет CPO — CEO/CTO решает <span class="evidence-tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Strengths</h5>
+                <ul>
+                    <li>Самый платёжеспособный: 0.3-0.7% выручки</li>
+                    <li>Тренд массовый (Korusconsulting, Garpix, Sinergo)</li>
+                    <li>~150-300 в активной фазе</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Weaknesses</h5>
+                <ul>
+                    <li style="color: var(--danger);">Боль НЕ острая — аутсорсинг кормит</li>
+                    <li style="color: var(--danger);">«Мы сами умеем» — непривычная модель</li>
+                    <li style="color: var(--danger);">Telegram фрагментирован, нет сообщества</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Table -->
+<div class="section">
+    <div class="section-header" style="background: var(--primary);">Сводная таблица</div>
+    <div class="section-body">
+        <table class="summary-table">
+            <thead><tr><th>Сегмент</th><th>JTBD</th><th>Size</th><th>Платёжеспособность</th><th>ЛПР</th><th>Confidence</th><th>Риск</th></tr></thead>
+            <tbody>
+                <tr style="background:#f0fff4;">
+                    <td><strong>A: B2B SaaS продуктовое решение</strong></td>
+                    <td>Проверить спрос на новое направление</td><td>~400-700</td><td>Высокая</td><td>CPO</td>
+                    <td><span class="status-pill status-e">[E]</span></td><td>Низкий awareness формата</td>
+                </tr>
+                <tr>
+                    <td><strong>B: SaaS конкурентные вертикали</strong></td>
+                    <td>Оценить реальность за ходом конкурента</td><td>~250-400</td><td>Высокая</td><td>CPO/CEO</td>
+                    <td><span class="status-pill status-e">[E]</span></td><td>Speed mismatch</td>
+                </tr>
+                <tr>
+                    <td><strong>C: AI/ML поиск рынка</strong></td>
+                    <td>Найти вертикаль для технологии</td><td>~150-250</td><td>Средняя</td><td>CEO/CTO</td>
+                    <td><span class="status-pill status-e">[E]</span></td><td>Бюджет, «сделаем сами»</td>
+                </tr>
+                <tr>
+                    <td><strong>D: IT-сервис → продукт</strong></td>
+                    <td>Проверить спрос перед MVP</td><td>~150-300</td><td>Высокая</td><td>CEO/CTO</td>
+                    <td><span class="status-pill status-partial">[H-mid/E]</span></td><td>Боль не острая</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Observations -->
+<div class="obs-box">
+    <h3>Наблюдения для review</h3>
+    <ol>
+        <li><strong>A и B — одни компании, разные триггеры.</strong> Возможно один мега-сегмент с двумя messaging tracks. Решение отложено.</li>
+        <li><strong>C требует отдельного GTM.</strong> Другой ЛПР, messaging, ценник. Фактически второй продукт.</li>
+        <li><strong>Observability решена для A и B.</strong> Рейтинги + HH.ru = список за 30 минут. Для C — через Сколково/ФРИИ. Для D — сложнее.</li>
+        <li><strong>Pricing signal.</strong> Custdev 33K-550K руб. UXSSR 1-3M руб. FL 150-350K = «средний сегмент агентств».</li>
+        <li><strong>5.1 (VC-backed) полезен как PR-канал.</strong> Кейс = reference для всех остальных.</li>
+    </ol>
+</div>
+
+</div>
+</body>
+</html>

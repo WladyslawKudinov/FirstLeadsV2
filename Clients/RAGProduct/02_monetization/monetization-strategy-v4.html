@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стратегия монетизации: AI-ассистент для бизнеса (v4)</title>
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        header .version {
+            margin-top: 15px; font-size: 0.85rem;
+            background: rgba(255,255,255,0.2);
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+        }
+
+        .section {
+            background: white; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 30px; margin-bottom: 24px;
+        }
+
+        .section h2 {
+            color: var(--primary); font-size: 1.5rem;
+            margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .section h3 { color: var(--gray-700); font-size: 1.1rem; margin: 25px 0 12px 0; }
+        .section h4 { color: var(--gray-600); font-size: 1rem; margin: 20px 0 10px 0; }
+
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95rem; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--gray-200); }
+        th { background: var(--gray-100); font-weight: 600; color: var(--gray-700); }
+        tr:hover { background: var(--gray-50); }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            border-left: 4px solid var(--primary);
+            padding: 20px 25px; border-radius: 0 8px 8px 0; margin: 20px 0;
+        }
+
+        .recommendation-box {
+            background: #ecfdf5; border: 1px solid #a7f3d0;
+            border-radius: 8px; padding: 20px; margin: 20px 0;
+        }
+        .recommendation-box h4 { color: var(--success); margin-bottom: 10px; margin-top: 0; }
+
+        .warning-box {
+            background: #fef3c7; border: 1px solid #fcd34d;
+            border-radius: 8px; padding: 20px; margin: 20px 0;
+        }
+        .warning-box h4 { color: var(--warning); margin-bottom: 10px; margin-top: 0; }
+
+        .formula {
+            background: var(--gray-100); border-radius: 6px; padding: 15px;
+            font-family: monospace; font-size: 0.9rem; margin: 10px 0;
+            overflow-x: auto; white-space: pre-wrap;
+        }
+
+        .tier-table { margin: 20px 0; }
+        .tier-table th, .tier-table td { text-align: center; }
+        .tier-table td:first-child { text-align: left; font-weight: 500; }
+
+        .check { color: var(--success); font-weight: bold; }
+        .cross { color: var(--gray-300); }
+
+        .executive-summary {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+        }
+        .executive-summary h2 { color: var(--warning); border-bottom-color: #f59e0b; }
+
+        .decision-card {
+            background: white; border: 2px solid var(--gray-200);
+            border-radius: 12px; padding: 25px; margin: 20px 0;
+        }
+        .decision-card.blocker { border-left: 5px solid var(--danger); }
+        .decision-card.important { border-left: 5px solid var(--warning); }
+
+        .decision-card-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 15px;
+        }
+        .decision-card-title { font-size: 1.2rem; font-weight: 600; color: var(--gray-800); }
+
+        .priority-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .priority-blocker { background: #fee2e2; color: var(--danger); }
+        .priority-important { background: #fef3c7; color: var(--warning); }
+
+        .option-card { background: var(--gray-50); border-radius: 8px; padding: 15px; margin: 10px 0; }
+        .option-card.recommended { background: #ecfdf5; border: 1px solid #a7f3d0; }
+
+        .option-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .option-letter {
+            width: 28px; height: 28px; background: var(--primary); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.9rem;
+        }
+        .option-card.recommended .option-letter { background: var(--success); }
+        .option-name { font-weight: 600; color: var(--gray-800); }
+        .option-recommended-badge {
+            background: var(--success); color: white;
+            padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600;
+        }
+        .option-description { color: var(--gray-600); margin: 8px 0; padding-left: 38px; }
+        .option-pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-left: 38px; margin-top: 10px; }
+        .option-pros span { font-weight: 600; color: var(--success); }
+        .option-cons span { font-weight: 600; color: var(--danger); }
+
+        .recommendation-highlight {
+            background: #ecfdf5; border: 1px solid #a7f3d0;
+            border-radius: 8px; padding: 15px 20px; margin: 15px 0;
+        }
+        .recommendation-highlight strong { color: var(--success); }
+
+        .appendix-section { background: var(--gray-50); border: 1px solid var(--gray-200); }
+        .appendix-section h2 { color: var(--gray-600); font-size: 1.3rem; }
+
+        .data-filled {
+            background: #d1fae5; padding: 3px 8px; border-radius: 4px;
+            font-family: monospace; color: var(--success); font-weight: 600;
+        }
+
+        .stage-badge {
+            display: inline-block; padding: 6px 16px; border-radius: 20px;
+            font-size: 0.9rem; font-weight: 600; background: #fef3c7; color: var(--warning);
+        }
+
+        footer { text-align: center; padding: 40px 20px; color: var(--gray-600); font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .section { padding: 20px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+            .option-pros-cons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Стратегия монетизации</h1>
+        <div class="subtitle">AI-ассистент для бизнеса</div>
+        <div class="version">v4.0</div>
+    </header>
+
+    <div class="container">
+
+        <!-- Executive Summary -->
+        <section class="section executive-summary">
+            <h2>Главное за 1 минуту</h2>
+
+            <p><strong>Что продаём:</strong> не подписку на софт, а трансформацию бизнес-процессов через AI. Проект внедрения — основной доход, подписка — регулярная база.</p>
+
+            <p style="margin-top: 10px;"><strong>Как продаём:</strong> бесплатная демонстрация на данных клиента → платный проект внедрения → ежемесячная подписка → расширение на новые процессы.</p>
+
+            <p style="margin-top: 10px;"><span class="stage-badge">Стадия: Pre-traction</span> — нет подтверждённых метрик. Стандартная тарифная сетка не подходит — нужен бесплатный вход для доказательства ценности.</p>
+
+            <table style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Демонстрация</th>
+                        <th style="background: #ecfdf5;">Проект внедрения ⭐</th>
+                        <th>Масштабирование</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Что это</strong></td>
+                        <td>Бесплатная проба на ваших данных</td>
+                        <td style="background: #ecfdf5;"><strong>AI в 1 процесс / отдел</strong></td>
+                        <td>Расширение на другие процессы</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Проект (разово)</strong></td>
+                        <td><strong style="color: var(--success);">Бесплатно</strong></td>
+                        <td style="background: #ecfdf5;"><strong>от 600,000 ₽</strong></td>
+                        <td><strong>от 1,200,000 ₽</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Подписка (в месяц)</strong></td>
+                        <td>—</td>
+                        <td style="background: #ecfdf5;"><strong>80,000–110,000 ₽/мес</strong></td>
+                        <td><strong>120,000–200,000 ₽/мес</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Средний чек</strong></td>
+                        <td>0 ₽</td>
+                        <td style="background: #ecfdf5;"><strong>~750,000 ₽</strong></td>
+                        <td>1,500,000+ ₽</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top: 15px; font-size: 0.9rem; color: var(--gray-600);">Расчёты на реальных данных: ставка 4,000 ₽/час, маржа от 250%, средний чек 750,000 ₽, инфраструктура ~$600/мес. Детали — <a href="#appendix-pricing" style="color: var(--warning);">Приложение 2</a>.</p>
+        </section>
+
+        <!-- Section 1: Pricing Philosophy -->
+        <section class="section">
+            <h2>1. Стратегия ценообразования</h2>
+
+            <p>Продукт на стадии <strong>pre-traction</strong> (0 подтверждённых метрик). Стандартная тарифная сетка «Старт / Рост / Корпоративный» не будет работать — покупатель не подпишется на 80,000 ₽/мес без доказательств на его данных.</p>
+
+            <div class="decision-card blocker">
+                <div class="decision-card-header">
+                    <div class="decision-card-title">Как продавать: философия ценообразования</div>
+                    <span class="priority-badge priority-blocker">Определяет всё остальное</span>
+                </div>
+
+                <div class="option-card">
+                    <div class="option-header">
+                        <span class="option-letter">A</span>
+                        <span class="option-name">Подписка на софт</span>
+                    </div>
+                    <div class="option-description">Стандартная модель: 3 тарифа, ежемесячная оплата.</div>
+                    <div class="option-pros-cons">
+                        <div class="option-pros"><span>Плюс:</span> Масштабируемость.</div>
+                        <div class="option-cons"><span>Минус:</span> Убивает позиционирование «методология». Сравнивают с ChatGPT Team ($25/чел).</div>
+                    </div>
+                </div>
+
+                <div class="option-card recommended">
+                    <div class="option-header">
+                        <span class="option-letter">B</span>
+                        <span class="option-name">Трансформация через бесплатный вход</span>
+                        <span class="option-recommended-badge">Рекомендую</span>
+                    </div>
+                    <div class="option-description">Бесплатная демонстрация → платный проект внедрения → ежемесячная подписка. Ценность — в результате, не в доступе к софту.</div>
+                    <div class="option-pros-cons">
+                        <div class="option-pros"><span>Плюс:</span> Снимает риск для покупателя. Доказывает ценность до оплаты. Оправдывает премиум.</div>
+                        <div class="option-cons"><span>Минус:</span> Требует ресурсов на бесплатные демо. Длиннее цикл продажи.</div>
+                    </div>
+                </div>
+
+                <div class="option-card">
+                    <div class="option-header">
+                        <span class="option-letter">C</span>
+                        <span class="option-name">Оплата за результат</span>
+                    </div>
+                    <div class="option-description">Цена привязана к метрикам: ₽ за сэкономленный час, за обработанный документ.</div>
+                    <div class="option-pros-cons">
+                        <div class="option-pros"><span>Плюс:</span> Максимально справедливо.</div>
+                        <div class="option-cons"><span>Минус:</span> Невозможно без proof points. Можно внедрить позже.</div>
+                    </div>
+                </div>
+
+                <div class="recommendation-highlight">
+                    <strong>Рекомендация: Вариант B.</strong> Позиционирование = «методология внедрения AI», не «платформа». Продукт pre-traction — нужен бесплатный вход. Средний чек 750k из переговоров подтверждает: рынок готов платить за проект.
+                </div>
+            </div>
+
+            <h3>Обязательные механизмы для pre-traction</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Механизм</th>
+                        <th>Приоритет</th>
+                        <th>Реализация</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Бесплатная демонстрация</strong></td>
+                        <td style="color: var(--danger); font-weight: 600;">Обязательно</td>
+                        <td>1–5 документов клиента. AI отвечает на реальные вопросы. 1–2 часа.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Бесплатный пилот</strong></td>
+                        <td style="color: var(--danger); font-weight: 600;">Обязательно</td>
+                        <td>Для стратегических клиентов: полное внедрение в обмен на кейс + метрики.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Скидка за кейс-стади</strong></td>
+                        <td style="color: var(--success); font-weight: 600;">По ситуации</td>
+                        <td>15–20% скидка на проект в обмен на публикуемый кейс. Первые 3–5 кейсов критичны.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 2: Customer Journey -->
+        <section class="section">
+            <h2>2. Путь клиента</h2>
+
+            <p>Вы продаёте не тарифный план, а <strong>путь от «хотим попробовать AI» до «AI встроен в наши процессы»</strong>. На сайте показывайте не тарифы, а «Попробуйте бесплатно → Получите аудит → Внедрим за N недель».</p>
+
+            <table style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>Этап</th>
+                        <th>Что происходит</th>
+                        <th>Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Демонстрация</strong></td>
+                        <td>Загружаем 1–5 документов клиента, показываем AI на реальных данных. «Aha-moment»: AI отвечает по ЕГО документам. Ваше время: 1–2 часа.</td>
+                        <td><strong style="color: var(--success);">Бесплатно</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>1.5. Пилот</strong> (опционально)</td>
+                        <td>Для стратегических клиентов: бесплатное внедрение в 1 процесс, 2–4 недели. Цель — собрать proof points с цифрами.</td>
+                        <td><strong style="color: var(--success);">Бесплатно</strong> (инвестиция)</td>
+                    </tr>
+                    <tr style="background: #ecfdf5;">
+                        <td><strong>2. Проект внедрения</strong> ⭐</td>
+                        <td>Полная методология: аудит процессов → карта внедрения → настройка AI → загрузка данных → обучение сотрудников. 20–160 часов. Первый месяц подписки включён.</td>
+                        <td><strong>от 600,000 ₽</strong><br>(средний ~750k)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Ежемесячная подписка</strong></td>
+                        <td>AI-ассистент + хостинг + API + поддержка до 10 ч/мес + обновления. До 50 пользователей.</td>
+                        <td><strong>80,000–110,000 ₽/мес</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Расширение</strong></td>
+                        <td>Новые процессы, отделы, интеграции, дополнительные RAG-системы, расширенное обучение.</td>
+                        <td><strong>от 300,000 ₽</strong> за проект + рост подписки</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 3: Delivery & Revenue Model -->
+        <section class="section">
+            <h2>3. Модель поставки и дохода</h2>
+
+            <div class="highlight-box">
+                <p><strong>Модель поставки:</strong> Гибридная — софт + экспертиза внедрения.</p>
+                <p><strong>Модель дохода:</strong> Проект (основной доход) + подписка (регулярный доход) + расширение (рост).</p>
+                <p><strong>Метрика ценности:</strong> За компанию/проект (не за пользователя — чтобы стимулировать adoption и убрать сравнение с ChatGPT).</p>
+            </div>
+
+            <h3>Прогноз на 1 клиента за год</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Источник</th>
+                        <th>Когда</th>
+                        <th>Сумма</th>
+                        <th>Маржа</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Проект внедрения</strong></td>
+                        <td>Месяц 0</td>
+                        <td>600,000–1,500,000 ₽</td>
+                        <td>~70%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Подписка (12 мес)</strong></td>
+                        <td>Месяцы 1–12</td>
+                        <td>960,000–1,320,000 ₽</td>
+                        <td>~65–75%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Расширение</strong></td>
+                        <td>Месяцы 6–12</td>
+                        <td>300,000–1,000,000 ₽</td>
+                        <td>~70%</td>
+                    </tr>
+                    <tr style="background: #ecfdf5; font-weight: 600;">
+                        <td>Итого за 1-й год</td>
+                        <td></td>
+                        <td>1,860,000–3,820,000 ₽</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Особенности для российского рынка</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Проектная часть = капитальные расходы.</strong> Российский бизнес охотнее платит за проект (CapEx), чем за подписку (OpEx).</li>
+                <li><strong>Минимум 12 месяцев подписки</strong> в договоре. Скидка за годовой контракт: 15–20%.</li>
+            </ul>
+        </section>
+
+        <!-- Section 4: Price Architecture -->
+        <section class="section">
+            <h2>4. Ценовая архитектура</h2>
+
+            <h3>Проект внедрения</h3>
+
+            <div class="formula">Часы × Ставка (4,000 ₽/час) × Коэффициент маржи (3.5)
+Минимальная цена проекта: 600,000 ₽ (якорь из переговоров)</div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Масштаб проекта</th>
+                        <th>Часы</th>
+                        <th>Себестоимость</th>
+                        <th>Цена (×3.5)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Базовый</strong> — 1 процесс, до 500 документов</td>
+                        <td>20–40 ч</td>
+                        <td>80–160k ₽</td>
+                        <td><strong>600,000 ₽</strong> (минимум)</td>
+                    </tr>
+                    <tr style="background: #ecfdf5;">
+                        <td><strong>Стандартный</strong> — 2–3 процесса, до 2,000 документов</td>
+                        <td>40–80 ч</td>
+                        <td>160–320k ₽</td>
+                        <td><strong>600,000–1,120,000 ₽</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Расширенный</strong> — 5+ процессов, 5,000+ документов</td>
+                        <td>80–160 ч</td>
+                        <td>320–640k ₽</td>
+                        <td><strong>1,120,000–2,240,000 ₽</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendation-box">
+                <h4>Проверка по среднему чеку</h4>
+                <p>Средний чек из переговоров: <span class="data-filled">750,000 ₽</span>. Стандартный проект (40–60 часов) попадает в этот диапазон — модель объясняет реальную готовность платить.</p>
+            </div>
+
+            <h3>Ежемесячная подписка</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>При 5 клиентах</th>
+                        <th>При 10 клиентах</th>
+                        <th>При 20 клиентах</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Себестоимость на клиента</td>
+                        <td>~31,000 ₽</td>
+                        <td>~25,400 ₽</td>
+                        <td>~22,700 ₽</td>
+                    </tr>
+                    <tr style="background: #ecfdf5;">
+                        <td><strong>Подписка 100,000 ₽/мес</strong></td>
+                        <td><strong>Маржа 69%</strong></td>
+                        <td><strong>Маржа 75%</strong></td>
+                        <td><strong>Маржа 77%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendation-box">
+                <h4>Рекомендация: 100,000 ₽/мес как стартовая точка</h4>
+                <p>100k/мес на фоне проекта 750k — это 13% от первоначальной инвестиции. Выглядит как мелочь. Но за год это 1.2M — больше, чем сам проект. Стратегия <strong>«менее заметно, более маржинально»</strong>.</p>
+            </div>
+        </section>
+
+        <!-- Section 5: Assumptions & Risks -->
+        <section class="section">
+            <h2>5. Допущения и риски</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Допущение</th>
+                        <th>Риск если неверно</th>
+                        <th>Как проверить</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Бесплатная демо конвертирует в проект</td>
+                        <td>Делаете бесплатную работу впустую</td>
+                        <td>Конверсия первых 10 демо. Ориентир: 20–30%</td>
+                    </tr>
+                    <tr>
+                        <td>Клиенты готовы платить 600k+ за внедрение</td>
+                        <td>Цена отсекает рынок</td>
+                        <td>Уже подтверждено: средний чек 750k</td>
+                    </tr>
+                    <tr>
+                        <td>Подписка 80–110k/мес не вызывает отторжения</td>
+                        <td>Клиенты уходят после внедрения</td>
+                        <td>Минимум 12 мес в договоре. Retention — ключевая метрика</td>
+                    </tr>
+                    <tr>
+                        <td>Инфраструктура $600/мес достаточна для 5–10 клиентов</td>
+                        <td>Затраты растут быстрее выручки</td>
+                        <td>Мониторинг нагрузки. Если >$150/клиент — пересчитать</td>
+                    </tr>
+                    <tr>
+                        <td>Поддержка укладывается в 5–10 ч/мес</td>
+                        <td>Поддержка съедает маржу</td>
+                        <td>Учёт времени. Если >15ч — ввести лимит</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Что пересмотреть при изменениях</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Появились proof points:</strong> убрать бесплатные пилоты, поднять цены на 20–30%.</li>
+                <li><strong>Конверсия демо &lt; 10%:</strong> пересмотреть формат демо или квалификацию лидов.</li>
+                <li><strong>Клиенты уходят после 12 мес:</strong> усилить вовлечение — регулярные ревью, отчёты по использованию.</li>
+            </ul>
+
+            <div class="decision-card important">
+                <div class="decision-card-header">
+                    <div class="decision-card-title">Валютный риск</div>
+                    <span class="priority-badge priority-important">Учитывать</span>
+                </div>
+                <p>Инфраструктура ($600/мес) привязана к доллару. При курсе 90 ₽/$ — это 54,000 ₽/мес, при 120 ₽/$ — уже 72,000 ₽/мес. Включите в договор пункт о пересмотре цены при изменении курса более чем на 15%.</p>
+            </div>
+        </section>
+
+        <!-- Appendix 1: Positioning Data -->
+        <section class="section appendix-section" id="appendix-positioning">
+            <h2>Приложение 1: Данные из позиционирования</h2>
+
+            <h3>Сигналы продукта</h3>
+            <table>
+                <tr><td><strong>Тип продукта</strong></td><td>AI-ассистент полного цикла (RAG + генерация + гибридный доступ)</td></tr>
+                <tr><td><strong>Категория</strong></td><td>Методология внедрения AI в бизнес-процессы (новая категория)</td></tr>
+                <tr><td><strong>Сервисная составляющая</strong></td><td>Значительная: 4-этапная методология + обучение сотрудников</td></tr>
+                <tr><td><strong>Позиционирование</strong></td><td>Премиум-эксперты, не вендоры. Партнёрство, не подписка.</td></tr>
+            </table>
+
+            <h3>Сигналы клиента</h3>
+            <table>
+                <tr><td><strong>Основной сегмент</strong></td><td>Торговые и производственные компании, 30–300 сотрудников</td></tr>
+                <tr><td><strong>Покупатель</strong></td><td>Собственник / CEO / HRD</td></tr>
+                <tr><td><strong>Триггер покупки</strong></td><td>«Конкуренты используют AI», «пробовали сами — не получилось», «боимся утечки данных»</td></tr>
+                <tr><td><strong>Средний чек</strong></td><td><span class="data-filled">750,000 ₽</span></td></tr>
+            </table>
+
+            <h3>Сигналы ценности</h3>
+            <table>
+                <thead>
+                    <tr><th>Атрибут</th><th>Ценность</th><th>Статус</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Методология внедрения</td>
+                        <td>Работающий результат, а не «ещё один софт»</td>
+                        <td style="color: var(--warning); font-weight: 600;">Claimed</td>
+                    </tr>
+                    <tr>
+                        <td>Обучение сотрудников</td>
+                        <td>Люди реально используют AI</td>
+                        <td style="color: var(--warning); font-weight: 600;">Claimed</td>
+                    </tr>
+                    <tr>
+                        <td>AI-ассистент полного цикла</td>
+                        <td>Экономия времени на рутине</td>
+                        <td style="color: var(--warning); font-weight: 600;">Claimed</td>
+                    </tr>
+                    <tr>
+                        <td>Защита данных</td>
+                        <td>СБ и руководство одобрят</td>
+                        <td style="color: var(--warning); font-weight: 600;">Claimed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <h4>0 из 6 ценностей подтверждены метриками</h4>
+                <p>Это определило стратегию: бесплатный вход + проектная модель. Как только появятся proof points, можно убрать пилоты, поднять цены на 20–30% и добавить компонент «оплата за результат».</p>
+            </div>
+        </section>
+
+        <!-- Appendix 2: Detailed Calculations -->
+        <section class="section appendix-section" id="appendix-pricing">
+            <h2>Приложение 2: Детальные расчёты</h2>
+
+            <h3>Исходные данные</h3>
+            <table>
+                <thead>
+                    <tr><th>Параметр</th><th>Значение</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Хостинг + API</td><td><span class="data-filled">$600/мес (общий)</span></td></tr>
+                    <tr><td>Почасовая ставка</td><td><span class="data-filled">4,000 ₽/час</span></td></tr>
+                    <tr><td>Часы внедрения</td><td><span class="data-filled">20–160 ч</span></td></tr>
+                    <tr><td>Целевая маржа</td><td><span class="data-filled">от 250% (×3.5)</span></td></tr>
+                    <tr><td>Поддержка</td><td><span class="data-filled">до 10 ч/мес</span></td></tr>
+                    <tr><td>Средний чек</td><td><span class="data-filled">750,000 ₽</span></td></tr>
+                    <tr><td>Активные пользователи</td><td><span class="data-filled">~30 чел</span></td></tr>
+                    <tr><td>Курс доллара</td><td>~90 ₽/$</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Ценовой потолок (экономическая ценность для клиента)</h3>
+
+            <div class="formula">Цена альтернативы (ChatGPT Team для 30 чел):
+  ~3,000 ₽/чел/мес × 30 = 90,000 ₽/мес
+
+Дифференцированная ценность (Claimed, ×0.7):
+  + Экономия времени: 1 ч/день × 20 дней × 30 чел × 500 ₽/час = 300,000 ₽/мес
+  + Сокращение онбординга: 20,000 ₽/мес
+  + Снижение нагрузки на экспертов: 15,000 ₽/мес
+  Итого после корректировки: 234,500 ₽/мес
+
+Потолок (EVC) = 90,000 + 234,500 = ~325,000 ₽/мес</div>
+
+            <h3>Себестоимость подписки</h3>
+
+            <div class="formula">При 5 клиентах:
+  Инфраструктура: $600 ÷ 5 × 90 ₽/$ = 10,800 ₽
+  Поддержка (средняя 5ч): 20,000 ₽
+  Итого COGS: ~31,000 ₽/мес
+
+При 10 клиентах: ~25,400 ₽/мес
+При 20 клиентах: ~22,700 ₽/мес</div>
+
+            <h3>Проверка по методу 10x</h3>
+
+            <div class="formula">Годовая ценность (EVC): ~3,900,000 ₽
+
+Совокупная стоимость за 1-й год:
+  Проект 750k + Подписка 100k × 12 = 1,950,000 ₽
+  Захват ценности: 50%
+
+Для консалтинга/внедрения 30–50% — норма.
+Цены в верхней, но обоснованной зоне.</div>
+
+            <h3>Якоря конкурентов</h3>
+            <table>
+                <thead>
+                    <tr><th>Альтернатива</th><th>Их цена</th><th>Наша позиция</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ChatGPT Team (30 чел)</td>
+                        <td>~90,000 ₽/мес</td>
+                        <td>Наша подписка 100k/мес + проект 750k. Дороже, но с методологией и защитой данных.</td>
+                    </tr>
+                    <tr>
+                        <td>Заказная разработка RAG</td>
+                        <td>1.5–5M ₽</td>
+                        <td>Значительно дешевле + включает методологию.</td>
+                    </tr>
+                    <tr>
+                        <td>Консалтинг по AI (Big4)</td>
+                        <td>3–10M ₽</td>
+                        <td>На порядок дешевле при сопоставимом результате.</td>
+                    </tr>
+                    <tr>
+                        <td>«Сами разберёмся»</td>
+                        <td>0 ₽ + 3–6 мес + 80% провал</td>
+                        <td>750k — страховка от потери времени.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendation-box">
+                <h4>Позиция: между ChatGPT и заказной разработкой</h4>
+                <p>Не дёшево (иначе не поверят), не дорого (доступно среднему бизнесу). Правильная позиция для «методологии внедрения AI».</p>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Стратегия монетизации v4.0 | На основе позиционирования + реальных данных клиента</p>
+    </footer>
+</body>
+</html>

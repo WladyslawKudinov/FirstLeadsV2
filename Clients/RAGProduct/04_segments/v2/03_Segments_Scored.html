@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скоринг сегментов — RAG Product (v2)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --purple: #7c3aed;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        header {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        header .version {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .section h3 {
+            color: var(--gray-700);
+            font-size: 1.05rem;
+            margin: 20px 0 10px 0;
+        }
+        .section p { margin-bottom: 12px; }
+
+        /* Score ring */
+        .score-ring {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .ring {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .ring .score-num { font-size: 1.8rem; line-height: 1; }
+        .ring .score-den { font-size: 0.75rem; opacity: 0.85; }
+        .ring-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .ring-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+        .ring-green { background: linear-gradient(135deg, #059669, #047857); }
+        .ring-amber { background: linear-gradient(135deg, #d97706, #b45309); }
+        .score-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .score-breakdown .line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        .score-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--gray-200);
+            width: 120px;
+            overflow: hidden;
+        }
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .fill-e { background: var(--primary); }
+        .fill-h { background: var(--purple); }
+
+        /* Scoring table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.88rem;
+        }
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        tr:hover { background: var(--gray-50); }
+
+        .score-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            width: 50px;
+        }
+        .score-5 { color: var(--success); }
+        .score-4 { color: var(--primary); }
+        .score-3 { color: var(--warning); }
+        .score-2 { color: var(--danger); }
+        .score-1 { color: #991b1b; }
+
+        .type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .type-e { background: #dbeafe; color: var(--primary); }
+        .type-h-high { background: #ede9fe; color: var(--purple); }
+        .type-h-mid { background: #fef3c7; color: var(--warning); }
+
+        .evidence-text { font-size: 0.85rem; color: var(--gray-600); }
+        .vq { font-style: italic; color: var(--purple); font-size: 0.85rem; margin-top: 4px; }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-p1 { background: var(--primary); color: white; }
+        .badge-p2 { background: var(--purple); color: white; }
+        .badge-p3 { background: #fef3c7; color: var(--warning); }
+
+        .segment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .segment-header h2 { flex: 1; border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+        .callout {
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        .callout-green { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .callout-green strong { color: var(--success); }
+        .callout-yellow { background: #fffbeb; border: 1px solid #fde68a; }
+        .callout-yellow strong { color: var(--warning); }
+        .callout-red { background: #fef2f2; border: 1px solid #fecaca; }
+        .callout-red strong { color: var(--danger); }
+        .callout-blue { background: #eff6ff; border: 1px solid #bfdbfe; }
+        .callout-blue strong { color: var(--primary); }
+
+        /* Summary matrix */
+        .matrix-section {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            border: 2px solid var(--purple);
+        }
+        .matrix-section h2 { color: var(--purple); border-bottom-color: var(--purple); }
+        .matrix-table th { font-size: 0.7rem; padding: 8px 6px; text-align: center; }
+        .matrix-table td { text-align: center; padding: 10px 6px; }
+        .matrix-table td:first-child { text-align: left; font-weight: 600; }
+        .matrix-table .total-cell { font-weight: 700; font-size: 1.1rem; }
+
+        /* Heatmap colors for matrix */
+        .heat-5 { background: #d1fae5; }
+        .heat-4 { background: #dbeafe; }
+        .heat-3 { background: #fef3c7; }
+        .heat-2 { background: #fee2e2; }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .section { padding: 20px; }
+            table { font-size: 0.78rem; }
+            th, td { padding: 6px 8px; }
+            .score-ring { flex-direction: column; align-items: flex-start; }
+            .segment-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Скоринг сегментов</h1>
+    <div class="subtitle">Moore Beachhead Criteria &middot; 10 критериев &middot; max 50 баллов</div>
+    <div class="version">RAG Product &middot; REDO v2 &middot; 1 марта 2026</div>
+</header>
+
+<div class="container">
+
+    <!-- ===== SUMMARY MATRIX ===== -->
+    <section class="section matrix-section">
+        <h2>Сводная матрица</h2>
+        <div style="overflow-x:auto;">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th style="text-align:left;min-width:140px;">Сегмент</th>
+                    <th>C1<br><small>[E]</small></th>
+                    <th>C2<br><small>[H]</small></th>
+                    <th>C3<br><small>[H]</small></th>
+                    <th>C4<br><small>[E]</small></th>
+                    <th>C5<br><small>[E]</small></th>
+                    <th>C6<br><small>[E]</small></th>
+                    <th>C7<br><small>[E]</small></th>
+                    <th>C8<br><small>[E]</small></th>
+                    <th>C9<br><small>[H]</small></th>
+                    <th>C10<br><small>[E]</small></th>
+                    <th>Total</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>IT-компании <span class="priority-badge badge-p1" style="font-size:0.65rem;padding:2px 8px;">P1</span></td>
+                    <td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-5">5</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-4">4</td>
+                    <td class="total-cell">42</td><td style="font-size:0.75rem;">E:30/35<br>H:12/15</td>
+                </tr>
+                <tr>
+                    <td>Оптовая торговля <span class="priority-badge badge-p1" style="font-size:0.65rem;padding:2px 8px;">P1</span></td>
+                    <td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-3">3</td>
+                    <td class="total-cell">41</td><td style="font-size:0.75rem;">E:31/35<br>H:10/15</td>
+                </tr>
+                <tr>
+                    <td>Производство <span class="priority-badge badge-p2" style="font-size:0.65rem;padding:2px 8px;">P2</span></td>
+                    <td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-5">5</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-3">3</td>
+                    <td class="total-cell">40</td><td style="font-size:0.75rem;">E:31/35<br>H:9/15</td>
+                </tr>
+                <tr>
+                    <td>Юр. фирмы <span class="priority-badge badge-p2" style="font-size:0.65rem;padding:2px 8px;">P2</span></td>
+                    <td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-2">2</td><td class="heat-4">4</td><td class="heat-4">4</td>
+                    <td class="total-cell">39</td><td style="font-size:0.75rem;">E:28/35<br>H:11/15</td>
+                </tr>
+                <tr>
+                    <td>Медицина <span class="priority-badge badge-p3" style="font-size:0.65rem;padding:2px 8px;">P3</span></td>
+                    <td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-2">2</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-3">3</td>
+                    <td class="total-cell">34</td><td style="font-size:0.75rem;">E:21/35<br>H:10/15</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;font-size:0.8rem;">
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#d1fae5;"></span> 5 &mdash; сильная позиция</span>
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#dbeafe;"></span> 4 &mdash; хорошая позиция</span>
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#fef3c7;"></span> 3 &mdash; недостаточно данных</span>
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#fee2e2;"></span> 2 &mdash; ограничитель</span>
+        </div>
+    </section>
+
+    <!-- ===== SEGMENT A: IT ===== -->
+    <section class="section">
+        <div class="segment-header">
+            <h2 style="color:var(--primary);">A. IT-компании</h2>
+            <span class="priority-badge badge-p1">P1</span>
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-blue">
+                <div class="score-num">42</div>
+                <div class="score-den">/ 50</div>
+            </div>
+            <div class="score-breakdown">
+                <div class="line">
+                    <span style="width:90px;">Evidence [E]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-e" style="width:85.7%;"></div></div>
+                    <strong>30/35</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">high confidence</span>
+                </div>
+                <div class="line">
+                    <span style="width:90px;">Hypothesis [H]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-h" style="width:80%;"></div></div>
+                    <strong>12/15</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">needs validation</span>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th style="width:30px;">#</th><th style="width:180px;">Criterion</th><th style="width:50px;">Score</th><th style="width:80px;">Type</th><th>Evidence / Reasoning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer exists</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">CTO/VP Engineering с бюджетом. 94 SaaS-компании HighTime 50M₽+. Cleverence (296M₽, 93 чел.), Sipuni (243M₽, 99 чел.). <em>[firmoteka.ru, HH.ru]</em></td></tr>
+                <tr><td>C2</td><td>Compelling reason to buy</td><td class="score-cell score-4">4</td><td><span class="type-badge type-h-high">[H-high]</span></td><td class="evidence-text">Инженеры 20% на документацию, новые 30% на поиск. ChatGPT заблокирован.<div class="vq">VQ: &laquo;Сколько часов/неделю команда тратит на поиск внутренней информации?&raquo;</div></td></tr>
+                <tr><td>C3</td><td>Whole product deliverable</td><td class="score-cell score-4">4</td><td><span class="type-badge type-h-high">[H-high]</span></td><td class="evidence-text">Полный цикл (docs+email+meetings). Конкуренты частичные. On-prem.<div class="vq">VQ: &laquo;Достаточно ли функционала или нужны доработки?&raquo;</div></td></tr>
+                <tr><td>C4</td><td>No entrenched competitor</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Minervasoft (50-150K₽/мес) &mdash; KMS без AI-ассистента. AutoFAQ &mdash; только support. ChatGPT заблокирован. Нет конкурента с полным набором + методология + on-prem. <em>[Habr, research]</em></td></tr>
+                <tr><td>C5</td><td>Partners &amp; allies</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Нет партнёрского канала. IT-медиа и Telegram-каналы CTO.</td></tr>
+                <tr><td>C6</td><td>Distribution channel</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">firmoteka.ru &rarr; 94 компании за 10 мин. CTO в Telegram. HH.ru pain signals. Цикл 2-6 недель. <em>[firmoteka, HH.ru, Telegram]</em></td></tr>
+                <tr><td>C7</td><td>Pricing fits budget</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">80-110K₽/мес = 0.5-0.7 FTE разработчика. ChatGPT Team недоступен в РФ. <em>[HighTime, salary benchmarks]</em></td></tr>
+                <tr><td>C8</td><td>Segment size</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">300-400 компаний. Достаточно для FL, но не массовый рынок. <em>[firmoteka.ru, Rusprofile]</em></td></tr>
+                <tr><td>C9</td><td>Reference value</td><td class="score-cell score-4">4</td><td><span class="type-badge type-h-high">[H-high]</span></td><td class="evidence-text">&laquo;Если IT-компания купила вместо того чтобы делать сама &mdash; продукт стоящий.&raquo; Максимальная credibility.<div class="vq">VQ: &laquo;Станет ли ваш кейс аргументом для не-IT компаний?&raquo;</div></td></tr>
+                <tr><td>C10</td><td>Outreach accessibility</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">CTO через Telegram и email. Список за 15-20 мин. Цикл 2-6 недель. <em>[Telegram channels, firmoteka]</em></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-green">
+            <strong>Блокеры: нет.</strong> Самый сбалансированный сегмент &mdash; ни одного критерия ниже 3.
+        </div>
+        <div class="callout callout-blue">
+            <strong>Приоритеты валидации:</strong> C2 (реальная боль vs &laquo;мы справляемся сами&raquo;), C3 (достаточность функционала для IT)
+        </div>
+    </section>
+
+    <!-- ===== SEGMENT B: WHOLESALE ===== -->
+    <section class="section">
+        <div class="segment-header">
+            <h2 style="color:var(--primary);">B. Оптовая торговля</h2>
+            <span class="priority-badge badge-p1">P1</span>
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-blue">
+                <div class="score-num">41</div>
+                <div class="score-den">/ 50</div>
+            </div>
+            <div class="score-breakdown">
+                <div class="line">
+                    <span style="width:90px;">Evidence [E]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-e" style="width:88.6%;"></div></div>
+                    <strong>31/35</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">high confidence</span>
+                </div>
+                <div class="line">
+                    <span style="width:90px;">Hypothesis [H]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-h" style="width:66.7%;"></div></div>
+                    <strong>10/15</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">needs validation</span>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th style="width:30px;">#</th><th style="width:180px;">Criterion</th><th style="width:50px;">Score</th><th style="width:80px;">Type</th><th>Evidence / Reasoning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer exists</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Комм. директор / РОП с бюджетом. 972+ вакансий. 2 000-5 000 компаний по ОКВЭД 46.x в диапазоне 100-500M₽. <em>[HH.ru, Rusprofile, ExportBase]</em></td></tr>
+                <tr><td>C2</td><td>Compelling reason to buy</td><td class="score-cell score-4">4</td><td><span class="type-badge type-h-high">[H-high]</span></td><td class="evidence-text">70% на рутине, 28-34% на продажи. Стоимость ~400K₽/мес на 10 менеджеров.<div class="vq">VQ: &laquo;Согласны что менеджеры &gt;50% на рутине?&raquo;</div></td></tr>
+                <tr><td>C3</td><td>Whole product deliverable</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">КП из прайс-листа &mdash; заявлено, не доказано на реальных прайсах.<div class="vq">VQ: &laquo;AI генерирует КП из вашего прайса за 30 сек?&raquo;</div></td></tr>
+                <tr><td>C4</td><td>No entrenched competitor</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">BitrixGPT и amoAI НЕ генерируют КП. SalesAI (39-56K₽) &mdash; только звонки. Gap подтверждён. <em>[CRM обзоры, SalesAI]</em></td></tr>
+                <tr><td>C5</td><td>Partners &amp; allies</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">CRM Academy (300+ клиентов), Intervolga (Комус, Левенгук), Ингруппа. 5+ интеграторов. <em>[crmacademy.ru, crmrating.ru]</em></td></tr>
+                <tr><td>C6</td><td>Distribution channel</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Rusprofile Pro &rarr; 50 за 10 мин. ExportBase 2459. HH.ru 972+. Telegram @optlist_chat 35K. <em>[all sources]</em></td></tr>
+                <tr><td>C7</td><td>Pricing fits budget</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">IT-бюджет 3-15M₽/год. Продукт ~1M₽ = 6-15%. Позиционирование &laquo;замена 1 менеджера&raquo; (100K₽/мес). <em>[research]</em></td></tr>
+                <tr><td>C8</td><td>Segment size</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">2 000-5 000 по РФ. Крупнейший TAM. <em>[Rusprofile, ExportBase]</em></td></tr>
+                <tr><td>C9</td><td>Reference value</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">Торговый кейс &rarr; другие B2B, но НЕ на производство/юристов. Средняя transferability.<div class="vq">VQ: &laquo;Какие метрики до/после убедительны?&raquo;</div></td></tr>
+                <tr><td>C10</td><td>Outreach accessibility</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Комм. директоры слабо в цифровых каналах. Телефон + email. Менее эффективно чем Telegram для IT. <em>[research]</em></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-green"><strong>Блокеры: нет.</strong></div>
+        <div class="callout callout-blue">
+            <strong>Приоритеты валидации:</strong> C3 (тех. валидация КП из прайса), C2 (реальная боль vs &laquo;у нас и так норм&raquo;)
+        </div>
+    </section>
+
+    <!-- ===== SEGMENT C: MANUFACTURING ===== -->
+    <section class="section">
+        <div class="segment-header">
+            <h2 style="color:var(--purple);">C. Производство</h2>
+            <span class="priority-badge badge-p2">P2</span>
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-purple">
+                <div class="score-num">40</div>
+                <div class="score-den">/ 50</div>
+            </div>
+            <div class="score-breakdown">
+                <div class="line">
+                    <span style="width:90px;">Evidence [E]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-e" style="width:88.6%;"></div></div>
+                    <strong>31/35</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">high confidence</span>
+                </div>
+                <div class="line">
+                    <span style="width:90px;">Hypothesis [H]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-h" style="width:60%;"></div></div>
+                    <strong>9/15</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">needs validation</span>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th style="width:30px;">#</th><th style="width:180px;">Criterion</th><th style="width:50px;">Score</th><th style="width:80px;">Type</th><th>Evidence / Reasoning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer exists</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Тех. директор с бюджетом. 3 146 вакансий КОМПАС-3D. 16 000 клиентов АСКОН. ЗБО (895M₽). <em>[HH.ru, ascon.ru]</em></td></tr>
+                <tr><td>C2</td><td>Compelling reason to buy</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">Инженеры 60% на нецелевых задачах. Но осознание проблемы ниже. &laquo;Спроси Михалыча&raquo;.<div class="vq">VQ: &laquo;Считаете что инженеры теряют время на поиск, или это норма?&raquo;</div></td></tr>
+                <tr><td>C3</td><td>Whole product deliverable</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">On-prem обязателен. Работа с PDF-чертежами, ЕСКД &mdash; тех. валидация не проведена.<div class="vq">VQ: &laquo;AI корректно найдёт информацию в ваших ТУ/СТО/чертежах?&raquo;</div></td></tr>
+                <tr><td>C4</td><td>No entrenched competitor</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text"><strong>НУЛЕВАЯ конкуренция.</strong> &laquo;Среди найденных инструментов нет ни одного отечественного&raquo; [Habr/LANIT, авг. 2025]. АСКОН &mdash; никакого AI. Leo.AI &mdash; &laquo;непригодно&raquo;.</td></tr>
+                <tr><td>C5</td><td>Partners &amp; allies</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">АСКОН: 30 офисов, 500K рабочих мест КОМПАС, Softline Gold Partner. <em>[ascon.ru/partners/]</em></td></tr>
+                <tr><td>C6</td><td>Distribution channel</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">best.ascon.ru/gallery/ &mdash; 63+ компании. Rusprofile ОКВЭД 25-30. HH.ru 3 146. <em>[АСКОН, Rusprofile, HH.ru]</em></td></tr>
+                <tr><td>C7</td><td>Pricing fits budget</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">IT-бюджет 5-15M₽/год. Продукт ~1M₽ = 7-20%. Якорь: ЛОЦМАН PLM 3-8M₽ &rarr; мы в 4-10x дешевле. <em>[НАФИ, ЛОЦМАН pricing]</em></td></tr>
+                <tr><td>C8</td><td>Segment size</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">3 000-5 000 компаний. АСКОН 16 000 корп. клиентов. Рынок инж. ПО 50-55 млрд ₽. <em>[Rusprofile, АСКОН, TAdviser]</em></td></tr>
+                <tr><td>C9</td><td>Reference value</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">Производственный кейс &rarr; другие производства, но слабо на торговлю/IT.<div class="vq">VQ: &laquo;Кейс 'онбординг за 2 мес вместо 6' убеждает техдиректоров?&raquo;</div></td></tr>
+                <tr><td>C10</td><td>Outreach accessibility</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Техдиректора НЕ на LinkedIn, минимально в Telegram. Телефон через приёмную. Медленнее и дороже. <em>[research]</em></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-green"><strong>Блокеры: нет формальных.</strong> C2 и C3 на уровне 3 &mdash; неизвестные, не блокеры.</div>
+        <div class="callout callout-blue">
+            <strong>Приоритеты валидации:</strong> C3 (on-prem + PDF/ЕСКД), C2 (осознание проблемы техдиректорами)
+        </div>
+    </section>
+
+    <!-- ===== SEGMENT D: LAW FIRMS ===== -->
+    <section class="section">
+        <div class="segment-header">
+            <h2 style="color:var(--purple);">D. Крупные юр. фирмы</h2>
+            <span class="priority-badge badge-p2">P2</span>
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-purple">
+                <div class="score-num">39</div>
+                <div class="score-den">/ 50</div>
+            </div>
+            <div class="score-breakdown">
+                <div class="line">
+                    <span style="width:90px;">Evidence [E]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-e" style="width:80%;"></div></div>
+                    <strong>28/35</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">high confidence</span>
+                </div>
+                <div class="line">
+                    <span style="width:90px;">Hypothesis [H]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-h" style="width:73.3%;"></div></div>
+                    <strong>11/15</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">needs validation</span>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th style="width:30px;">#</th><th style="width:180px;">Criterion</th><th style="width:50px;">Score</th><th style="width:80px;">Type</th><th>Evidence / Reasoning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer exists</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Управляющий партнёр. 330+ фирм в диапазоне 100-500M₽. Таргет: ранг 20-50 Право-300 (КИАП, a.t.Legal, ЦПО Групп). <em>[Право-300, RBC]</em></td></tr>
+                <tr><td>C2</td><td>Compelling reason to buy</td><td class="score-cell score-4">4</td><td><span class="type-badge type-h-high">[H-high]</span></td><td class="evidence-text">88% юристов используют AI. 500+ договоров = 1000-2000 чел.-часов. 86% с выгоранием.<div class="vq">VQ: &laquo;Сколько часов/неделю партнёры тратят на вопросы от ассоциатов?&raquo;</div></td></tr>
+                <tr><td>C3</td><td>Whole product deliverable</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">Юридические тексты, прецеденты, К+ &mdash; специфичная область.<div class="vq">VQ: &laquo;AI понимает юр. терминологию и находит прецеденты?&raquo;</div></td></tr>
+                <tr><td>C4</td><td>No entrenched competitor</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">К+ AI &mdash; только база К+. Гарант ИСКРА &mdash; публичная. Doczilla Pro &laquo;недоработанный&raquo;. <strong>Ни один не покрывает полный набор + on-prem.</strong> <em>[research, Habr]</em></td></tr>
+                <tr><td>C5</td><td>Partners &amp; allies</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Нет очевидного партнёра. Право.ru и рейтинги как медиа-каналы.</td></tr>
+                <tr><td>C6</td><td>Distribution channel</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Право-300 &rarr; 50 фирм за 25 мин. Telegram &laquo;Рульфы&raquo; 5K, &laquo;ЗарбитражЫ&raquo; 1.5K. <em>[300.pravo.ru, Telegram]</em></td></tr>
+                <tr><td>C7</td><td>Pricing fits budget</td><td class="score-cell score-5">5</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Топ-20: IT-бюджет 15-250M₽. Продукт ~1M₽ = 0.4-7%. Doczilla 87K₽/мес &rarr; мы сопоставимы, шире. <em>[Право-300, Doczilla pricing]</em></td></tr>
+                <tr><td>C8</td><td>Segment size</td><td class="score-cell score-2">2</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">TAM ~80-130. Конверсия 20% &rarr; 16-26 клиентов &rarr; ARR 14-24M₽. <strong>Малый рынок.</strong> Expansion через корп. юр. отделы (2000-5000). <em>[Право-300, RAEX]</em></td></tr>
+                <tr><td>C9</td><td>Reference value</td><td class="score-cell score-4">4</td><td><span class="type-badge type-h-high">[H-high]</span></td><td class="evidence-text">Юр. кейс &rarr; корп. юр. отделы (10x TAM). &laquo;Если АЛРУД использует &mdash; стоящий инструмент.&raquo;<div class="vq">VQ: &laquo;Юр. фирма-reference убеждает корп. юристов?&raquo;</div></td></tr>
+                <tr><td>C10</td><td>Outreach accessibility</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Управляющие партнёры видимы через Право-300. Email доступен. Telegram активнее чем для торговли/производства. <em>[Право-300, research]</em></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-yellow"><strong>Ограничитель: C8=2 &mdash; малый TAM.</strong> Не убивает (expansion через корп. юр. отделы), но ограничивает как primary.</div>
+        <div class="callout callout-blue">
+            <strong>Приоритеты валидации:</strong> C3 (юридическая специфика), C2 (боль управляющих партнёров)
+        </div>
+    </section>
+
+    <!-- ===== SEGMENT E: MEDICINE ===== -->
+    <section class="section">
+        <div class="segment-header">
+            <h2 style="color:var(--warning);">E. Частная медицина (300M₽+)</h2>
+            <span class="priority-badge badge-p3">P3</span>
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-amber">
+                <div class="score-num">34</div>
+                <div class="score-den">/ 50</div>
+            </div>
+            <div class="score-breakdown">
+                <div class="line">
+                    <span style="width:90px;">Evidence [E]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-e" style="width:60%;"></div></div>
+                    <strong>21/35</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">moderate confidence</span>
+                </div>
+                <div class="line">
+                    <span style="width:90px;">Hypothesis [H]:</span>
+                    <div class="score-bar"><div class="score-bar-fill fill-h" style="width:66.7%;"></div></div>
+                    <strong>10/15</strong>
+                    <span style="font-size:0.8rem;color:var(--gray-600);">needs validation</span>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th style="width:30px;">#</th><th style="width:180px;">Criterion</th><th style="width:50px;">Score</th><th style="width:80px;">Type</th><th>Evidence / Reasoning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>C1</td><td>Target customer exists</td><td class="score-cell score-4">4</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Исполнительный директор / управляющий. Vademecum TOP200, таргет: позиции 30-150 (300M₽-3B₽). Здоровье 365 (#38, +38%), СМТ-Клиника (#135, +20%). <em>[Vademecum, HH.ru]</em></td></tr>
+                <tr><td>C2</td><td>Compelling reason to buy</td><td class="score-cell score-4">4</td><td><span class="type-badge type-h-high">[H-high]</span></td><td class="evidence-text">120 звонков/день, 80% рутинных. 1 222+ вакансий администраторов. V-AI Labs: 72% без человека.<div class="vq">VQ: &laquo;Заменили бы 1-2 администраторов на AI при сохранении качества?&raquo;</div></td></tr>
+                <tr><td>C3</td><td>Whole product deliverable</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">Интеграция с МИС (МЕДИАЛОГ, Инфоклиника) &mdash; неизвестно.<div class="vq">VQ: &laquo;Продукт может интегрироваться с вашей МИС?&raquo;</div></td></tr>
+                <tr><td>C4</td><td>No entrenched competitor</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Chatme.ai УЖЕ с Клиникой Фомина (70% записей через бот), ЕМЦ. TWIN от 950₽/мес. Конкуренция есть. <em>[chatme.ai case studies]</em></td></tr>
+                <tr><td>C5</td><td>Partners &amp; allies</td><td class="score-cell score-2">2</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Нет партнёрского канала. МИС-вендоры потенциальные, но контакт не установлен. <em>[research &mdash; no partners found]</em></td></tr>
+                <tr><td>C6</td><td>Distribution channel</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">Vademecum TOP200 &rarr; список за 15 мин. Но ЛПР не в открытых каналах. Только email + телефон. <em>[research]</em></td></tr>
+                <tr><td>C7</td><td>Pricing fits budget</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">IT-бюджет 3-9M₽. Продукт ~1M₽ = 11-33% &mdash; на грани. Chatme.ai project-based дешевле. TWIN от 35K₽. <em>[Vademecum, competitor pricing]</em></td></tr>
+                <tr><td>C8</td><td>Segment size</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">~150-200 клиник (Vademecum TOP200). Маленький, но больше юристов. <em>[Vademecum]</em></td></tr>
+                <tr><td>C9</td><td>Reference value</td><td class="score-cell score-3">3</td><td><span class="type-badge type-h-mid">[H-mid]</span></td><td class="evidence-text">Мед. кейс слабо переносится (другой ЛПР, другой контекст).<div class="vq">VQ: &laquo;Медицинский кейс помогает продавать в другие отрасли?&raquo;</div></td></tr>
+                <tr><td>C10</td><td>Outreach accessibility</td><td class="score-cell score-3">3</td><td><span class="type-badge type-e">[E]</span></td><td class="evidence-text">ЛПР не в цифровых каналах. Email + телефон. Культура консервативная. <em>[research]</em></td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-yellow"><strong>Ограничитель: C5=2 &mdash; нет партнёров/каналов.</strong> Не hard kill, но серьёзный ограничитель.</div>
+        <div class="callout callout-blue">
+            <strong>Приоритеты валидации:</strong> C3 (интеграция с МИС), C7 (готовность платить 80-110K при альтернативах от 950₽)
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    RAG Product &middot; Segment Scoring (Moore Beachhead) &middot; REDO v2 &middot; 1 марта 2026
+</footer>
+
+</body>
+</html>

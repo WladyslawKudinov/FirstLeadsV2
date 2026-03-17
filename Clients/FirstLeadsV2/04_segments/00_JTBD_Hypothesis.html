@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>00 JTBD Hypothesis | FirstLeads Segments</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --accent: #ed8936;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --purple: #553c9a;
+            --teal: #2c7a7b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        header { background: linear-gradient(135deg, var(--purple) 0%, #6b46c1 100%); color: white; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        header .badge { display: inline-block; margin-top: 16px; padding: 8px 20px; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.9rem; }
+        header .badge.turn { background: var(--accent); font-weight: 600; margin-left: 8px; }
+
+        .signals { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: 12px; padding: 32px; margin-bottom: 24px; color: white; }
+        .signals h2 { font-size: 1.4rem; margin-bottom: 20px; }
+        .sig-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .sig-card { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 16px 20px; }
+        .sig-card h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 10px; }
+        .sig-card ul { list-style: none; padding: 0; }
+        .sig-card li { padding: 4px 0; font-size: 0.95rem; line-height: 1.5; }
+        .sig-card li::before { content: "→ "; opacity: 0.6; }
+
+        .section { background: var(--card-bg); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px; overflow: hidden; }
+        .section-header { padding: 16px 24px; font-size: 1.1rem; font-weight: 600; color: white; }
+        .section-header.jtbd1 { background: linear-gradient(135deg, #2c5282, #3182ce); }
+        .section-header.jtbd2 { background: linear-gradient(135deg, #2c7a7b, #38b2ac); }
+        .section-header.jtbd3 { background: linear-gradient(135deg, #9b2c2c, #e53e3e); }
+        .section-header.jtbd4 { background: linear-gradient(135deg, #744210, #d69e2e); }
+        .section-header.jtbd5 { background: linear-gradient(135deg, #553c9a, #805ad5); }
+        .section-body { padding: 24px; }
+
+        .jtbd-statement { background: #f0f4ff; border-left: 4px solid var(--secondary); padding: 16px 20px; margin: 0 0 16px; border-radius: 0 8px 8px 0; font-style: italic; font-size: 0.95rem; }
+        .moment-row { display: flex; gap: 16px; margin-bottom: 20px; }
+        .moment { flex: 1; background: #f7fafc; border-radius: 8px; padding: 12px 16px; }
+        .moment strong { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 4px; }
+
+        .segment-card { border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+        .segment-card h4 { font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .conf-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .conf-high { background: #c6f6d5; color: #22543d; }
+        .conf-mid { background: #fefcbf; color: #744210; }
+        .field { margin-bottom: 8px; font-size: 0.92rem; }
+        .field-label { font-weight: 600; color: var(--text-muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .summary-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 16px 0; }
+        .summary-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .summary-table tr:hover { background: #f7fafc; }
+
+        .obs-box { background: #fffbeb; border: 1px solid #f6e05e; border-radius: 10px; padding: 20px; margin-top: 8px; }
+        .obs-box h3 { font-size: 1rem; margin-bottom: 12px; color: #744210; }
+        .obs-box ol { padding-left: 20px; }
+        .obs-box li { margin-bottom: 10px; font-size: 0.92rem; line-height: 1.6; }
+
+        hr { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>00 — JTBD Hypothesis</h1>
+    <div class="subtitle">FirstLeads | Initial Segment Hypotheses from Positioning_Raw</div>
+    <span class="badge">Target Segments Agent</span>
+    <span class="badge turn">Turn 1</span>
+</header>
+
+<div class="container">
+
+<!-- Signals -->
+<div class="signals">
+    <h2>Сигналы из Positioning_Raw</h2>
+    <div class="sig-grid">
+        <div class="sig-card">
+            <h4>Продуктовые сигналы</h4>
+            <ul>
+                <li>Аутсорс-сервис: гипотеза CPO → оффер → аутрич → лиды ИЛИ rejection analysis</li>
+                <li>Цикл ~1 месяц, ~30 мин/нед от CPO</li>
+                <li>Deliverable: данные для go/no-go, не поток лидов</li>
+                <li>Персона: CPO (или CEO-как-CPO) в B2B tech</li>
+            </ul>
+        </div>
+        <div class="sig-card">
+            <h4>Ценностные сигналы</h4>
+            <ul>
+                <li>Якорь: структурированный анализ отказов (ни один конкурент)</li>
+                <li>Оба исхода ценны: лиды = рост, rejection = экономия 6+ мес</li>
+                <li>Buying signals vs мнения (отличие от кастдева)</li>
+                <li>Скрытое: страховка карьеры, легитимизация интуиции</li>
+            </ul>
+        </div>
+        <div class="sig-card">
+            <h4>Конкурентные сигналы</h4>
+            <ul>
+                <li>Категория «validation through sales» пуста [E]</li>
+                <li>Strogo, Polza фреймят как лидген, не валидацию [E]</li>
+                <li>Кастдев-агентства дают мнения, не buying signals [E]</li>
+                <li>Moat слабый технически, сильный позиционно [E]</li>
+            </ul>
+        </div>
+        <div class="sig-card">
+            <h4>Триггеры (Enough Moment)</h4>
+            <ul>
+                <li>CEO спросил «что дальше?» — рост замедлился [E]</li>
+                <li>3+ клиентов спросили одно и то же [E]</li>
+                <li>Конкурент запустил что-то новое [E]</li>
+                <li>Инвестор давит на traction [E]</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- JTBD 1 -->
+<div class="section">
+    <div class="section-header jtbd1">JTBD 1: «Когда рост замедлился — проверить следующую ставку»</div>
+    <div class="section-body">
+        <div class="jtbd-statement">
+            When [рост основного продукта замедляется и руководство спрашивает «что дальше?»],<br>
+            I want to [быстро проверить новое продуктовое направление с реальными покупателями],<br>
+            so I can [принять решение go/no-go на данных, а не инвестировать 6+ месяцев вслепую].
+        </div>
+        <div class="moment-row">
+            <div class="moment"><strong>Hiring moment</strong>CPO понимает, что roadmap не обеспечит рост. Идея есть (в Notion, в голове), но нет данных и нет процесса проверки.</div>
+            <div class="moment"><strong>Firing moment</strong>CPO получил go/no-go данные → прекращает искать способ проверки.</div>
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 1.1: B2B SaaS с замедлившимся ростом <span class="conf-badge conf-high">[H-high]</span></h4>
+            <div class="field"><span class="field-label">JTBD</span><br>Проверить, есть ли спрос на новое направление, прежде чем выделять ресурсы</div>
+            <div class="field"><span class="field-label">Market</span><br>B2B SaaS / платформенные tech-компании в России</div>
+            <div class="field"><span class="field-label">Company Profile</span><br>20-150 сотрудников, 50-500M руб/год, один основной продукт (>80% выручки), рост замедлился до &lt;20% YoY</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>CPO видит замедление, имеет идею, не может обосновать перед бордом. Нет BDM-отдела. Нанять — 3-6 мес. Проверить самому — нет навыка и времени.</div>
+            <div class="field"><span class="field-label">Signal from Positioning_Raw</span><br>Прямое описание primary segment + Transformation Map (State A → State B)</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Сколько таких компаний? Observable ли замедление извне?</div>
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 1.2: AI/ML компании, продуктизирующие кастомную разработку <span class="conf-badge conf-high">[H-high]</span></h4>
+            <div class="field"><span class="field-label">JTBD</span><br>Найти рыночную нишу для продукта на базе повторяющихся проектных паттернов</div>
+            <div class="field"><span class="field-label">Market</span><br>AI/ML-компании, data science-бюро, ML-студии</div>
+            <div class="field"><span class="field-label">Company Profile</span><br>15-80 сотрудников, 30-300M руб/год, доход от кастомных AI/ML проектов, технический фаундер</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>Маржинальность проектной работы падает, видят паттерн в 5-10 проектах, хотят продуктизировать, но не знают кому продавать. Фаундер — технарь, стесняется cold outreach.</div>
+            <div class="field"><span class="field-label">Signal from Positioning_Raw</span><br>Описан как secondary segment + триггер #4</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Сколько AI/ML дошли до «хотим продукт»? CPO или CTO/CEO? Бюджет?</div>
+        </div>
+    </div>
+</div>
+
+<!-- JTBD 2 -->
+<div class="section">
+    <div class="section-header jtbd2">JTBD 2: «Когда клиенты сигналят — проверить, это рынок или шум»</div>
+    <div class="section-body">
+        <div class="jtbd-statement">
+            When [3+ клиентов спрашивают одно и то же, чего нет в продукте],<br>
+            I want to [проверить, существует ли спрос за пределами текущей базы],<br>
+            so I can [решить — строить новый продукт или игнорировать как нишевый запрос].
+        </div>
+        <div class="moment-row">
+            <div class="moment"><strong>Hiring moment</strong>CPO замечает паттерн. Обсуждает с CTO — «давай не сейчас». CEO спрашивает: «данные есть?» Данных нет.</div>
+            <div class="moment"><strong>Firing moment</strong>Получает рыночные данные — спрос подтверждён или опровергнут.</div>
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 2.1: B2B SaaS с установленной базой и повторяющимися запросами <span class="conf-badge conf-high">[H-high]</span></h4>
+            <div class="field"><span class="field-label">Company Profile</span><br>30-150 сотрудников, 80-500M руб/год, B2B продукт с 50+ клиентов, продуктовая команда 3-10 чел</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>Повторяющиеся запросы на то, чего нет. Непонятно — edge case или рыночный сигнал. Проверка через текущих клиентов = confirmation bias.</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Как найти такие компании извне? «Повторяющиеся запросы» — не observable. Нужен proxy.</div>
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 2.2: IT-сервисные компании с паттернами в проектах <span class="conf-badge conf-mid">[H-mid]</span></h4>
+            <div class="field"><span class="field-label">Company Profile</span><br>30-150 сотрудников, 50-500M руб/год, несколько крупных заказчиков, команда разработки 10-50 чел</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>Каждый третий проект — один модуль. Понимают, что можно продуктизировать, но нет ресурса и нет продуктовой экспертизы.</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Покупают ли IT-интеграторы внешние сервисы валидации? Кто decision-maker?</div>
+        </div>
+    </div>
+</div>
+
+<!-- JTBD 3 -->
+<div class="section">
+    <div class="section-header jtbd3">JTBD 3: «Когда конкурент двинулся — понять, надо ли реагировать»</div>
+    <div class="section-body">
+        <div class="jtbd-statement">
+            When [конкурент запускает продукт в смежной нише],<br>
+            I want to [быстро проверить, есть ли там реальный рынок],<br>
+            so I can [решить — следовать, контратаковать или игнорировать на данных, а не на панике].
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 3.1: B2B SaaS в конкурентных вертикалях <span class="conf-badge conf-mid">[H-mid]</span></h4>
+            <div class="field"><span class="field-label">Company Profile</span><br>30-150 сотрудников, 100-500M руб/год, вертикаль с 5+ конкурентами (fintech, HR-tech, martech, legaltech)</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>Конкурент запустил смежный продукт. Паника. CEO хочет ответ. У CPO — только интуиция. Бездействие рискованно.</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Можно ли найти проактивно? Или это реактивный триггер? Observable proxy?</div>
+        </div>
+    </div>
+</div>
+
+<!-- JTBD 4 -->
+<div class="section">
+    <div class="section-header jtbd4">JTBD 4: «Когда есть технология, но нет рынка — найти, кому продавать»</div>
+    <div class="section-body">
+        <div class="jtbd-statement">
+            When [мы построили capability, но не знаем, какую вертикаль таргетировать],<br>
+            I want to [протестировать несколько сегментов реальными офферами],<br>
+            so I can [сфокусировать разработку на самом отзывчивом рынке].
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 4.1: AI/ML с горизонтальной технологией <span class="conf-badge conf-mid">[H-mid]</span></h4>
+            <div class="field"><span class="field-label">Company Profile</span><br>10-60 сотрудников, pre-revenue или &lt;100M руб/год, работающая AI-модель/платформа, технический фаундер</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>Технология горизонтальная — подходит многим, непонятно кому. 3-5 пилотов без системы. Инвестор хочет фокус.</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Есть ли бюджет? Сколько таких в РФ? Готовы ли отдать «первый контакт» на аутсорс?</div>
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 4.2: IT-аутсорсинг/интеграторы → собственный продукт <span class="conf-badge conf-mid">[H-mid]</span></h4>
+            <div class="field"><span class="field-label">Company Profile</span><br>30-200 сотрудников, 100-500M руб/год, проектная разработка, есть «внутренний продукт» на стадии MVP</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>Маржинальность падает. Из 10 проектов 4 — одна задача. Есть MVP/прототип. Нет продуктового опыта.</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Привычна ли модель «аутсорс валидации»? Предпочитают «нанять продуктолога»?</div>
+        </div>
+    </div>
+</div>
+
+<!-- JTBD 5 -->
+<div class="section">
+    <div class="section-header jtbd5">JTBD 5: «Когда инвестор требует traction — показать данные»</div>
+    <div class="section-body">
+        <div class="jtbd-statement">
+            When [инвестор/борд требует доказательств рыночного спроса],<br>
+            I want to [быстро получить данные реального тестирования],<br>
+            so I can [продемонстрировать прогресс и обосновать следующие шаги].
+        </div>
+
+        <div class="segment-card">
+            <h4>Hypothesis 5.1: VC-backed B2B tech (Series A-B) <span class="conf-badge conf-mid">[H-mid]</span></h4>
+            <div class="field"><span class="field-label">Company Profile</span><br>20-100 сотрудников, раунд A или B (50-300M руб), инвестор давит на traction, PMF не доказан</div>
+            <div class="field"><span class="field-label">Problem Context</span><br>Деньги есть, burn rate тикает. Инвестор спрашивает про traction. Нужны числа, не «мы думаем».</div>
+            <div class="field"><span class="field-label">Key Unknown</span><br>Размер после 2022? Decision-maker — CPO или CEO? Готовы тратить на «валидацию» vs «ещё разработчика»?</div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Table -->
+<div class="section">
+    <div class="section-header" style="background: var(--primary);">Summary</div>
+    <div class="section-body">
+        <table class="summary-table">
+            <thead>
+                <tr><th>#</th><th>JTBD</th><th>Segment</th><th>Confidence</th><th>Key Unknown</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1.1</td><td>Рост замедлился</td><td>B2B SaaS, 20-150 чел</td><td><span class="conf-badge conf-high">[H-high]</span></td><td>Сколько компаний? Observable?</td></tr>
+                <tr><td>1.2</td><td>Рост замедлился</td><td>AI/ML продуктизация, 15-80 чел</td><td><span class="conf-badge conf-high">[H-high]</span></td><td>Бюджет? Decision-maker?</td></tr>
+                <tr><td>2.1</td><td>Клиенты сигналят</td><td>B2B SaaS, повторяющиеся запросы, 30-150 чел</td><td><span class="conf-badge conf-high">[H-high]</span></td><td>Как найти извне? Proxy?</td></tr>
+                <tr><td>2.2</td><td>Клиенты сигналят</td><td>IT-сервис/интеграторы, 30-150 чел</td><td><span class="conf-badge conf-mid">[H-mid]</span></td><td>Покупают ли внешние сервисы?</td></tr>
+                <tr><td>3.1</td><td>Конкурент двинулся</td><td>B2B SaaS конкурентные вертикали, 30-150 чел</td><td><span class="conf-badge conf-mid">[H-mid]</span></td><td>Проактивно ли? Ситуативный триггер</td></tr>
+                <tr><td>4.1</td><td>Есть технология</td><td>AI/ML горизонтальная, 10-60 чел</td><td><span class="conf-badge conf-mid">[H-mid]</span></td><td>Бюджет? Размер в РФ?</td></tr>
+                <tr><td>4.2</td><td>Есть технология</td><td>IT-аутсорсинг → продукт, 30-200 чел</td><td><span class="conf-badge conf-mid">[H-mid]</span></td><td>Модель «аутсорс валидации» привычна?</td></tr>
+                <tr><td>5.1</td><td>Инвестор давит</td><td>VC-backed B2B tech, 20-100 чел</td><td><span class="conf-badge conf-mid">[H-mid]</span></td><td>Размер после 2022?</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;"><strong>Итого:</strong> 5 JTBDs → 8 segment hypotheses. 3 × [H-high] (из материалов), 5 × [H-mid] (логичные расширения).</p>
+    </div>
+</div>
+
+<!-- Observations -->
+<div class="obs-box">
+    <h3>Наблюдения и открытые вопросы</h3>
+    <ol>
+        <li><strong>Пересечение 1.1, 2.1, 3.1</strong> — одни и те же компании (B2B SaaS, 30-150 чел) с разными триггерами. Возможно слияние в «B2B SaaS в точке стратегического выбора».</li>
+        <li><strong>Observability problem</strong> — триггеры внутренние. Нужны proxy: вакансии CPO, изменения в продукте, активность на vc.ru.</li>
+        <li><strong>Decision-maker drift</strong> — в 4.1, 4.2, 5.1 ЛПР скорее CEO, не CPO. Positioning_Raw построен вокруг CPO. Нужна адаптация?</li>
+        <li><strong>Budget reality</strong> — 4.1 (pre-revenue AI) и 5.1 (VC-backed + burn rate) могут не иметь 150-350K руб.</li>
+        <li><strong>Отсутствующий сегмент?</strong> — Corporate innovation подразделения исключены сознательно: FL не делает тендеры.</li>
+    </ol>
+</div>
+
+</div>
+</body>
+</html>

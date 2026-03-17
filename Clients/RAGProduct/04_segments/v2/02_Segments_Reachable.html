@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Достижимость сегментов — RAG Product (v2)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --purple: #7c3aed;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        header .version {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .section h3 {
+            color: var(--gray-700);
+            font-size: 1.1rem;
+            margin: 20px 0 12px 0;
+        }
+        .section p { margin-bottom: 12px; }
+
+        .segment-card {
+            border-left: 5px solid var(--primary);
+            position: relative;
+        }
+        .segment-card.p1 { border-left-color: var(--primary); }
+        .segment-card.p2 { border-left-color: var(--purple); }
+        .segment-card.p3 { border-left-color: var(--warning); }
+
+        .segment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .segment-header h2 { border-bottom: none; padding-bottom: 0; margin-bottom: 0; flex: 1; }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-p1 { background: var(--primary); color: white; }
+        .badge-p2 { background: var(--purple); color: white; }
+        .badge-p3 { background: #fef3c7; color: var(--warning); }
+
+        .verdict-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .verdict-yes { background: #d1fae5; color: var(--success); }
+        .verdict-partial { background: #fef3c7; color: var(--warning); }
+
+        .jtbd-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 0.95rem;
+        }
+        .jtbd-box strong { color: var(--primary); }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .info-item {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .info-item .label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .info-item .value { font-weight: 500; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+        }
+        tr:hover { background: var(--gray-50); }
+
+        .channel-table td:first-child { font-weight: 600; white-space: nowrap; min-width: 140px; }
+
+        .list-steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .list-steps li {
+            counter-increment: step;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .list-steps li:last-child { border-bottom: none; }
+        .list-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 9px;
+        }
+
+        .companies-table .pain { color: var(--danger); font-size: 0.85rem; }
+
+        .callout {
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        .callout-yellow { background: #fffbeb; border: 1px solid #fde68a; }
+        .callout-yellow strong { color: var(--warning); }
+        .callout-red { background: #fef2f2; border: 1px solid #fecaca; }
+        .callout-red strong { color: var(--danger); }
+        .callout-green { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .callout-green strong { color: var(--success); }
+
+        .lpr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .lpr-item {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .lpr-item .label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .divider {
+            height: 2px;
+            background: var(--gray-200);
+            margin: 24px 0;
+            border: none;
+        }
+
+        /* Summary */
+        .summary-section {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 2px solid var(--primary);
+        }
+        .summary-section h2 { color: var(--primary); border-bottom-color: var(--primary); }
+        .summary-table td:nth-child(4) { font-weight: 600; }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .section { padding: 20px; }
+            .info-grid, .lpr-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.8rem; }
+            th, td { padding: 8px 10px; }
+            .segment-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Достижимость сегментов</h1>
+    <div class="subtitle">Может ли FL найти 50 компаний и контакты ЛПР за 30 минут?</div>
+    <div class="version">RAG Product &middot; REDO v2 &middot; 1 марта 2026</div>
+</header>
+
+<div class="container">
+
+    <!-- Summary -->
+    <section class="section summary-section">
+        <h2>Сводка по достижимости</h2>
+        <p>Все 5 сегментов прошли тест на достижимость. FL может построить список из 50 компаний и найти контакты ЛПР через cold-каналы для каждого сегмента.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Сегмент</th>
+                    <th>Приоритет</th>
+                    <th>TAM</th>
+                    <th>50 компаний за 30 мин?</th>
+                    <th>Основной FL-канал</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>IT-компании</td>
+                    <td><span class="priority-badge badge-p1">P1</span></td>
+                    <td>300–400</td>
+                    <td><span class="verdict-box verdict-yes">YES, 15–20 мин</span></td>
+                    <td>Email + Telegram DM</td>
+                </tr>
+                <tr>
+                    <td>Оптовая торговля</td>
+                    <td><span class="priority-badge badge-p1">P1</span></td>
+                    <td>2 000–5 000</td>
+                    <td><span class="verdict-box verdict-yes">YES, 15–25 мин</span></td>
+                    <td>Email + Телефон + CRM-интеграторы</td>
+                </tr>
+                <tr>
+                    <td>Производство</td>
+                    <td><span class="priority-badge badge-p2">P2</span></td>
+                    <td>3 000–5 000</td>
+                    <td><span class="verdict-box verdict-yes">YES, 20–30 мин</span></td>
+                    <td>Телефон + АСКОН-партнёры</td>
+                </tr>
+                <tr>
+                    <td>Юр. фирмы</td>
+                    <td><span class="priority-badge badge-p2">P2</span></td>
+                    <td>80–130</td>
+                    <td><span class="verdict-box verdict-yes">YES, 25 мин</span></td>
+                    <td>Email + Telegram DM</td>
+                </tr>
+                <tr>
+                    <td>Частная медицина</td>
+                    <td><span class="priority-badge badge-p3">P3</span></td>
+                    <td>150–200</td>
+                    <td><span class="verdict-box verdict-yes">YES, 15–30 мин</span></td>
+                    <td>Email + Телефон</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ============ SEGMENT A: IT ============ -->
+    <section class="section segment-card p1">
+        <div class="segment-header">
+            <h2>A. IT-компании / Производители ПО</h2>
+            <span class="priority-badge badge-p1">Приоритет 1</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> Документация устаревает, онбординг долгий, support перегружен, ChatGPT заблокирован в РФ &rarr; нужен AI-ассистент для внутренних знаний с on-prem.
+        </div>
+
+        <h3>Профиль компании</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Отрасль</div>
+                <div class="value">Разработка ПО, SaaS, IT-аутсорс<br><small style="color:var(--gray-600)">ОКВЭД 62.01, 62.02, 63.11.1</small></div>
+            </div>
+            <div class="info-item">
+                <div class="label">Размер</div>
+                <div class="value">20–150 сотрудников<br>Выручка 50–300M₽</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Техно-стек</div>
+                <div class="value">Собственный продукт, внутренняя документация, support-команда</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Адресуемый рынок</div>
+                <div class="value">~94 SaaS (HighTime) + 200–300 по ОКВЭД = <strong>300–400 компаний</strong></div>
+            </div>
+        </div>
+
+        <h3>ЛПР (лицо, принимающее решение)</h3>
+        <div class="lpr-grid">
+            <div class="lpr-item">
+                <div class="label">Должность</div>
+                <div class="value">CTO / VP Engineering / Техдиректор (50+ чел.)<br>CEO (&lt;50 чел.)</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">KPI</div>
+                <div class="value">Скорость разработки, time-to-market, удержание команды</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Где активен</div>
+                <div class="value"><strong>Telegram</strong> (primary): @ctodaily, @techdir, @ctoonlive</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Email-паттерны</div>
+                <div class="value">firstname@company.ru<br>firstname.lastname@company.ru</div>
+            </div>
+        </div>
+
+        <h3>FL Outreach Channels</h3>
+        <table class="channel-table">
+            <thead>
+                <tr><th>Канал</th><th>Что FL делает</th><th>Результат</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Email (cold)</td>
+                    <td>firmoteka.ru &rarr; email CTO через сайт/whois/hunter.io. Hook: &laquo;Растёте на 30-50% &mdash; как справляетесь с онбордингом?&raquo;</td>
+                    <td>5–10% open-to-reply</td>
+                </tr>
+                <tr>
+                    <td>Telegram DM</td>
+                    <td>CTO в @ctodaily, @techdir &mdash; личное сообщение с hook по компании</td>
+                    <td>3–8% reply rate</td>
+                </tr>
+                <tr>
+                    <td>HH.ru сигнал</td>
+                    <td>&laquo;technical writer&raquo; / &laquo;knowledge manager&raquo; &rarr; компания нанимает = боль</td>
+                    <td>Персонализация</td>
+                </tr>
+                <tr>
+                    <td>Телефон</td>
+                    <td>Ресепшн &rarr; CTO. IT-компании плоские, CTO доступен</td>
+                    <td>Назначение демо</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Как построить список 50 компаний за 30 мин</h3>
+        <ol class="list-steps">
+            <li><strong>firmoteka.ru/top-saas-hightime</strong> &rarr; фильтр выручка 50–300M₽, сотрудники 20–150 &rarr; ~25–30 компаний <em>(10 мин)</em></li>
+            <li><strong>Rusprofile</strong> ОКВЭД 62.01 + выручка 50–300M₽ + сотрудники 20–150 &rarr; ~20+ <em>(10 мин)</em></li>
+            <li><strong>HH.ru</strong> &laquo;technical writer&raquo; + &laquo;knowledge manager&raquo; &rarr; кросс-проверка <em>(10 мин)</em></li>
+        </ol>
+        <div class="verdict-box verdict-yes" style="margin-top:12px;">YES &mdash; 50 компаний за 15–20 минут</div>
+
+        <h3>Топ-5 компаний</h3>
+        <table class="companies-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Город</th><th>Выручка</th><th>Сотр.</th><th>Pain signal</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Cleverence</strong></td><td>Москва</td><td>296M₽</td><td>93</td><td class="pain">Сложная документация по мобильным платформам</td></tr>
+                <tr><td>2</td><td><strong>Aspro</strong></td><td>Челябинск</td><td>276M₽</td><td>79</td><td class="pain">+50% рост, растущая команда</td></tr>
+                <tr><td>3</td><td><strong>Smartnut</strong></td><td>Екатеринбург</td><td>255M₽</td><td>47</td><td class="pain">Борьба с обновлением документации</td></tr>
+                <tr><td>4</td><td><strong>Textback</strong></td><td>Москва</td><td>252M₽</td><td>37</td><td class="pain">Быстрый рост, знания не масштабируются</td></tr>
+                <tr><td>5</td><td><strong>Sipuni</strong></td><td>Москва</td><td>243M₽</td><td>99</td><td class="pain">+30% рост, support без базы знаний</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ============ SEGMENT B: WHOLESALE ============ -->
+    <section class="section segment-card p1">
+        <div class="segment-header">
+            <h2>B. Оптовая торговля / Дистрибьюторы</h2>
+            <span class="priority-badge badge-p1">Приоритет 1</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> Менеджеры по продажам тратят 70% времени на рутину (КП, переписка, претензии). AI автоматизирует &rarr; больше времени на продажи.
+        </div>
+
+        <h3>Профиль компании</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Отрасль</div>
+                <div class="value">Оптовая торговля, дистрибуция<br><small style="color:var(--gray-600)">ОКВЭД 46.x</small></div>
+            </div>
+            <div class="info-item">
+                <div class="label">Размер</div>
+                <div class="value">30–200 сотрудников<br>Выручка 100–500M₽</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Техно-стек</div>
+                <div class="value">CRM (Битрикс24 / AmoCRM / 1С), отдел продаж 5+ менеджеров</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Адресуемый рынок</div>
+                <div class="value"><strong>2 000–5 000</strong> по РФ, 500–1 500 в Москве/СПб</div>
+            </div>
+        </div>
+
+        <h3>ЛПР</h3>
+        <div class="lpr-grid">
+            <div class="lpr-item">
+                <div class="label">Должность</div>
+                <div class="value">Коммерческий директор / РОП (50+ чел.)<br>Собственник/CEO (&lt;50 чел.)</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">KPI</div>
+                <div class="value">Выручка, конверсия, средний чек, продуктивность менеджеров</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Где активен</div>
+                <div class="value"><strong>Telegram</strong>: @optlist_chat (35K), @dirclub (17K). VK</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Email-паттерны</div>
+                <div class="value">ivan@company.ru, sales@company.ru</div>
+            </div>
+        </div>
+
+        <h3>FL Outreach Channels</h3>
+        <table class="channel-table">
+            <thead>
+                <tr><th>Канал</th><th>Что FL делает</th><th>Результат</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Email (cold)</td>
+                    <td>Rusprofile &rarr; email. Hook: &laquo;Набираете 4 менеджера на HH &mdash; AI может закрыть рутину вместо найма&raquo;</td>
+                    <td>5–8% reply rate</td>
+                </tr>
+                <tr>
+                    <td>Telegram DM</td>
+                    <td>Комм. директоры в @optlist_chat, @dirclub &mdash; личное сообщение</td>
+                    <td>3–5% reply rate</td>
+                </tr>
+                <tr>
+                    <td>Телефон (cold)</td>
+                    <td>Основной номер &rarr; комм. директор / РОП. Торговые привыкли к cold calls</td>
+                    <td>Назначение демо</td>
+                </tr>
+                <tr>
+                    <td>HH.ru сигнал</td>
+                    <td>&laquo;Менеджер по оптовым продажам&raquo; &rarr; 972+ вакансий = рост = рутина давит</td>
+                    <td>Персонализация</td>
+                </tr>
+                <tr>
+                    <td>CRM-интеграторы</td>
+                    <td>CRM Academy (300+ клиентов), Intervolga, Ингруппа &rarr; рекомендации клиентам</td>
+                    <td>Warm referral</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Как построить список 50 компаний за 30 мин</h3>
+        <ol class="list-steps">
+            <li><strong>Rusprofile Pro</strong> ОКВЭД 46.x + выручка 100–500M₽ + сотрудники 30–200 &rarr; экспорт 50 <em>(10 мин)</em></li>
+            <li><strong>ExportBase</strong> (export-base.ru) &mdash; готовая база 2 459 дистрибьюторов &rarr; фильтр <em>(5 мин)</em></li>
+            <li><strong>HH.ru</strong> &laquo;менеджер по оптовым продажам&raquo; &rarr; компании-наниматели <em>(10 мин)</em></li>
+        </ol>
+        <div class="verdict-box verdict-yes" style="margin-top:12px;">YES &mdash; 50 компаний за 15–25 минут</div>
+
+        <h3>Топ-5 компаний (новые)</h3>
+        <table class="companies-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Город</th><th>Сегмент</th><th>Pain signal</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>ГК &laquo;КСК&raquo;</strong></td><td>СПб</td><td>Стройматериалы</td><td class="pain">Нанимает менеджеров для cold sales + КП</td></tr>
+                <tr><td>2</td><td><strong>ГК KOLOBOX</strong></td><td>Н. Новгород</td><td>Шины/диски, топ-10</td><td class="pain">110+ точек, IT-инвестиции</td></tr>
+                <tr><td>3</td><td><strong>&laquo;ГРАТ-ВЕСТ&raquo;</strong></td><td>Москва</td><td>FMCG (игрушки)</td><td class="pain">Нанимает региональных менеджеров</td></tr>
+                <tr><td>4</td><td><strong>&laquo;ВЕКТОР&raquo; (Total Tools)</strong></td><td>Москва</td><td>Инструмент</td><td class="pain">Развитие представительства</td></tr>
+                <tr><td>5</td><td><strong>&laquo;СМАРТ-ПРОЕКТ&raquo;</strong></td><td>Москва</td><td>Стройматериалы</td><td class="pain">Расширение</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size:0.9rem;color:var(--gray-600);margin-top:8px;">+ 12 компаний из v1: Русич, РБМ-СТРОЙ, МедБаза, НВ-Лаб и др. (фильтровать по профилю 100-500M₽)</p>
+    </section>
+
+    <!-- ============ SEGMENT C: MANUFACTURING ============ -->
+    <section class="section segment-card p2">
+        <div class="segment-header">
+            <h2>C. Производство с офисным блоком</h2>
+            <span class="priority-badge badge-p2">Приоритет 2</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> Инженеры 60% на нецелевых задачах. Техдокументация разбросана. Уход эксперта = потеря знаний. AI-поиск по документации + сохранение знаний.
+        </div>
+
+        <h3>Профиль компании</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Отрасль</div>
+                <div class="value">Обрабатывающее производство<br><small style="color:var(--gray-600)">ОКВЭД 25–30</small></div>
+            </div>
+            <div class="info-item">
+                <div class="label">Размер</div>
+                <div class="value">50–300 сотрудников<br>Выручка 200–1 000M₽</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Техно-стек</div>
+                <div class="value">КОМПАС-3D, НЕТ PLM/PDM, файловые серверы</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Адресуемый рынок</div>
+                <div class="value"><strong>3 000–5 000</strong> компаний по РФ</div>
+            </div>
+        </div>
+
+        <h3>ЛПР</h3>
+        <div class="lpr-grid">
+            <div class="lpr-item">
+                <div class="label">Должность</div>
+                <div class="value">Технический директор / Главный инженер (рекомендатель)<br>Генеральный директор (бюджет)</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">KPI</div>
+                <div class="value">Сроки производства, качество, себестоимость, онбординг инженеров</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Где активен</div>
+                <div class="value"><strong>Нигде цифрово.</strong> LinkedIn мёртв. Telegram минимально. Основной канал: <strong>телефон</strong></div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Email-паттерны</div>
+                <div class="value">info@company.ru (через приёмную)</div>
+            </div>
+        </div>
+
+        <h3>FL Outreach Channels</h3>
+        <table class="channel-table">
+            <thead>
+                <tr><th>Канал</th><th>Что FL делает</th><th>Результат</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="color:var(--primary);font-weight:700;">Телефон (PRIMARY)</td>
+                    <td>Приёмная завода (2GIS/сайт) &rarr; технический директор. Производственная культура &mdash; телефонная</td>
+                    <td>Назначение демо</td>
+                </tr>
+                <tr>
+                    <td>Email (cold)</td>
+                    <td>info@ &rarr; письмо техдиректору. &laquo;Используете КОМПАС &mdash; у нас AI-поиск по техдокументации, аналогов в РФ нет&raquo;</td>
+                    <td>3–5% reply rate</td>
+                </tr>
+                <tr>
+                    <td style="color:var(--success);font-weight:700;">АСКОН-партнёры</td>
+                    <td>30 региональных офисов АСКОН &mdash; они знают КАЖДОГО клиента КОМПАС. Горячая линия: 8-800-700-00-78</td>
+                    <td>Warm referral (лучший канал)</td>
+                </tr>
+                <tr>
+                    <td>HH.ru сигнал</td>
+                    <td>&laquo;Инженер-конструктор КОМПАС-3D&raquo; &rarr; 3 146 вакансий = документация растёт</td>
+                    <td>Персонализация</td>
+                </tr>
+                <tr>
+                    <td>Форумы АСКОН</td>
+                    <td>forum.ascon.ru, cccp3d.ru &mdash; мониторим обсуждения</td>
+                    <td>Lead intelligence</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Как построить список 50 компаний за 30 мин</h3>
+        <ol class="list-steps">
+            <li><strong>best.ascon.ru/gallery/</strong> &mdash; 63+ компании-участники конкурса АСов &rarr; 20–30 компаний <em>(10 мин)</em></li>
+            <li><strong>Rusprofile</strong> ОКВЭД 25–30 + выручка 200–1 000M₽ + сотрудники 50–300 &rarr; 20+ <em>(10 мин)</em></li>
+            <li><strong>HH.ru</strong> &laquo;инженер-конструктор КОМПАС-3D&raquo; &rarr; компании-наниматели <em>(10 мин)</em></li>
+        </ol>
+        <div class="verdict-box verdict-yes" style="margin-top:12px;">YES &mdash; 50 компаний за 20–30 минут</div>
+
+        <h3>Топ-5 компаний (новые)</h3>
+        <table class="companies-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Город</th><th>Сектор</th><th>Pain signal</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Челябинский компрессорный завод</strong></td><td>Челябинск</td><td>Компрессоры</td><td class="pain">1-е место конкурс АСКОН, КОМПАС без PLM</td></tr>
+                <tr><td>2</td><td><strong>Завод Двигатель</strong></td><td>СПб</td><td>Двигатели</td><td class="pain">Кейс АСКОН &mdash; КОМПАС + ВЕРТИКАЛЬ</td></tr>
+                <tr><td>3</td><td><strong>Финист</strong></td><td>Екатеринбург</td><td>Пищевое оборудование</td><td class="pain">Нанимает конструктора КОМПАС-3D</td></tr>
+                <tr><td>4</td><td><strong>НПП Квант</strong></td><td>Ростов-на-Дону</td><td>Приборостроение</td><td class="pain">КОМПАС-3D, ЕСКД compliance</td></tr>
+                <tr><td>5</td><td><strong>ГЯМ АГАТ</strong></td><td>Ярославская обл.</td><td>Машиностроение</td><td class="pain">АСКОН проект, малый город = мало IT</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size:0.9rem;color:var(--gray-600);margin-top:8px;">+ 12 компаний из v1: ЗБО, Пожарные системы, КРМЗ, ИНФОТРАНС и др.</p>
+    </section>
+
+    <!-- ============ SEGMENT D: LAW FIRMS ============ -->
+    <section class="section segment-card p2">
+        <div class="segment-header">
+            <h2>D. Крупные юридические фирмы</h2>
+            <span class="priority-badge badge-p2">Приоритет 2</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> 88% юристов используют AI. Экспертный боттлнек. On-prem (адвокатская тайна). Ни один конкурент не покрывает полный набор.
+        </div>
+
+        <h3>Профиль компании</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Отрасль</div>
+                <div class="value">Юридические фирмы, бух. аутсорс<br><small style="color:var(--gray-600)">ОКВЭД 69.1</small></div>
+            </div>
+            <div class="info-item">
+                <div class="label">Размер</div>
+                <div class="value">30-150 юристов<br>Выручка 200-800M₽. Не топ-5 &mdash; слишком длинный цикл</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Адресуемый рынок</div>
+                <div class="value">~60–100 юр. фирм + ~20–30 бух. аутсорсеров = <strong>80–130 компаний</strong></div>
+            </div>
+            <div class="info-item">
+                <div class="label">Expansion</div>
+                <div class="value">&rarr; Корп. юр. отделы = <strong>2 000–5 000 компаний</strong></div>
+            </div>
+        </div>
+
+        <h3>ЛПР</h3>
+        <div class="lpr-grid">
+            <div class="lpr-item">
+                <div class="label">Должность</div>
+                <div class="value">Управляющий партнёр / Генеральный директор / Старший партнёр</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">KPI</div>
+                <div class="value">Utilization rate, revenue per partner, качество работы</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Где активен</div>
+                <div class="value"><strong>Telegram:</strong> &laquo;Рульфы&raquo; (5K), &laquo;ЗарбитражЫ&raquo; (1.5K). Право.ru</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Email</div>
+                <div class="value">С сайта фирмы (публичные)</div>
+            </div>
+        </div>
+
+        <h3>FL Outreach Channels</h3>
+        <table class="channel-table">
+            <thead>
+                <tr><th>Канал</th><th>Что FL делает</th><th>Результат</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Email (cold)</td>
+                    <td>Право-300 &rarr; email партнёра. &laquo;88% юристов уже используют AI, но ни один инструмент не работает с вашими внутренними документами + on-prem&raquo;</td>
+                    <td>5–10% reply rate</td>
+                </tr>
+                <tr>
+                    <td>Telegram DM</td>
+                    <td>&laquo;Рульфы, Ильфы и Инхаусы&raquo; (5K), &laquo;ЗарбитражЫ&raquo; (1.5K)</td>
+                    <td>3–5% reply rate</td>
+                </tr>
+                <tr>
+                    <td>Телефон</td>
+                    <td>Юр. фирмы привыкли к деловым звонкам &rarr; управляющий партнёр</td>
+                    <td>Назначение демо</td>
+                </tr>
+                <tr>
+                    <td>Право.ru</td>
+                    <td>Мониторим рейтинг Право-300, упоминаем позицию в outreach</td>
+                    <td>Персонализация</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Как построить список 50 компаний за 30 мин</h3>
+        <ol class="list-steps">
+            <li><strong>300.pravo.ru</strong> &rarr; топ-50 по выручке &rarr; 30+ подходящих <em>(10 мин)</em></li>
+            <li><strong>RAEX рейтинг</strong> бух. аутсорса &rarr; топ-20 &rarr; 10+ подходящих <em>(5 мин)</em></li>
+            <li><strong>Rusprofile</strong> ОКВЭД 69.1 + выручка 200M₽+ &rarr; 10+ дополнительных <em>(10 мин)</em></li>
+        </ol>
+        <div class="verdict-box verdict-yes" style="margin-top:12px;">YES &mdash; 50 компаний за 25 минут</div>
+        <div class="callout callout-yellow" style="margin-top:8px;">
+            <strong>Ограничение:</strong> TAM ~130 компаний. Список из 50 &mdash; это ~38% всего рынка. Каждый контакт ценен, персонализация максимальная.
+        </div>
+
+        <h3>Топ-5 компаний</h3>
+        <table class="companies-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Город</th><th>Факты</th><th>Тип</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>КИАП</strong></td><td>Москва</td><td>Top-10 по ширине практик, LegalTech-активны</td><td>Юр.</td></tr>
+                <tr><td>2</td><td><strong>a.t.Legal</strong></td><td>Москва</td><td>Группа 1 в арбитраже, банкротстве, недвижимости</td><td>Юр.</td></tr>
+                <tr><td>3</td><td><strong>ЦПО Групп</strong></td><td>Москва</td><td>13 номинаций 2025</td><td>Юр.</td></tr>
+                <tr><td>4</td><td><strong>Хренов и Партнёры</strong></td><td>Москва</td><td>30-й по юристам, 48-й по выручке</td><td>Юр.</td></tr>
+                <tr><td>5</td><td><strong>Рустам Курмаев</strong></td><td>Москва</td><td>Крупная литигация, основан 2017</td><td>Юр.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ============ SEGMENT E: MEDICINE ============ -->
+    <section class="section segment-card p3">
+        <div class="segment-header">
+            <h2>E. Частная медицина (клиники 300M₽+)</h2>
+            <span class="priority-badge badge-p3">Приоритет 3</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> 120 звонков/день, 80% рутинных. Администраторы перегружены. On-prem = преимущество (ФЗ-152).
+        </div>
+
+        <h3>Профиль компании</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Отрасль</div>
+                <div class="value">Частная медицина: многопрофильные клиники, сети<br><small style="color:var(--gray-600)">ОКВЭД 86.x</small></div>
+            </div>
+            <div class="info-item">
+                <div class="label">Размер</div>
+                <div class="value">50–300+ сотрудников<br>Выручка 300M₽+</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Адресуемый рынок</div>
+                <div class="value">~150–200 клиник (Vademecum TOP200)</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Порог входа</div>
+                <div class="value">Выручка 307M₽ (Vademecum TOP200)</div>
+            </div>
+        </div>
+
+        <h3>ЛПР</h3>
+        <div class="lpr-grid">
+            <div class="lpr-item">
+                <div class="label">Должность</div>
+                <div class="value">Исполнительный директор / Управляющий клиникой (primary)<br>Директор/Собственник (sign-off)</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">KPI</div>
+                <div class="value">Загрузка клиники, NPS, текучка персонала, выручка на врача</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Где активен</div>
+                <div class="value">Крайне ограниченно. Закрытые группы Telegram. Школа Медицинского Бизнеса</div>
+            </div>
+            <div class="lpr-item">
+                <div class="label">Email</div>
+                <div class="value">С сайта клиники (info@, администрация)</div>
+            </div>
+        </div>
+
+        <h3>FL Outreach Channels</h3>
+        <table class="channel-table">
+            <thead>
+                <tr><th>Канал</th><th>Что FL делает</th><th>Результат</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Email (cold)</td>
+                    <td>Vademecum TOP200 &rarr; email с сайта клиники. &laquo;У вас 429 вакансий на HH &mdash; AI закроет 80% рутинных звонков&raquo;</td>
+                    <td>3–5% reply rate</td>
+                </tr>
+                <tr>
+                    <td>Телефон</td>
+                    <td>Клиника &rarr; управляющий/исполнительный директор</td>
+                    <td>Назначение демо</td>
+                </tr>
+                <tr>
+                    <td>HH.ru сигнал</td>
+                    <td>&laquo;Администратор клиники&raquo; &rarr; 1 222+ вакансий в Москве. Массовый найм = боль</td>
+                    <td>Персонализация</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Как построить список 50 компаний за 30 мин</h3>
+        <ol class="list-steps">
+            <li><strong>Vademecum TOP200</strong> (PDF, платный) &rarr; 200 клиник с выручкой 307M₽+ <em>(5 мин)</em></li>
+            <li><strong>HH.ru</strong> &laquo;администратор клиники&raquo; &rarr; компании-наниматели <em>(15 мин)</em></li>
+            <li><strong>Rusprofile</strong> ОКВЭД 86.x + выручка 300M₽+ <em>(10 мин)</em></li>
+        </ol>
+        <div class="verdict-box verdict-yes" style="margin-top:12px;">YES &mdash; 50 клиник за 15–30 минут с Vademecum PDF</div>
+
+        <div class="callout callout-red" style="margin-top:16px;">
+            <strong>Самый сложный сегмент для FL:</strong>
+            <ul style="margin-top:8px;padding-left:20px;">
+                <li>ЛПР не на LinkedIn, не в открытых Telegram-каналах</li>
+                <li>Конкуренты (Chatme.ai) уже имеют кейсы с клиниками из Vademecum TOP200</li>
+                <li>Культура консервативная, доверие строится долго</li>
+                <li><strong>Рекомендация:</strong> тестировать ПОСЛЕ получения кейсов из других сегментов</li>
+            </ul>
+        </div>
+
+        <h3>Топ-5 компаний</h3>
+        <table class="companies-table">
+            <thead>
+                <tr><th>#</th><th>Клиника</th><th>Город</th><th>Выручка / Rank</th><th>Pain signal</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Здоровье 365</strong></td><td>Екатеринбург</td><td>#38 Vademecum</td><td class="pain">+38% рост, активный найм</td></tr>
+                <tr><td>2</td><td><strong>СМТ-Клиника</strong></td><td>Екатеринбург</td><td>#135 Vademecum</td><td class="pain">+20% рост</td></tr>
+                <tr><td>3</td><td><strong>Парацельс</strong></td><td>Екатеринбург</td><td>#140 Vademecum</td><td class="pain">+18% рост</td></tr>
+                <tr><td>4</td><td><strong>Клиника Пасман</strong></td><td>Новосибирск</td><td>Новичок TOP200</td><td class="pain">Строит процессы с нуля</td></tr>
+                <tr><td>5</td><td><strong>Авеню</strong></td><td>Ростов-на-Дону</td><td>Франшиза</td><td class="pain">Стандартизация при расширении</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+</div>
+
+<footer>
+    RAG Product &middot; Segment Reachability Analysis &middot; REDO v2 &middot; 1 марта 2026
+</footer>
+
+</body>
+</html>

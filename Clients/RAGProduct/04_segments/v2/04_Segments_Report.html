@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кому продавать AI-ассистента (v2) — RAG Product</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --purple: #7c3aed;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+        header {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        header .version {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .section h3 {
+            color: var(--gray-700);
+            font-size: 1.1rem;
+            margin: 20px 0 12px 0;
+        }
+        .section h4 {
+            color: var(--gray-700);
+            font-size: 1rem;
+            margin: 16px 0 8px 0;
+        }
+        .section p { margin-bottom: 12px; }
+
+        /* Executive Summary */
+        .exec-summary {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid var(--success);
+        }
+        .exec-summary h2 { color: var(--success); border-bottom-color: var(--success); }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+        }
+        .summary-card .number { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .summary-card .label { font-size: 0.85rem; color: var(--gray-600); }
+
+        /* Sequence */
+        .sequence-box {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .sequence-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .sequence-step:last-child { border-bottom: none; }
+        .step-badge {
+            flex-shrink: 0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .step-1 { background: var(--primary); color: white; }
+        .step-2 { background: var(--purple); color: white; }
+        .step-3 { background: var(--warning); color: white; }
+        .step-frozen { background: var(--gray-300); color: var(--gray-700); }
+        .step-content { flex: 1; }
+        .step-title { font-weight: 600; }
+        .step-desc { font-size: 0.9rem; color: var(--gray-600); }
+        .step-score { font-weight: 700; color: var(--primary); font-size: 0.9rem; white-space: nowrap; }
+
+        /* Segment cards */
+        .segment-section { border-left: 5px solid var(--primary); }
+        .segment-section.p2 { border-left-color: var(--purple); }
+        .segment-section.p3 { border-left-color: var(--warning); }
+
+        .segment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .segment-header h2 { flex: 1; border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-p1 { background: var(--primary); color: white; }
+        .badge-p2 { background: var(--purple); color: white; }
+        .badge-p3 { background: #fef3c7; color: var(--warning); }
+
+        .jtbd-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin: 14px 0;
+            font-size: 0.95rem;
+        }
+        .jtbd-box strong { color: var(--primary); }
+
+        /* Score ring */
+        .score-ring {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .ring {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: white; font-weight: 700; flex-shrink: 0;
+        }
+        .ring .score-num { font-size: 1.6rem; line-height: 1; }
+        .ring .score-den { font-size: 0.7rem; opacity: 0.85; }
+        .ring-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .ring-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+        .ring-amber { background: linear-gradient(135deg, #d97706, #b45309); }
+        .score-meta { font-size: 0.85rem; color: var(--gray-600); }
+        .score-meta strong { color: var(--gray-800); }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 14px 0;
+        }
+        .info-item {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .info-item .label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .info-item .value { font-weight: 500; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.82rem;
+        }
+        tr:hover { background: var(--gray-50); }
+
+        .callout {
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        .callout-green { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .callout-green strong { color: var(--success); }
+        .callout-blue { background: #eff6ff; border: 1px solid #bfdbfe; }
+        .callout-blue strong { color: var(--primary); }
+        .callout-yellow { background: #fffbeb; border: 1px solid #fde68a; }
+        .callout-yellow strong { color: var(--warning); }
+        .callout-red { background: #fef2f2; border: 1px solid #fecaca; }
+        .callout-red strong { color: var(--danger); }
+        .callout-purple { background: #f5f3ff; border: 1px solid #c4b5fd; }
+        .callout-purple strong { color: var(--purple); }
+
+        /* Killed sections */
+        .killed-section {
+            border-left: 5px solid var(--danger);
+        }
+        .killed-section h2 { color: var(--danger); border-bottom-color: var(--danger); }
+
+        .killed-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            border-left: 4px solid var(--danger);
+        }
+        .killed-card h4 { color: var(--danger); margin-bottom: 8px; }
+
+        .frozen-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            border-left: 4px solid var(--gray-600);
+        }
+        .frozen-card h4 { color: var(--gray-600); margin-bottom: 8px; }
+
+        /* Downstream data */
+        .downstream-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 14px 0;
+        }
+        .downstream-card {
+            border-radius: 8px;
+            padding: 18px;
+        }
+        .downstream-card h4 { margin-bottom: 10px; font-size: 0.95rem; }
+        .downstream-card ul { padding-left: 18px; font-size: 0.9rem; }
+        .downstream-card li { margin-bottom: 6px; }
+        .card-offers { background: #f5f3ff; border: 1px solid #c4b5fd; }
+        .card-offers h4 { color: var(--purple); }
+        .card-gtm { background: #eff6ff; border: 1px solid #bfdbfe; }
+        .card-gtm h4 { color: var(--primary); }
+
+        /* Validation */
+        .validation-table td:first-child { font-weight: 500; }
+        .validation-table td:nth-child(3) { font-style: italic; color: var(--gray-600); }
+
+        /* FL Plan */
+        .fl-plan {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid var(--success);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .fl-plan strong { color: var(--success); }
+        .fl-plan-nums {
+            display: flex;
+            gap: 20px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .fl-num {
+            text-align: center;
+        }
+        .fl-num .big { font-size: 1.5rem; font-weight: 700; color: var(--success); }
+        .fl-num .small { font-size: 0.8rem; color: var(--gray-600); }
+
+        /* Macro signal */
+        .macro-section {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid var(--warning);
+        }
+        .macro-section h2 { color: var(--warning); border-bottom-color: var(--warning); }
+
+        /* Recommendations */
+        .reco-section {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            border: 2px solid var(--purple);
+        }
+        .reco-section h2 { color: var(--purple); border-bottom-color: var(--purple); }
+        .reco-list { list-style: none; padding: 0; counter-reset: reco; }
+        .reco-list li {
+            counter-increment: reco;
+            padding: 12px 0 12px 40px;
+            position: relative;
+            border-bottom: 1px solid rgba(124,58,237,0.2);
+        }
+        .reco-list li:last-child { border-bottom: none; }
+        .reco-list li::before {
+            content: counter(reco);
+            position: absolute; left: 0; top: 12px;
+            width: 26px; height: 26px;
+            background: var(--purple); color: white;
+            border-radius: 50%; font-size: 0.75rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* All hypotheses table */
+        .fate-table .status-live { color: var(--success); font-weight: 600; }
+        .fate-table .status-killed { color: var(--danger); font-weight: 600; }
+        .fate-table .status-frozen { color: var(--gray-600); font-weight: 600; }
+
+        /* Appendix scoring */
+        .matrix-table th { font-size: 0.72rem; padding: 8px 5px; text-align: center; }
+        .matrix-table td { text-align: center; padding: 8px 5px; font-size: 0.88rem; }
+        .matrix-table td:first-child { text-align: left; font-weight: 600; font-size: 0.88rem; }
+        .heat-5 { background: #d1fae5; }
+        .heat-4 { background: #dbeafe; }
+        .heat-3 { background: #fef3c7; }
+        .heat-2 { background: #fee2e2; }
+        .total-cell { font-weight: 700; font-size: 1rem; }
+
+        /* Channel table */
+        .channel-table td:first-child { font-weight: 600; white-space: nowrap; min-width: 120px; }
+
+        /* List steps */
+        .list-steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .list-steps li {
+            counter-increment: step;
+            padding: 8px 0 8px 36px;
+            position: relative;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .list-steps li:last-child { border-bottom: none; }
+        .list-steps li::before {
+            content: counter(step);
+            position: absolute; left: 0; top: 9px;
+            width: 24px; height: 24px;
+            background: var(--primary); color: white;
+            border-radius: 50%; font-size: 0.75rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .pain { color: var(--danger); font-size: 0.85rem; }
+
+        /* Reasons to buy */
+        .reasons-list {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+            counter-reset: reason;
+        }
+        .reasons-list li {
+            counter-increment: reason;
+            position: relative;
+            padding: 18px 18px 18px 56px;
+            margin-bottom: 12px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-left: 4px solid var(--danger);
+            border-radius: 8px;
+            transition: box-shadow 0.2s;
+        }
+        .reasons-list li:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.06); }
+        .reasons-list li::before {
+            content: counter(reason);
+            position: absolute; left: 16px; top: 18px;
+            width: 28px; height: 28px;
+            background: var(--danger); color: white;
+            border-radius: 50%; font-size: 0.8rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .reason-headline {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+        }
+        .reason-evidence {
+            font-size: 0.88rem;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+        .reason-outcome {
+            font-size: 0.88rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .section { padding: 20px; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+            .info-grid, .downstream-grid { grid-template-columns: 1fr; }
+            .segment-header { flex-direction: column; align-items: flex-start; }
+            table { font-size: 0.82rem; }
+            th, td { padding: 8px 8px; }
+            .score-ring { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Кому продавать AI-ассистента</h1>
+    <div class="subtitle">Сегментация рынка и план первых кампейнов</div>
+    <div class="version">REDO v2 &middot; 1 марта 2026</div>
+</header>
+
+<div class="container">
+
+    <!-- ==================== EXECUTIVE SUMMARY ==================== -->
+    <section class="section exec-summary">
+        <h2>Коротко: что сделали и что поняли</h2>
+
+        <p>Исследовали <strong>9 гипотез</strong> о том, кому можно продавать AI-ассистента. Провели два раунда исследования, оценили каждый сегмент по 10 критериям, нашли конкретные компании и каналы выхода. Вот итог:</p>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="number">5</div>
+                <div class="label">живых сегментов</div>
+            </div>
+            <div class="summary-card">
+                <div class="number">2</div>
+                <div class="label">убито (с доказательствами)</div>
+            </div>
+            <div class="summary-card">
+                <div class="number">2</div>
+                <div class="label">заморожено / отложено</div>
+            </div>
+            <div class="summary-card">
+                <div class="number">~30</div>
+                <div class="label">конкретных компаний найдено</div>
+            </div>
+        </div>
+
+        <h3>Рекомендуемая последовательность</h3>
+        <div class="sequence-box">
+            <div class="sequence-step">
+                <span class="step-badge step-1">Приоритет 1</span>
+                <div class="step-content">
+                    <div class="step-title">IT-компании + Оптовая торговля (параллельно)</div>
+                    <div class="step-desc">Два кампейна одновременно. IT &mdash; самый быстрый цикл (2-6 нед), лучшая reference-ценность. Торговля &mdash; крупнейший рынок (2 000-5 000 компаний), CRM-интеграторы как тёплый канал.</div>
+                </div>
+                <div class="step-score">42 + 41</div>
+            </div>
+            <div class="sequence-step">
+                <span class="step-badge step-2">Приоритет 2</span>
+                <div class="step-content">
+                    <div class="step-title">Производство + Юр. фирмы</div>
+                    <div class="step-desc">Производство: нулевая конкуренция + АСКОН как канал. Юр. фирмы: малый рынок, но высокая боль и переход на корп. юр. отделы (10x TAM).</div>
+                </div>
+                <div class="step-score">40 + 39</div>
+            </div>
+            <div class="sequence-step">
+                <span class="step-badge step-3">Приоритет 3</span>
+                <div class="step-content">
+                    <div class="step-title">Частная медицина</div>
+                    <div class="step-desc">Только после получения кейсов из других сегментов. Консервативный рынок, конкуренты уже на месте.</div>
+                </div>
+                <div class="step-score">34</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEGMENT RANKING ==================== -->
+    <section class="section">
+        <h2>Рейтинг сегментов</h2>
+        <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Сегмент</th>
+                    <th>Приоритет</th>
+                    <th>Score</th>
+                    <th>Что подтверждено</th>
+                    <th>Что нужно проверить</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>IT-компании</strong></td>
+                    <td><span class="priority-badge badge-p1">P1</span></td>
+                    <td style="font-weight:700;">42/50</td>
+                    <td>94 SaaS-компании, CTO в Telegram, ChatGPT заблокирован в РФ</td>
+                    <td>Реальная боль vs &laquo;справляемся сами&raquo;, достаточность функционала</td>
+                </tr>
+                <tr>
+                    <td><strong>Оптовая торговля</strong></td>
+                    <td><span class="priority-badge badge-p1">P1</span></td>
+                    <td style="font-weight:700;">41/50</td>
+                    <td>2 000-5 000 TAM, CRM-gap подтверждён, 5+ CRM-интеграторов</td>
+                    <td>Тех. валидация КП из прайса, конверсия при цене 80-110K₽</td>
+                </tr>
+                <tr>
+                    <td><strong>Производство</strong></td>
+                    <td><span class="priority-badge badge-p2">P2</span></td>
+                    <td style="font-weight:700;">40/50</td>
+                    <td>Нулевая конкуренция, АСКОН 30 офисов, 3 000-5 000 компаний</td>
+                    <td>Осознание проблемы техдиректорами, on-prem + PDF/ЕСКД</td>
+                </tr>
+                <tr>
+                    <td><strong>Юр. фирмы</strong></td>
+                    <td><span class="priority-badge badge-p2">P2</span></td>
+                    <td style="font-weight:700;">39/50</td>
+                    <td>88% юристов в AI, on-prem (тайна), конкуренты не покрывают</td>
+                    <td>Юридическая специфика, реакция партнёров</td>
+                </tr>
+                <tr>
+                    <td><strong>Частная медицина</strong></td>
+                    <td><span class="priority-badge badge-p3">P3</span></td>
+                    <td style="font-weight:700;">34/50</td>
+                    <td>120 звонков/день, 80% рутина, ФСТЭК не нужен</td>
+                    <td>Интеграция с МИС, готовность платить при альтернативах от 950₽</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </section>
+
+    <!-- ==================== PRIORITY 1: IT ==================== -->
+    <section class="section segment-section">
+        <div class="segment-header">
+            <h2>IT-компании / Производители ПО</h2>
+            <span class="priority-badge badge-p1">Приоритет 1</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> Документация устаревает, онбординг долгий, support перегружен, ChatGPT заблокирован &rarr; нужен AI-ассистент для внутренних знаний.
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-blue"><div class="score-num">42</div><div class="score-den">/ 50</div></div>
+            <div class="score-meta">
+                <div><strong>Evidence: 30/35</strong> &mdash; высокая уверенность</div>
+                <div><strong>Hypothesis: 12/15</strong> &mdash; нужна валидация</div>
+                <div style="margin-top:4px;">Блокеры: <strong style="color:var(--success);">нет</strong></div>
+            </div>
+        </div>
+
+        <h3>Профиль</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Отрасль</div>
+                <div class="value">SaaS, IT-аутсорс (ОКВЭД 62.01)</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Размер</div>
+                <div class="value">20-150 чел., выручка 50-300M₽</div>
+            </div>
+            <div class="info-item">
+                <div class="label">TAM</div>
+                <div class="value">300-400 компаний</div>
+            </div>
+            <div class="info-item">
+                <div class="label">ЛПР</div>
+                <div class="value">CTO / VP Engineering</div>
+            </div>
+        </div>
+
+        <h3>Как FL достаёт этих людей</h3>
+        <table class="channel-table">
+            <thead><tr><th>Канал</th><th>Что делаем</th><th>Результат</th></tr></thead>
+            <tbody>
+                <tr><td>Email</td><td>firmoteka.ru &rarr; email CTO. Hook: &laquo;Растёте на 30-50% &mdash; как справляетесь с онбордингом?&raquo;</td><td>5-10% reply</td></tr>
+                <tr><td>Telegram DM</td><td>CTO в @ctodaily, @techdir &mdash; личное сообщение</td><td>3-8% reply</td></tr>
+                <tr><td>HH.ru</td><td>&laquo;technical writer&raquo; &rarr; компания = наш таргет</td><td>Персонализация</td></tr>
+                <tr><td>Телефон</td><td>Ресепшн &rarr; CTO (плоская структура)</td><td>Демо</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Топ-5 компаний</h3>
+        <table>
+            <thead><tr><th>#</th><th>Компания</th><th>Город</th><th>Выручка</th><th>Pain signal</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Cleverence</strong></td><td>Москва</td><td>296M₽</td><td class="pain">Сложная документация по мобильным платформам</td></tr>
+                <tr><td>2</td><td><strong>Aspro</strong></td><td>Челябинск</td><td>276M₽</td><td class="pain">+50% рост, растущая команда</td></tr>
+                <tr><td>3</td><td><strong>Smartnut</strong></td><td>Екатеринбург</td><td>255M₽</td><td class="pain">Борьба с обновлением документации</td></tr>
+                <tr><td>4</td><td><strong>Textback</strong></td><td>Москва</td><td>252M₽</td><td class="pain">Быстрый рост, знания не масштабируются</td></tr>
+                <tr><td>5</td><td><strong>Sipuni</strong></td><td>Москва</td><td>243M₽</td><td class="pain">+30% рост, support без базы знаний</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Почему покупают</h3>
+        <ol class="reasons-list">
+            <li>
+                <div class="reason-headline">Каждый новый разработчик первые 2 месяца работает вполсилы, потому что не может найти нужную документацию</div>
+                <div class="reason-evidence">При зарплате 200-300K₽/мес вы теряете 200-300K₽ на каждом новом найме. Новые сотрудники тратят до 30% времени на поиск информации [MTS Web Services]. 43% компаний не имеют структурированного онбординга.</div>
+                <div class="reason-outcome">AI-ассистент делает нового сотрудника продуктивным с первого дня &mdash; он находит любую документацию за секунды.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Когда уходит senior &mdash; вместе с ним уходят знания о вашем продукте. Восстановление стоит 2 недели всей команды</div>
+                <div class="reason-evidence">Уход senior-разработчика = двухнедельный knowledge audit [MTS Web Services]. Знания раскиданы по чатам, PR, записям встреч &mdash; собрать их после увольнения почти невозможно.</div>
+                <div class="reason-outcome">AI непрерывно индексирует документы, переписки, записи встреч. Уход человека не обнуляет команду.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Support эскалирует тикеты разработчикам, потому что не может найти ответ в Confluence. Каждая эскалация = 30 мин разработчика</div>
+                <div class="reason-evidence">Инженеры тратят до 20% времени на поддержку документации [MTS Web Services]. При 10 эскалациях/день = 5 часов разработчиков ≈ 5 000₽/день ≈ 100K₽/мес.</div>
+                <div class="reason-outcome">AI ищет по всем источникам разом &mdash; включая записи митингов и почту. Support находит ответ сам.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Ваши разработчики пользуются ChatGPT через VPN. Вы не контролируете какой код и данные утекают наружу</div>
+                <div class="reason-evidence">ChatGPT функционально заблокирован в РФ (IP-блоки, оплата). Команды обходят через VPN на общем аккаунте. Внутренний код, переписки, данные клиентов &mdash; всё летит в OpenAI.</div>
+                <div class="reason-outcome">On-prem AI-ассистент: данные не покидают контур компании. Легальная замена ChatGPT для всей команды.</div>
+            </li>
+        </ol>
+
+        <h3>Данные для последующих этапов</h3>
+        <div class="downstream-grid">
+            <div class="downstream-card card-offers">
+                <h4>Для построения оффера</h4>
+                <ul>
+                    <li><strong>ЛПР:</strong> CTO / VP Engineering</li>
+                    <li><strong>Идеал:</strong> &laquo;Новый разработчик продуктивен через 2 недели, не 2 месяца&raquo;</li>
+                    <li><strong>Боль:</strong> причины выше (7/10)</li>
+                    <li><strong>Альтернатива:</strong> Confluence (бесплатно), кастом (200K-1M₽)</li>
+                    <li><strong>Возражения:</strong> &laquo;Мы можем сделать сами&raquo;, &laquo;У нас Notion и так&raquo;</li>
+                    <li><strong>Proof:</strong> ТеДо купил AutoFAQ, Doctolib утроил team</li>
+                </ul>
+            </div>
+            <div class="downstream-card card-gtm">
+                <h4>Для GTM</h4>
+                <ul>
+                    <li><strong>Каналы:</strong> Email + Telegram DM + HH.ru + телефон</li>
+                    <li><strong>Списки:</strong> firmoteka.ru (94 SaaS), Rusprofile ОКВЭД 62.01</li>
+                    <li><strong>Timing:</strong> без сезонности, цикл 2-6 недель</li>
+                    <li><strong>Конкуренты:</strong> Minervasoft (50-150K₽), AutoFAQ (support)</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>План валидации (FL)</h3>
+        <table class="validation-table">
+            <thead><tr><th>Гипотеза</th><th>Вопрос</th><th>Как тестируем</th><th>&laquo;Да&raquo;</th><th>&laquo;Нет&raquo;</th></tr></thead>
+            <tbody>
+                <tr><td>Боль реальная</td><td>Сколько часов на поиск информации?</td><td>Cold email + discovery</td><td>Усиливаем messaging</td><td>Меняем hook</td></tr>
+                <tr><td>Продукт достаточен</td><td>Достаточно функционала?</td><td>Демо + feedback</td><td>К пилоту</td><td>Список доработок</td></tr>
+                <tr><td>Reference value</td><td>IT-кейс убеждает не-IT?</td><td>После 1-го закрытия</td><td>Кросс-сегментный кейс</td><td>Separate messaging</td></tr>
+            </tbody>
+        </table>
+
+        <div class="fl-plan">
+            <strong>FL-план на 2 недели:</strong>
+            <div class="fl-plan-nums">
+                <div class="fl-num"><div class="big">50</div><div class="small">email</div></div>
+                <div class="fl-num"><div class="big">20</div><div class="small">Telegram DM</div></div>
+                <div class="fl-num"><div class="big">10</div><div class="small">звонков</div></div>
+                <div class="fl-num"><div class="big">&rarr;</div><div class="small">&nbsp;</div></div>
+                <div class="fl-num"><div class="big">5-8</div><div class="small">ответов</div></div>
+                <div class="fl-num"><div class="big">3-5</div><div class="small">discovery calls</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRIORITY 1: WHOLESALE ==================== -->
+    <section class="section segment-section">
+        <div class="segment-header">
+            <h2>Оптовая торговля / Дистрибьюторы</h2>
+            <span class="priority-badge badge-p1">Приоритет 1 (параллельно)</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> Менеджеры 70% на рутине (КП, переписка, претензии). AI автоматизирует &rarr; больше времени на продажи.
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-blue"><div class="score-num">41</div><div class="score-den">/ 50</div></div>
+            <div class="score-meta">
+                <div><strong>Evidence: 31/35</strong> &mdash; высшая уверенность по evidence</div>
+                <div><strong>Hypothesis: 10/15</strong> &mdash; нужна валидация</div>
+                <div style="margin-top:4px;">Блокеры: <strong style="color:var(--success);">нет</strong></div>
+            </div>
+        </div>
+
+        <h3>Профиль</h3>
+        <div class="info-grid">
+            <div class="info-item"><div class="label">Отрасль</div><div class="value">Оптовая торговля (ОКВЭД 46.x)</div></div>
+            <div class="info-item"><div class="label">Размер</div><div class="value">30-200 чел., выручка 100-500M₽</div></div>
+            <div class="info-item"><div class="label">TAM</div><div class="value">2 000-5 000 (крупнейший)</div></div>
+            <div class="info-item"><div class="label">ЛПР</div><div class="value">Коммерческий директор / РОП</div></div>
+        </div>
+
+        <h3>Как FL достаёт этих людей</h3>
+        <table class="channel-table">
+            <thead><tr><th>Канал</th><th>Что делаем</th><th>Результат</th></tr></thead>
+            <tbody>
+                <tr><td>Email</td><td>Rusprofile &rarr; email. Hook: &laquo;4 менеджера на HH &mdash; AI закроет рутину&raquo;</td><td>5-8% reply</td></tr>
+                <tr><td>Telegram DM</td><td>@optlist_chat (35K), @dirclub (17K)</td><td>3-5% reply</td></tr>
+                <tr><td>Телефон</td><td>Основной номер &rarr; комм. директор. Привыкли к cold calls</td><td>Демо</td></tr>
+                <tr><td>CRM-интеграторы</td><td>CRM Academy, Intervolga, Ингруппа &rarr; рекомендации</td><td>Warm referral</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Топ-5 компаний</h3>
+        <table>
+            <thead><tr><th>#</th><th>Компания</th><th>Город</th><th>Сегмент</th><th>Pain signal</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td><strong>ГК &laquo;КСК&raquo;</strong></td><td>СПб</td><td>Стройматериалы</td><td class="pain">Нанимает для cold sales + КП</td></tr>
+                <tr><td>2</td><td><strong>ГК KOLOBOX</strong></td><td>Н. Новгород</td><td>Шины, топ-10</td><td class="pain">110+ точек, IT-инвестиции</td></tr>
+                <tr><td>3</td><td><strong>&laquo;ГРАТ-ВЕСТ&raquo;</strong></td><td>Москва</td><td>FMCG</td><td class="pain">Региональные менеджеры</td></tr>
+                <tr><td>4</td><td><strong>&laquo;ВЕКТОР&raquo;</strong></td><td>Москва</td><td>Инструмент</td><td class="pain">Развитие</td></tr>
+                <tr><td>5</td><td><strong>&laquo;СМАРТ-ПРОЕКТ&raquo;</strong></td><td>Москва</td><td>Стройматериалы</td><td class="pain">Расширение</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size:0.85rem;color:var(--gray-600);">+ 12 компаний из предыдущего исследования (Русич, РБМ-СТРОЙ, МедБаза и др. &mdash; фильтровать по профилю 100-500M₽)</p>
+
+        <h3>Почему покупают</h3>
+        <ol class="reasons-list">
+            <li>
+                <div class="reason-headline">Ваши менеджеры собирают КП по 40 минут из прайса на 5 000 строк. За это время клиент получает КП от конкурента</div>
+                <div class="reason-evidence">При 15 КП/день = 10 часов ежедневно на сборку. Это 2 менеджера, которые могли бы продавать. Ни BitrixGPT, ни amoAI не умеют генерировать КП из прайс-листов &mdash; это подтверждённый рыночный gap.</div>
+                <div class="reason-outcome">AI генерирует КП из вашего прайс-листа за 30 секунд. С актуальными ценами, скидками и условиями.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Новый менеджер 2-3 месяца не может самостоятельно ответить клиенту &mdash; не знает условия, скидки, историю</div>
+                <div class="reason-evidence">Вы платите полную зарплату за человека, который работает на 30%. При текучке 20% и зарплате 80K₽ вы теряете ~500K₽/год только на онбординг. Менеджеры тратят 70% на рутину, только 28-34% на продажи [исследование 43 отделов продаж].</div>
+                <div class="reason-outcome">AI мгновенно отвечает на любой вопрос по клиенту, договору, условиям. Новый менеджер продуктивен с первой недели.</div>
+            </li>
+            <li>
+                <div class="reason-headline">В каждом 4-м КП ваших менеджеров &mdash; ошибка в ценах или условиях. Каждая ошибка = потерянная маржа или потерянный клиент</div>
+                <div class="reason-evidence">РОП тратит полдня на проверку КП. Старые цены, неверная логистика, забытая скидка по договору &mdash; репутационные и финансовые потери. Стоимость проблемы ~400K₽/мес на 10 менеджеров.</div>
+                <div class="reason-outcome">AI всегда работает с актуальными данными. Ноль ошибок по ценам и условиям. РОП проверяет стратегию, не цифры.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Ответ на претензию клиента занимает 2 часа, потому что данные в 3 разных системах (CRM + почта + 1С)</div>
+                <div class="reason-evidence">Менеджер ищет условия договора, историю переписки и акты в трёх системах. Каждая претензия = 2 часа ≈ 800₽ стоимости работы. При 5 претензиях/неделю = 40 часов/мес.</div>
+                <div class="reason-outcome">AI находит всё за минуту и готовит черновик ответа. 2 часа &rarr; 10 минут.</div>
+            </li>
+        </ol>
+
+        <h3>Данные для последующих этапов</h3>
+        <div class="downstream-grid">
+            <div class="downstream-card card-offers">
+                <h4>Для построения оффера</h4>
+                <ul>
+                    <li><strong>ЛПР:</strong> Коммерческий директор / РОП</li>
+                    <li><strong>Идеал:</strong> &laquo;Менеджеры 70% на продажах. КП за 30 секунд&raquo;</li>
+                    <li><strong>Боль:</strong> причины выше (8/10)</li>
+                    <li><strong>Альтернатива:</strong> CRM + Excel/Word, найм (500-700K₽/мес)</li>
+                    <li><strong>Возражения:</strong> &laquo;У нас Битрикс&raquo;, &laquo;Фрилансер настроил n8n&raquo;</li>
+                    <li><strong>Proof:</strong> 43 отдела продаж &mdash; 70% рутина. SalesAI/imot.io &mdash; рынок есть</li>
+                </ul>
+            </div>
+            <div class="downstream-card card-gtm">
+                <h4>Для GTM</h4>
+                <ul>
+                    <li><strong>Каналы:</strong> Email + Telegram + Телефон + CRM-интеграторы</li>
+                    <li><strong>Списки:</strong> Rusprofile ОКВЭД 46.x, ExportBase (2 459)</li>
+                    <li><strong>Timing:</strong> без сезонности, можно немедленно</li>
+                    <li><strong>Фишка:</strong> CRM-интеграторы &mdash; тёплый канал, параллельно с cold</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>План валидации</h3>
+        <table class="validation-table">
+            <thead><tr><th>Гипотеза</th><th>Вопрос</th><th>Как тестируем</th><th>&laquo;Да&raquo;</th><th>&laquo;Нет&raquo;</th></tr></thead>
+            <tbody>
+                <tr><td>КП из прайса</td><td>AI генерирует КП за 30 сек?</td><td>Демо на реальном прайсе</td><td>Ключевой proof point</td><td>Сигнал: доработать</td></tr>
+                <tr><td>Боль рутины</td><td>Менеджеры &gt;50% на рутине?</td><td>Cold email + discovery</td><td>Messaging &laquo;замена найма&raquo;</td><td>Другой hook</td></tr>
+            </tbody>
+        </table>
+
+        <div class="fl-plan">
+            <strong>FL-план на 2 недели:</strong>
+            <div class="fl-plan-nums">
+                <div class="fl-num"><div class="big">50</div><div class="small">email</div></div>
+                <div class="fl-num"><div class="big">15</div><div class="small">Telegram DM</div></div>
+                <div class="fl-num"><div class="big">15</div><div class="small">звонков</div></div>
+                <div class="fl-num"><div class="big">3</div><div class="small">CRM-интегратора</div></div>
+                <div class="fl-num"><div class="big">&rarr;</div><div class="small">&nbsp;</div></div>
+                <div class="fl-num"><div class="big">5-8</div><div class="small">ответов</div></div>
+                <div class="fl-num"><div class="big">3-5</div><div class="small">discovery</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRIORITY 2: MANUFACTURING ==================== -->
+    <section class="section segment-section p2">
+        <div class="segment-header">
+            <h2>Производство с офисным блоком</h2>
+            <span class="priority-badge badge-p2">Приоритет 2</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> Инженеры 60% на нецелевых задачах. Техдокументация разбросана. Уход эксперта = потеря знаний.
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-purple"><div class="score-num">40</div><div class="score-den">/ 50</div></div>
+            <div class="score-meta">
+                <div><strong>Evidence: 31/35</strong> &mdash; высокая уверенность</div>
+                <div><strong>Hypothesis: 9/15</strong> &mdash; нужна валидация</div>
+                <div style="margin-top:4px;">Блокеры: <strong style="color:var(--success);">нет</strong></div>
+            </div>
+        </div>
+
+        <div class="callout callout-green">
+            <strong>Почему стратегически важен:</strong> НУЛЕВАЯ конкуренция (&laquo;ни одного отечественного инструмента&raquo; [Habr/LANIT, 2025]). АСКОН &mdash; 30 офисов, 500K рабочих мест КОМПАС &mdash; как канал. TAM 3 000-5 000 компаний.
+        </div>
+
+        <div class="callout callout-yellow">
+            <strong>Почему P2, а не P1:</strong> Осознание проблемы ниже (&laquo;спроси Михалыча&raquo;). Outreach медленнее (телефон через приёмную). FL тестирует малым объёмом параллельно с P1.
+        </div>
+
+        <h3>Профиль и FL-каналы</h3>
+        <div class="info-grid">
+            <div class="info-item"><div class="label">Отрасль</div><div class="value">Обрабатывающее производство (ОКВЭД 25-30)</div></div>
+            <div class="info-item"><div class="label">Размер</div><div class="value">50-300 чел., 200-1 000M₽</div></div>
+            <div class="info-item"><div class="label">TAM</div><div class="value">3 000-5 000 компаний</div></div>
+            <div class="info-item"><div class="label">ЛПР</div><div class="value">Технический директор (рекомендатель)<br>Гендиректор (бюджет)</div></div>
+        </div>
+
+        <table class="channel-table">
+            <thead><tr><th>Канал</th><th>Что делаем</th><th>Результат</th></tr></thead>
+            <tbody>
+                <tr><td style="color:var(--primary);font-weight:700;">Телефон (PRIMARY)</td><td>Приёмная завода &rarr; техдиректор</td><td>Демо</td></tr>
+                <tr><td style="color:var(--success);font-weight:700;">АСКОН-партнёры</td><td>30 региональных офисов. Горячая линия: 8-800-700-00-78</td><td>Warm referral</td></tr>
+                <tr><td>Email</td><td>info@ + hook &laquo;КОМПАС + AI-поиск, аналогов нет&raquo;</td><td>3-5% reply</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Почему покупают</h3>
+        <ol class="reasons-list">
+            <li>
+                <div class="reason-headline">Когда ваш главный инженер уволится или уйдёт на пенсию, 80% знаний о допусках, технологиях и нюансах уйдут с ним</div>
+                <div class="reason-evidence">Знания хранятся в головах 2-3 ключевых людей, а не в системах. Формальная &laquo;передача дел&raquo; = &laquo;если будут вопросы &mdash; звоните.&raquo; Восстановление знаний занимает годы, если вообще возможно.</div>
+                <div class="reason-outcome">AI непрерывно сохраняет знания из документов, переписок, записей совещаний. Уход человека не обнуляет отдел.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Новый конструктор 4 месяца разгоняется до полной продуктивности. При зарплате 120K₽/мес вы теряете ~300K₽ на онбординг каждого инженера</div>
+                <div class="reason-evidence">Первые 2 месяца новый инженер не может найти нужный чертёж без помощи. На 3-й начинает понимать логику именования файлов на сервере. Инженеры тратят 60% времени на нецелевые задачи.</div>
+                <div class="reason-outcome">AI-поиск по всей документации: новый инженер находит любой документ с первого дня. Онбординг 2 месяца &rarr; 2 недели.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Брак из-за устаревшей версии ТУ. Конструктор нашёл файл &laquo;_v3_итог_финал&raquo;, а актуальный &mdash; в другой папке</div>
+                <div class="reason-evidence">Файловый сервер с тысячами документов, без версионирования, без поиска. Несколько копий одного ТУ в разных папках. ОТК возвращает партию &mdash; убытки + сроки.</div>
+                <div class="reason-outcome">AI всегда отдаёт актуальную версию. Поиск по содержанию, не по именам файлов.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Аналогов нашего AI-поиска по техдокументации на российском рынке нет. Ни одного</div>
+                <div class="reason-evidence">&laquo;Среди найденных мной инструментов нет ни одного отечественного&raquo; [Habr/LANIT, август 2025]. АСКОН &mdash; никакого AI. Leo.AI &mdash; &laquo;непригодно для проектирования.&raquo; ЛОЦМАН PLM 3-8M₽ &mdash; в 4-10 раз дороже нас.</div>
+                <div class="reason-outcome">Вы получаете решение, которого больше ни у кого нет. Первый на рынке = конкурентное преимущество.</div>
+            </li>
+        </ol>
+
+        <div class="downstream-grid">
+            <div class="downstream-card card-offers">
+                <h4>Для оффера</h4>
+                <ul>
+                    <li><strong>Идеал:</strong> &laquo;Новый инженер продуктивен через 2 мес, не 6. Уход Михалыча не парализует&raquo;</li>
+                    <li><strong>Боль:</strong> причины выше (6/10 &mdash; привыкли, не осознают)</li>
+                    <li><strong>Hook:</strong> &laquo;Аналогов в РФ нет&raquo; &mdash; единственная позиция</li>
+                </ul>
+            </div>
+            <div class="downstream-card card-gtm">
+                <h4>Для GTM</h4>
+                <ul>
+                    <li><strong>Каналы:</strong> Телефон + Email + АСКОН</li>
+                    <li><strong>АСКОН &mdash; приоритет:</strong> 1 контакт = доступ к десяткам заводов</li>
+                    <li><strong>Бюджеты:</strong> годовые (планирование Q4)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="fl-plan">
+            <strong>FL-план на 2 недели (тестовый объём):</strong>
+            <div class="fl-plan-nums">
+                <div class="fl-num"><div class="big">20</div><div class="small">звонков</div></div>
+                <div class="fl-num"><div class="big">30</div><div class="small">email</div></div>
+                <div class="fl-num"><div class="big">3</div><div class="small">офиса АСКОН</div></div>
+                <div class="fl-num"><div class="big">&rarr;</div><div class="small">&nbsp;</div></div>
+                <div class="fl-num"><div class="big">3-5</div><div class="small">discovery</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRIORITY 2: LAW ==================== -->
+    <section class="section segment-section p2">
+        <div class="segment-header">
+            <h2>Крупные юридические фирмы</h2>
+            <span class="priority-badge badge-p2">Приоритет 2</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> 88% юристов используют AI. Экспертный боттлнек. On-prem (адвокатская тайна). Ни один конкурент не покрывает полный набор.
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-purple"><div class="score-num">39</div><div class="score-den">/ 50</div></div>
+            <div class="score-meta">
+                <div><strong>Evidence: 28/35</strong> &mdash; высокая уверенность</div>
+                <div><strong>Hypothesis: 11/15</strong> &mdash; нужна валидация</div>
+                <div style="margin-top:4px;">Ограничитель: <strong style="color:var(--warning);">малый TAM (~130)</strong></div>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item"><div class="label">Отрасль</div><div class="value">Юр. фирмы (ОКВЭД 69.1)</div></div>
+            <div class="info-item"><div class="label">Размер</div><div class="value">30-150 юристов, выручка 200-800M₽. Не топ-5 &mdash; слишком длинный цикл</div></div>
+            <div class="info-item"><div class="label">TAM</div><div class="value">80-130 &rarr; expansion: корп. юр. отделы (2 000-5 000)</div></div>
+            <div class="info-item"><div class="label">ЛПР</div><div class="value">Управляющий партнёр</div></div>
+            <div class="info-item"><div class="label">FL-каналы</div><div class="value">Email + Telegram (&laquo;Рульфы&raquo; 5K) + Телефон</div></div>
+            <div class="info-item"><div class="label">Компании</div><div class="value">КИАП, a.t.Legal, ЦПО Групп, Хренов и Партнёры, Рустам Курмаев</div></div>
+        </div>
+
+        <h3>Почему покупают</h3>
+        <ol class="reasons-list">
+            <li>
+                <div class="reason-headline">Ассоциаты тратят 3-6 часов на поиск прецедента, который лежит в собственном архиве фирмы</div>
+                <div class="reason-evidence">88% юрфирм уже используют AI-инструменты, но К+ AI ищет только по своей базе &mdash; не по вашим внутренним документам. Прецедент из дела 2019 года находится через 2 дня вместо 2 минут.</div>
+                <div class="reason-outcome">AI ищет одновременно по внутренним документам фирмы и внешним базам &mdash; прецедент находится за секунды.</div>
+            </li>
+            <li>
+                <div class="reason-headline">500 договоров в год на due diligence. Каждый &mdash; 2-3 часа рутинной проверки типовых рисков. Это 1 000-1 500 часов ассоциатов</div>
+                <div class="reason-evidence">86% ассоциатов жалуются на перегрузку рутиной. Партнёры вынуждены перепроверять &mdash; двойная работа. При ставке ассоциата 3 000-5 000₽/час: 3-7,5M₽/год на рутинный анализ.</div>
+                <div class="reason-outcome">AI анализирует договор за минуты, выделяет типовые риски. Ассоциаты фокусируются на нестандартных кейсах, партнёры не перепроверяют.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Ваши юристы не могут использовать ChatGPT &mdash; адвокатская тайна. Research занимает полдня вместо 20 минут</div>
+                <div class="reason-evidence">ChatGPT заблокирован в РФ (IP-блоки + оплата). Даже если обойти &mdash; адвокатская тайна запрещает выгружать данные. Результат: junior открывает 30 вкладок К+ и перебирает формулировки вручную.</div>
+                <div class="reason-outcome">On-prem AI-ассистент: данные не покидают контур фирмы. Полный compliance с адвокатской тайной + скорость работы x10.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Клиент звонит &mdash; а помощник 40 минут ищет какая из 4 версий договора финальная</div>
+                <div class="reason-evidence">Без DMS-системы версионирование документов в юрфирмах &mdash; хаос. 4 файла &laquo;договор_финал&raquo;, &laquo;договор_итог_v2&raquo;, &laquo;договор_правки_партнёр&raquo;. Клиент ждёт, пока разберутся.</div>
+                <div class="reason-outcome">AI всегда знает актуальную версию. Ответ клиенту &mdash; за секунды, не за 40 минут.</div>
+            </li>
+        </ol>
+
+        <div class="downstream-grid">
+            <div class="downstream-card card-offers">
+                <h4>Для оффера</h4>
+                <ul>
+                    <li><strong>Идеал:</strong> &laquo;500 договоров за день. Ассоциаты не дёргают партнёров&raquo;</li>
+                    <li><strong>Боль:</strong> причины выше (8/10)</li>
+                    <li><strong>Hook:</strong> On-prem + полный набор &mdash; единственные</li>
+                </ul>
+            </div>
+            <div class="downstream-card card-gtm">
+                <h4>Для GTM</h4>
+                <ul>
+                    <li><strong>Каналы:</strong> Email + Telegram DM + Телефон</li>
+                    <li><strong>Особенность:</strong> малый TAM &rarr; максимальная персонализация</li>
+                    <li><strong>Expansion:</strong> 2-3 закрытия &rarr; корп. юр. отделы (10x)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRIORITY 3: MEDICINE ==================== -->
+    <section class="section segment-section p3">
+        <div class="segment-header">
+            <h2>Частная медицина (300M₽+)</h2>
+            <span class="priority-badge badge-p3">Приоритет 3</span>
+        </div>
+
+        <div class="jtbd-box">
+            <strong>JTBD:</strong> 120 звонков/день, 80% рутинных. Администраторы перегружены.
+        </div>
+
+        <div class="score-ring">
+            <div class="ring ring-amber"><div class="score-num">34</div><div class="score-den">/ 50</div></div>
+            <div class="score-meta">
+                <div><strong>Evidence: 21/35</strong> &mdash; средняя уверенность</div>
+                <div><strong>Hypothesis: 10/15</strong> &mdash; нужна валидация</div>
+                <div style="margin-top:4px;">Ограничитель: <strong style="color:var(--warning);">нет партнёров (C5=2)</strong></div>
+            </div>
+        </div>
+
+        <div class="callout callout-red">
+            <strong>Самый сложный сегмент для FL:</strong> ЛПР не в цифровых каналах. Конкуренты (Chatme.ai) уже в клиниках из нашего списка. Цена на грани (11-33% IT-бюджета). <strong>Тестировать после получения кейсов из P1/P2.</strong>
+        </div>
+
+        <h3>Почему покупают</h3>
+        <ol class="reasons-list">
+            <li>
+                <div class="reason-headline">120 звонков в день, 80% &mdash; рутинные вопросы. Администратор тратит 3 минуты на каждый, потому что ищет в бумажном справочнике</div>
+                <div class="reason-evidence">96 рутинных звонков/день &times; 3 мин = 4,8 часов чистого времени. У конкурентов боты отвечают за 5 секунд. Пациент на удержании 3 минуты &mdash; уходит в клинику с ботом.</div>
+                <div class="reason-outcome">AI отвечает на рутинные вопросы мгновенно, 24/7. Администраторы занимаются записью и сервисом, а не зачитыванием справочника.</div>
+            </li>
+            <li>
+                <div class="reason-headline">Текучка администраторов 30% &mdash; каждый новый учится 2 месяца, задавая одни и те же вопросы старшим</div>
+                <div class="reason-evidence">&laquo;Какие анализы перед лапароскопией?&raquo;, &laquo;Сколько стоит ЭКО по ОМС?&raquo;, &laquo;К какому врачу с головной болью?&raquo; &mdash; каждый вопрос эскалируется старшему. При текучке 30% обучение &mdash; бесконечный цикл.</div>
+                <div class="reason-outcome">AI-ассистент как мгновенный наставник: новый администратор продуктивен с первого дня, старшие не отвлекаются.</div>
+            </li>
+        </ol>
+
+        <div class="info-grid">
+            <div class="info-item"><div class="label">Размер</div><div class="value">50-300 сотрудников, выручка 300M₽-3B₽. Не крупные сети &mdash; слишком длинный цикл</div></div>
+            <div class="info-item"><div class="label">TAM</div><div class="value">150-200 клиник (Vademecum TOP200)</div></div>
+            <div class="info-item"><div class="label">ЛПР</div><div class="value">Исполнительный директор / Управляющий клиникой</div></div>
+            <div class="info-item"><div class="label">FL-каналы</div><div class="value">Email + Телефон (единственные)</div></div>
+            <div class="info-item"><div class="label">Компании</div><div class="value">Здоровье 365, СМТ-Клиника, Парацельс, Клиника Пасман, Авеню</div></div>
+        </div>
+    </section>
+
+    <!-- ==================== KILLED SEGMENTS ==================== -->
+    <section class="section killed-section">
+        <h2>Убитые и замороженные сегменты</h2>
+
+        <p>Из 9 исследованных гипотез &mdash; 4 не прошли. Каждое решение основано на конкретных доказательствах, а не на мнениях.</p>
+
+        <div class="killed-card">
+            <h4>Логистика / Транспорт &mdash; УБИТ (3 блокера)</h4>
+            <p><strong>Блокер 1 &mdash; Нет денег:</strong> При рентабельности 4% компания с выручкой 100M₽ зарабатывает ~4M₽ прибыли. Продукт за ~1M₽/год = 25-33% всей прибыли. Даже при выручке 500M₽ продукт = 5-7% прибыли. Клиент сам указал: &laquo;тут у них может не быть денег на цифровую трансформацию&raquo;.</p>
+            <p><strong>Блокер 2 &mdash; ЭДО-триггер ложный:</strong> Обязательная Э-ТТН с сентября 2026 полностью обслуживается специализированными ЭДО-операторами (1С-ЭПД, Контур, СБИС). Это юридические документы с КЭП &mdash; нулевое пересечение с AI-ассистентом.</p>
+            <p><strong>Блокер 3 &mdash; AI в логистике &ne; офисная рутина:</strong> 45% компаний планируют AI, но для маршрутов, прогнозов, складов &mdash; не для офисной обработки документов. Примеров AI для офисной работы в средних логистических компаниях РФ не найдено.</p>
+        </div>
+
+        <div class="killed-card">
+            <h4>Тренинговые компании &mdash; УБИТ (2 блокера)</h4>
+            <p><strong>Блокер 1 &mdash; Размер рынка:</strong> Тренинговых компаний с выручкой &gt;50M₽ в РФ менее 500. Большинство &mdash; микро-предприятия и соло-тренеры.</p>
+            <p><strong>Блокер 2 &mdash; Цена:</strong> 80-110K₽/мес на 10-15 человек = 6-8K₽/чел/мес &mdash; в 50 раз дороже iSpring LMS (131₽/чел). Корпоративные университеты существуют, но это enterprise с циклом 6-12 месяцев &mdash; за рамками FL.</p>
+        </div>
+
+        <div class="frozen-card">
+            <h4>Госорганизации &mdash; ЗАМОРОЖЕН (Реестр ПО)</h4>
+            <p>Потенциал высокий: IT-бюджеты 3-15M₽, нацпроект 457 млрд ₽, конкуренция слабая. Но <strong>Постановление Правительства №1236 запрещает закупку ПО вне Реестра</strong>. CorpGPT уже в Реестре (запись №23046) &rarr; исключение &laquo;нет аналога&raquo; не работает. Регистрация: 2-4 мес., 21% approval rate. <strong>Рекомендация: начать регистрацию немедленно.</strong></p>
+        </div>
+
+        <div class="frozen-card">
+            <h4>Девелоперы / Строительство &mdash; ОТЛОЖЕН (рынок не готов)</h4>
+            <p>Сигналы есть: ГК ФСК снизила время подготовки документов на 45%, 70% девелоперов заинтересованы в AI. Но строительство &mdash; одна из наименее цифровизованных отраслей (IT-расходы &lt;1% выручки). Конкурент НейроШтат уже предлагает 50 AI-сотрудников с on-prem. <strong>Мониторить, не инвестировать сейчас.</strong></p>
+        </div>
+    </section>
+
+    <!-- ==================== MACRO SIGNAL ==================== -->
+    <section class="section macro-section">
+        <h2>Macro signal &mdash; для всех сегментов</h2>
+        <p><strong>95% AI-пилотов в РФ не дают ROI</strong> (Сколково AI Lab / TAdviser). <strong>75% компаний с бюджетом на AI не имеют стратегии внедрения</strong> (MTS Web Services, 700+ компаний). Пример: ChatGPT Pro на 500 сотрудников &rarr; через месяц <strong>23 используют</strong>.</p>
+        <div class="callout callout-green" style="margin-top:16px;">
+            <strong>Вывод для оффера:</strong> Методология внедрения &mdash; не фича, а ОСНОВНОЙ аргумент. &laquo;Мы продаём не AI-инструмент, а гарантию того, что им будут пользоваться&raquo; &mdash; это работает кросс-сегментно.
+        </div>
+    </section>
+
+    <!-- ==================== RECOMMENDATIONS ==================== -->
+    <section class="section reco-section">
+        <h2>Рекомендации клиенту (вне scope FL)</h2>
+        <ol class="reco-list">
+            <li><strong>Начать регистрацию в Реестре российского ПО</strong> &mdash; блокирует весь госсектор (2-4 мес., 21% approval rate). Требования: &ge;50% российского владения, исходный код в РФ, совместимость с Astra Linux</li>
+            <li><strong>Подтвердить on-prem deployment</strong> &mdash; критично для Производства (ЕСКД/PDF) и IT. Без этого два крупных сегмента теряют ключевое преимущество</li>
+            <li><strong>Подготовить демо генерации КП из реального прайс-листа</strong> &mdash; ключевой proof point для Оптовой торговли. Без работающего демо этот сегмент теряет главный аргумент</li>
+            <li><strong>Начать диалог с АСКОН</strong> &mdash; стратегический канал для Производства. 30 региональных офисов, 500K рабочих мест КОМПАС. Один контакт = доступ к десяткам заводов</li>
+        </ol>
+    </section>
+
+    <!-- ==================== ALL HYPOTHESES ==================== -->
+    <section class="section">
+        <h2>Все 9 гипотез: итоговая судьба</h2>
+        <table class="fate-table">
+            <thead><tr><th>#</th><th>Гипотеза</th><th>Статус</th><th>Score / Причина</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td>Оптовая торговля</td><td class="status-live">P1</td><td>41/50</td></tr>
+                <tr><td>2</td><td>Производство</td><td class="status-live">P2</td><td>40/50</td></tr>
+                <tr><td>3</td><td>IT-компании</td><td class="status-live">P1</td><td>42/50</td></tr>
+                <tr><td>4</td><td>Частная медицина</td><td class="status-live">P3</td><td>34/50</td></tr>
+                <tr><td>5</td><td>Госорганизации</td><td class="status-frozen">Заморожен</td><td>Реестр ПО &mdash; hard blocker</td></tr>
+                <tr><td>6</td><td>Логистика</td><td class="status-killed">УБИТ</td><td>3 evidence-backed блокера</td></tr>
+                <tr><td>7</td><td>Сервисные &rarr; Юр. фирмы</td><td class="status-live">P2</td><td>39/50 (сужен до крупных)</td></tr>
+                <tr><td>8</td><td>Тренинговые</td><td class="status-killed">УБИТ</td><td>Рынок &lt;500 + цена 50x LMS</td></tr>
+                <tr><td>9</td><td>Девелоперы</td><td class="status-frozen">Отложен</td><td>Рынок не готов, конкурент</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ==================== APPENDIX: SCORING MATRIX ==================== -->
+    <section class="section">
+        <h2>Приложение: полная матрица скоринга</h2>
+        <div style="overflow-x:auto;">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th style="text-align:left;min-width:130px;">Сегмент</th>
+                    <th>C1<br><small>[E]</small></th>
+                    <th>C2<br><small>[H]</small></th>
+                    <th>C3<br><small>[H]</small></th>
+                    <th>C4<br><small>[E]</small></th>
+                    <th>C5<br><small>[E]</small></th>
+                    <th>C6<br><small>[E]</small></th>
+                    <th>C7<br><small>[E]</small></th>
+                    <th>C8<br><small>[E]</small></th>
+                    <th>C9<br><small>[H]</small></th>
+                    <th>C10<br><small>[E]</small></th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>IT-компании</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-5">5</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="total-cell">42</td></tr>
+                <tr><td>Опт. торговля</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="total-cell">41</td></tr>
+                <tr><td>Производство</td><td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-5">5</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="total-cell">40</td></tr>
+                <tr><td>Юр. фирмы</td><td class="heat-5">5</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-5">5</td><td class="heat-3">3</td><td class="heat-4">4</td><td class="heat-5">5</td><td class="heat-2">2</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="total-cell">39</td></tr>
+                <tr><td>Медицина</td><td class="heat-4">4</td><td class="heat-4">4</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-2">2</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="heat-3">3</td><td class="total-cell">34</td></tr>
+            </tbody>
+        </table>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;font-size:0.8rem;">
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#d1fae5;"></span> 5</span>
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#dbeafe;"></span> 4</span>
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#fef3c7;"></span> 3</span>
+            <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;background:#fee2e2;"></span> 2</span>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    RAG Product &middot; Segmentation Report REDO v2 &middot; 1 марта 2026
+</footer>
+
+</body>
+</html>

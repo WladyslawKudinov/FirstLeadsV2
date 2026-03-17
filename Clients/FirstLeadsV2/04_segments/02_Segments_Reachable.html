@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02 Segments Reachable | FirstLeads</title>
+    <style>
+        :root {
+            --primary: #1a365d; --secondary: #2c5282; --accent: #ed8936;
+            --success: #38a169; --warning: #d69e2e; --danger: #e53e3e;
+            --bg: #f7fafc; --card-bg: #ffffff; --text: #2d3748;
+            --text-muted: #718096; --border: #e2e8f0;
+            --green: #276749; --teal: #2c7a7b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 40px 20px; }
+
+        header { background: linear-gradient(135deg, var(--green) 0%, var(--success) 100%); color: white; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        header .badges { margin-top: 16px; }
+        header .badge { display: inline-block; padding: 8px 20px; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.9rem; margin: 0 4px; }
+        header .badge.turn { background: var(--accent); font-weight: 600; }
+
+        .section { background: var(--card-bg); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; overflow: hidden; }
+        .section-header { padding: 16px 24px; font-size: 1.1rem; font-weight: 600; color: white; }
+        .section-body { padding: 24px; }
+
+        .sh-a { background: linear-gradient(135deg, #2c5282, #3182ce); }
+        .sh-b { background: linear-gradient(135deg, #744210, #d69e2e); }
+        .sh-c { background: linear-gradient(135deg, #553c9a, #805ad5); }
+        .sh-d { background: linear-gradient(135deg, #4a5568, #718096); }
+
+        .jtbd-box { background: linear-gradient(135deg, #ebf8ff, #e6fffa); border: 1px solid #b2f5ea; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; font-style: italic; font-size: 0.95rem; line-height: 1.6; color: var(--primary); }
+
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; vertical-align: middle; }
+        .tag-e { background: #c6f6d5; color: #22543d; }
+        .tag-h-high { background: #fefcbf; color: #744210; }
+        .tag-h-mid { background: #fed7d7; color: #742a2a; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+        .card-grid.three { grid-template-columns: repeat(3, 1fr); }
+        .info-card { background: #f7fafc; border-radius: 8px; padding: 14px 16px; border: 1px solid var(--border); }
+        .info-card.full { grid-column: 1 / -1; }
+        .info-card h5 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; }
+        .info-card p, .info-card ul { font-size: 0.9rem; line-height: 1.5; }
+        .info-card ul { list-style: none; padding: 0; }
+        .info-card li { padding: 3px 0; }
+        .info-card li::before { content: "→ "; opacity: 0.4; }
+
+        .detail-section { margin-bottom: 20px; }
+        .detail-section h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--secondary); }
+        .detail-section p, .detail-section ul { font-size: 0.92rem; line-height: 1.6; }
+        .detail-section ul { padding-left: 20px; }
+        .detail-section li { margin-bottom: 4px; }
+
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 16px 0; }
+        .data-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .data-table tr:hover { background: #f7fafc; }
+
+        .verdict { border-radius: 10px; padding: 16px 20px; margin-top: 20px; font-size: 0.95rem; }
+        .verdict-yes { background: #f0fff4; border: 2px solid var(--success); }
+        .verdict-partial { background: #fffbeb; border: 2px solid var(--warning); }
+        .verdict h4 { margin-bottom: 6px; }
+        .verdict-icon { font-size: 1.2rem; margin-right: 6px; }
+
+        .channel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+        .channel-card { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 8px; padding: 12px 16px; }
+        .channel-card h6 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.3px; color: var(--green); margin-bottom: 6px; }
+        .channel-card p, .channel-card ul { font-size: 0.85rem; line-height: 1.5; }
+        .channel-card ul { list-style: none; padding: 0; }
+        .channel-card li { padding: 2px 0; }
+        .channel-card li::before { content: "• "; color: var(--success); }
+
+        hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+        @media (max-width: 768px) {
+            .card-grid, .card-grid.three, .channel-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Segments Reachable</h1>
+    <div class="subtitle">FirstLeads — Reachability Cards</div>
+    <div class="badges">
+        <span class="badge">02_Segments_Reachable</span>
+        <span class="badge turn">Turn 4</span>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- ==================== SEGMENT A ==================== -->
+<div class="section">
+    <div class="section-header sh-a">Сегмент A: B2B SaaS в точке продуктового решения</div>
+    <div class="section-body">
+
+        <div class="jtbd-box">
+            «Когда мы стоим перед решением о новом продуктовом направлении, мы хотим быстро проверить рыночный спрос реальными покупателями, чтобы принять go/no-go на данных, а не на мнениях.»
+        </div>
+
+        <div class="detail-section">
+            <h4>Company Profile <span class="tag tag-e">[E]</span></h4>
+        </div>
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Отрасль</h5>
+                <p>B2B SaaS / платформенные tech-компании</p>
+            </div>
+            <div class="info-card">
+                <h5>Размер</h5>
+                <p>30–150 сотрудников<br>80–500M руб/год выручки</p>
+            </div>
+            <div class="info-card">
+                <h5>Продукт</h5>
+                <p>1+ B2B-продукт с устоявшейся клиентской базой (50+ клиентов)</p>
+            </div>
+            <div class="info-card">
+                <h5>Команда</h5>
+                <p>Продуктовая команда 3–10 чел, выделенный CPO / Head of Product / VP Product</p>
+            </div>
+            <div class="info-card">
+                <h5>Сигнал <span class="tag tag-h-high">[H-high]</span></h5>
+                <p>Backlog нереализованных запросов / обсуждение новых направлений</p>
+            </div>
+            <div class="info-card">
+                <h5>Регион</h5>
+                <p>Москва, Санкт-Петербург</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>Decision-Maker</h4>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Роль</h5>
+                <ul>
+                    <li>Title: CPO / Head of Product / VP Product <span class="tag tag-e">[E]</span></li>
+                    <li>Reports to: CEO / Founder</li>
+                    <li>KPIs: revenue growth, product adoption, new launches, retention <span class="tag tag-h-high">[H-high]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Онлайн-активность <span class="tag tag-e">[E]</span></h5>
+                <ul>
+                    <li>LinkedIn — высокая активность</li>
+                    <li>Telegram: GoPractice (~26K), No Flame (~30K), Hire ProProduct (~13K)</li>
+                    <li>vc.ru</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>Problem & Buying Context</h4>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Проблема</h5>
+                <p>Стоят перед решением «строить новое направление или нет», но нет данных — только мнения и интуиция <span class="tag tag-e">[E]</span></p>
+                <p style="margin-top:8px"><strong>Кейс SKAI:</strong> CPO не мог аргументировать roadmap перед топ-менеджерами</p>
+            </div>
+            <div class="info-card">
+                <h5>Стоимость проблемы</h5>
+                <ul>
+                    <li>$500K+ на неудачный запуск (YouScan) <span class="tag tag-e">[E]</span></li>
+                    <li>6+ мес инженерного времени впустую <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Текущее решение</h5>
+                <ul>
+                    <li>Custdev-интервью (33K–550K руб)</li>
+                    <li>Внутренние опросы</li>
+                    <li>«Просто строим» <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Триггеры / Бюджет</h5>
+                <ul>
+                    <li>3+ клиентов спросили одно и то же</li>
+                    <li>Рост замедлился</li>
+                    <li>OKR / roadmap cycle <span class="tag tag-e">[E]</span></li>
+                    <li>Budget: 500K–3M руб/год на product research</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>FL Outreach Channels</h4>
+        </div>
+
+        <div class="channel-grid">
+            <div class="channel-card">
+                <h6>Источники компаний</h6>
+                <ul>
+                    <li>HighTime Media — 94 SaaS-компании (hightime.media)</li>
+                    <li>Smart Ranking — fintech top-100, HR-tech top-85, martech top-50</li>
+                    <li>CNews Analytics — рейтинги SaaS, AI, HR-tech</li>
+                    <li>Digirate — SaaS-рейтинг с финансовыми данными</li>
+                    <li>saas-rating.ru — независимый рейтинг за 5 лет</li>
+                    <li>HH.ru — вакансии CPO/PM, 200–400 активных</li>
+                </ul>
+            </div>
+            <div class="channel-card">
+                <h6>Каналы контакта</h6>
+                <ul>
+                    <li>LinkedIn (CPO профили), Hunter.io (email patterns)</li>
+                    <li>Email response rates 3–8% <span class="tag tag-h-high">[H-high]</span></li>
+                    <li>Cold calls через reception / 2GIS</li>
+                    <li>LinkedIn connection acceptance 20–40%</li>
+                </ul>
+            </div>
+            <div class="channel-card" style="grid-column: 1 / -1;">
+                <h6>Telegram (warm-up)</h6>
+                <ul>
+                    <li>GoPractice (~26K) • No Flame No Game (~30K) • Стартап дня (~20K) • Hire ProProduct (~13K) • Products Jobs (~11K) — совокупно ~150K+</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Примеры компаний</h4>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Размер</th><th>Почему подходит</th><th>Сигнал боли</th><th>DM</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>SKAI</strong></td><td>~50–100</td><td>CPO не мог аргументировать roadmap</td><td>После AJTBD: выручка +75%</td><td>CPO <span class="tag tag-e">[E]</span></td></tr>
+                <tr><td>2</td><td><strong>YouScan</strong></td><td>~100–150</td><td>Потерял ~$500K на неудачном запуске</td><td>Публичный кейс</td><td>CPO <span class="tag tag-e">[E]</span></td></tr>
+                <tr><td>3</td><td><strong>Mindbox</strong></td><td>~200+</td><td>25% времени PM на интервью</td><td>Публикация о discovery</td><td>Head of Product <span class="tag tag-e">[E]</span></td></tr>
+                <tr><td>4</td><td><strong>Deeplay</strong></td><td>AI/SaaS</td><td>Вакансия CPO «для новой стратегии»</td><td>HH.ru</td><td>CPO (ищут)</td></tr>
+                <tr><td>5</td><td><strong>МТС Cloud</strong></td><td>Platform</td><td>Вакансия CPO для трансформации</td><td>HH.ru</td><td>CPO (ищут)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="verdict verdict-yes">
+            <h4>&#10003; Reachability: YES</h4>
+            <p>Рейтинги HighTime (94), Smart Ranking (100+ per vertical), Digirate = готовые списки. CPO через LinkedIn за минуты. <span class="tag tag-e">[E]</span></p>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== SEGMENT B ==================== -->
+<div class="section">
+    <div class="section-header sh-b">Сегмент B: B2B SaaS в конкурентных вертикалях</div>
+    <div class="section-body">
+
+        <div class="jtbd-box">
+            «Когда конкурент делает ход в смежное пространство, мы хотим быстро проверить реальность рынка, чтобы решить — следовать, контратаковать или игнорировать — на данных, а не на панике.»
+        </div>
+
+        <div class="detail-section">
+            <h4>Company Profile <span class="tag tag-e">[E]</span></h4>
+        </div>
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Отрасль</h5>
+                <p>B2B SaaS в fintech, HR-tech, martech, legaltech</p>
+            </div>
+            <div class="info-card">
+                <h5>Размер</h5>
+                <p>30–150 сотрудников<br>100–500M руб/год</p>
+            </div>
+            <div class="info-card">
+                <h5>Рынок</h5>
+                <p>Вертикаль с 5+ прямыми конкурентами, M&A активность</p>
+            </div>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Регион</h5>
+                <p>Москва, Санкт-Петербург</p>
+            </div>
+            <div class="info-card">
+                <h5>Decision-Maker</h5>
+                <ul>
+                    <li>CPO / CEO (в 30–80 чел часто CEO) <span class="tag tag-h-high">[H-high]</span></li>
+                    <li>LinkedIn, Smart Ranking мероприятия, отраслевые Telegram</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>Problem & Buying Context</h4>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Проблема</h5>
+                <p>Конкурент сделал ход — нужно понять, реальная ли возможность <span class="tag tag-e">[E]</span></p>
+                <p style="margin-top:8px">Ростелеком + Calltouch/Mango, VK Tech +133%, Яндекс 360 ×1.5</p>
+            </div>
+            <div class="info-card">
+                <h5>Текущее решение</h5>
+                <ul>
+                    <li>CI-инструменты (Brand Analytics 25K/мес, SpyWords 2K/мес) — ЧТО конкурент сделал, не ЕСТЬ ЛИ спрос <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Триггеры <span class="tag tag-e">[E]</span></h5>
+                <ul>
+                    <li>Конкурент запустил продукт</li>
+                    <li>M&A в вертикали</li>
+                    <li>Квартальные рейтинги</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Бюджет</h5>
+                <p>100–500K руб/год на CI <span class="tag tag-e">[E]</span></p>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>FL Outreach Channels</h4>
+        </div>
+        <div class="channel-grid">
+            <div class="channel-card">
+                <h6>Источники компаний</h6>
+                <ul>
+                    <li>Smart Ranking (fintech top-100, HR-tech top-85, martech top-50)</li>
+                    <li>CNews (top-50 HR-tech)</li>
+                    <li>HighTime (94 SaaS)</li>
+                </ul>
+            </div>
+            <div class="channel-card">
+                <h6>Каналы / Trigger monitoring</h6>
+                <ul>
+                    <li>LinkedIn, cold email</li>
+                    <li>vc.ru (запуски), Smart Ranking (квартал), RBC/CNews (M&A)</li>
+                    <li>Telegram: FintechRu, HR Tech Channel, MarTech Chat <span class="tag tag-h-mid">[H-mid]</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Примеры компаний</h4>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Размер</th><th>Почему подходит</th><th>Сигнал</th><th>DM</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Конкуренты Calltouch</strong></td><td>50–150</td><td>Ростелеком купил Calltouch+Mango</td><td>M&A конкурента <span class="tag tag-e">[E]</span></td><td>CEO/CPO</td></tr>
+                <tr><td>2</td><td><strong>Конкуренты VK Tech (HR-tech)</strong></td><td>30–100</td><td>VK Tech +133.4% до 2 млрд</td><td>Рост конкурента <span class="tag tag-e">[E]</span></td><td>CPO</td></tr>
+                <tr><td>3</td><td><strong>Collaboration tools</strong></td><td>SaaS</td><td>Яндекс 360 ×1.5 до 12.4 млрд</td><td>Рост гиганта <span class="tag tag-e">[E]</span></td><td>CPO/CEO</td></tr>
+                <tr><td>4</td><td><strong>Аналоги Miro</strong></td><td>SaaS</td><td>Битрикс24 инвестировал в flip</td><td>Конкурентный ход <span class="tag tag-e">[E]</span></td><td>CPO</td></tr>
+            </tbody>
+        </table>
+
+        <div class="verdict verdict-yes">
+            <h4>&#10003; Reachability: YES</h4>
+            <p>Smart Ranking, CNews рейтинги по вертикалям. CPO/CEO через LinkedIn. Trigger monitoring через vc.ru / Smart Ranking. <span class="tag tag-e">[E]</span></p>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== SEGMENT C ==================== -->
+<div class="section">
+    <div class="section-header sh-c">Сегмент C: AI/ML компании в поиске рынка</div>
+    <div class="section-body">
+
+        <div class="jtbd-box">
+            «Когда мы построили технологию, но не знаем, какому рынку продавать, мы хотим протестировать вертикали реальными офферами, чтобы сфокусировать разработку.»
+        </div>
+
+        <div class="detail-section">
+            <h4>Company Profile <span class="tag tag-e">[E]</span></h4>
+        </div>
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Отрасль</h5>
+                <p>AI/ML-компании, data science-студии, NLP/CV/предиктивная аналитика</p>
+            </div>
+            <div class="info-card">
+                <h5>Размер</h5>
+                <p>15–80 сотрудников<br>30–300M руб/год (или гранты)</p>
+            </div>
+            <div class="info-card">
+                <h5>Фаундер</h5>
+                <p>Технический (CTO/CEO с ML-бэкграундом). Нет выделенного CPO.</p>
+            </div>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Revenue</h5>
+                <p>Кастомные AI/ML проекты и/или гранты + собственная технология</p>
+            </div>
+            <div class="info-card">
+                <h5>Регион</h5>
+                <p>Москва, Санкт-Петербург, Сколково, Иннополис</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>Decision-Maker</h4>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Роль</h5>
+                <ul>
+                    <li>Title: CEO / CTO (НЕ CPO) <span class="tag tag-e">[E]</span></li>
+                    <li>Reports to: инвестор / грантодатель / сам себе</li>
+                    <li>KPIs: PMF, revenue, customer count <span class="tag tag-h-high">[H-high]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Онлайн-активность <span class="tag tag-e">[E]</span></h5>
+                <ul>
+                    <li>LinkedIn, Telegram (ODS — десятки тысяч)</li>
+                    <li>vc.ru, Habr</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>Problem & Buying Context</h4>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Проблема</h5>
+                <p>«Отсутствие рынка/спроса» = причина провала №1 (9 из 10) <span class="tag tag-e">[E]</span></p>
+                <p style="margin-top:8px">CB Insights: lack of market need — top reason for startup failure</p>
+            </div>
+            <div class="info-card">
+                <h5>Стоимость</h5>
+                <ul>
+                    <li>Смерть стартапа</li>
+                    <li>Потеря инвестиций</li>
+                    <li>12–24 мес без PMF <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Текущее решение</h5>
+                <ul>
+                    <li>Акселераторы (бесплатно)</li>
+                    <li>Custdev (время фаундера)</li>
+                    <li>UXSSR PMF (1–3M руб) <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Триггеры / Бюджет</h5>
+                <ul>
+                    <li>Инвестор требует фокус</li>
+                    <li>Кончились проекты через нетворк</li>
+                    <li>Конкурент нашёл вертикаль <span class="tag tag-e">[E]</span></li>
+                    <li>Budget из гранта/раунда: 5–30M руб/год, FL = 1–7%</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>FL Outreach Channels</h4>
+        </div>
+        <div class="channel-grid">
+            <div class="channel-card">
+                <h6>Источники компаний</h6>
+                <ul>
+                    <li>Сколково — 5500+ резидентов, 700+ AI-проектов</li>
+                    <li>ФРИИ — портфельные компании</li>
+                    <li>Yandex AI Startup Lab — выпускники</li>
+                    <li>Product Radar — ~500 стартапов/год</li>
+                    <li>Smart Ranking AI-рейтинг, CNews AI top-35</li>
+                    <li>i.moscow/startup_reestr</li>
+                </ul>
+            </div>
+            <div class="channel-card">
+                <h6>Каналы контакта</h6>
+                <ul>
+                    <li>LinkedIn, корпоративные сайты</li>
+                    <li>Telegram: ODS (Open Data Science), AIConference, AI Russia <span class="tag tag-e">[E]</span></li>
+                    <li>Сколково/ФРИИ базы</li>
+                    <li>Email CEO/CTO через сайты <span class="tag tag-h-mid">[H-mid]</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Примеры компаний</h4>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Размер</th><th>Почему подходит</th><th>Сигнал</th><th>DM</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>CyberPhysics</strong></td><td>15–30</td><td>Из Сколтеха → предиктивная аналитика</td><td>50M от Skolkovo Ventures <span class="tag tag-e">[E]</span></td><td>CEO/CTO</td></tr>
+                <tr><td>2</td><td><strong>Just AI</strong></td><td>~100</td><td>NLP-платформа → банки/e-commerce</td><td>Оценка 3.5 млрд <span class="tag tag-e">[E]</span></td><td>CEO</td></tr>
+                <tr><td>3</td><td><strong>VisionLabs</strong></td><td>50–80</td><td>CV → биометрия для банков/ритейла</td><td>Вертикализация <span class="tag tag-e">[E]</span></td><td>CEO/CTO</td></tr>
+                <tr><td>4</td><td><strong>AGIMA.AI</strong></td><td>30–50</td><td>Из заказной разработки в AI-продукт</td><td>Продуктизация <span class="tag tag-e">[E]</span></td><td>CEO</td></tr>
+                <tr><td>5</td><td><strong>HiveTrace</strong></td><td>10–30</td><td>AI-стартап в поиске market fit</td><td>Публичные упоминания <span class="tag tag-e">[E]</span></td><td>CEO</td></tr>
+            </tbody>
+        </table>
+
+        <div class="verdict verdict-yes">
+            <h4>&#10003; Reachability: YES</h4>
+            <p>Сколково (5500+), ФРИИ, Product Radar, CNews. CEO/CTO через LinkedIn и Telegram. Требует больше фильтрации, чем A. <span class="tag tag-e">[E]</span></p>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== SEGMENT D ==================== -->
+<div class="section">
+    <div class="section-header sh-d">Сегмент D: IT-сервисные компании → продукт</div>
+    <div class="section-body">
+
+        <div class="jtbd-box">
+            «Когда мы видим повторяющийся паттерн в проектах и хотим из него сделать продукт, мы хотим проверить спрос до инвестиции 5–30M руб в MVP.»
+        </div>
+
+        <div class="detail-section">
+            <h4>Company Profile <span class="tag tag-e">[E]</span></h4>
+        </div>
+        <div class="card-grid three">
+            <div class="info-card">
+                <h5>Отрасль</h5>
+                <p>IT-аутсорсинг, заказная разработка, системная интеграция</p>
+            </div>
+            <div class="info-card">
+                <h5>Размер</h5>
+                <p>30–200 сотрудников<br>100–500M руб/год</p>
+            </div>
+            <div class="info-card">
+                <h5>Сигнал</h5>
+                <p>Имеют или планируют собственный продукт (MVP, прототип). Нет CPO.</p>
+            </div>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Регион</h5>
+                <p>Распределённые (не только Москва/СПб)</p>
+            </div>
+            <div class="info-card">
+                <h5>Decision-Maker</h5>
+                <ul>
+                    <li>Title: CEO / CTO <span class="tag tag-e">[E]</span></li>
+                    <li>LinkedIn — умеренная активность, CNews/TAdviser рейтинги</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>Problem & Buying Context</h4>
+        </div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h5>Проблема</h5>
+                <p>Хотят перейти от проектного к продуктовому, но не знают, будет ли спрос <span class="tag tag-e">[E]</span></p>
+                <p style="margin-top:8px">Кейсы: Korusconsulting, Garpix, Sinergo</p>
+            </div>
+            <div class="info-card">
+                <h5>Стоимость</h5>
+                <p>5–30M руб на MVP без валидации <span class="tag tag-e">[E]</span></p>
+            </div>
+            <div class="info-card">
+                <h5>Текущее решение</h5>
+                <ul>
+                    <li>«Просто строим и смотрим» <span class="tag tag-e">[E]</span></li>
+                    <li>Гранты Фонда содействия</li>
+                    <li>Найм PM 200–400K/мес</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h5>Триггеры / Бюджет</h5>
+                <ul>
+                    <li>Решение руководства, получение гранта, импортозамещение</li>
+                    <li>Нет отдельного budget line на «валидацию» — через R&D <span class="tag tag-e">[E]</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="detail-section">
+            <h4>FL Outreach Channels</h4>
+        </div>
+        <div class="channel-grid">
+            <div class="channel-card">
+                <h6>Источники компаний</h6>
+                <ul>
+                    <li>CNews рейтинг IT-разработчиков</li>
+                    <li>TAdviser, Рейтинг Рунета, RUWARD</li>
+                    <li>HighTime рейтинг интеграторов (92 компании)</li>
+                </ul>
+            </div>
+            <div class="channel-card">
+                <h6>Каналы / Сигналы</h6>
+                <ul>
+                    <li>LinkedIn, корпоративные сайты, 2GIS</li>
+                    <li>HH.ru — вакансия «product manager» = сигнал продуктизации <span class="tag tag-e">[E]</span></li>
+                    <li>Telegram — фрагментирован, нет единого канала</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h4>Примеры компаний</h4>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>Компания</th><th>Размер</th><th>Почему подходит</th><th>Сигнал</th><th>DM</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>Korusconsulting</strong></td><td>100–200</td><td>3 продукта из проектов (АВАНДОК, БУСТРЕЙД, КОНЦРИТ)</td><td>Публичные запуски <span class="tag tag-e">[E]</span></td><td>CEO</td></tr>
+                <tr><td>2</td><td><strong>Garpix</strong></td><td>30–80</td><td>Load System, 3D Scan из заказной разработки</td><td>Продуктизация <span class="tag tag-e">[E]</span></td><td>CEO/CTO</td></tr>
+                <tr><td>3</td><td><strong>Sinergo</strong></td><td>50–100</td><td>«1С:Горнодобывающая промышленность»</td><td>Нишевый продукт <span class="tag tag-e">[E]</span></td><td>CEO</td></tr>
+                <tr><td>4</td><td><strong>SimbirSoft</strong></td><td>200+</td><td>Развивает собственные продукты</td><td>Вакансии PM <span class="tag tag-e">[E]</span></td><td>CEO</td></tr>
+                <tr><td>5</td><td><strong>Napoleon IT</strong></td><td>100–200</td><td>Computer vision из проектного опыта</td><td>Продуктизация <span class="tag tag-e">[E]</span></td><td>CEO</td></tr>
+            </tbody>
+        </table>
+
+        <div class="verdict verdict-partial">
+            <h4>&#9888; Reachability: PARTIALLY</h4>
+            <p>CNews/TAdviser дают общий список. Фильтр «кто думает о продукте» требует косвенных сигналов (вакансия PM, гранты). За 30 минут = 30–40 компаний, но не все в активной фазе. <span class="tag tag-e">[E]</span></p>
+        </div>
+
+    </div>
+</div>
+
+</div>
+</body>
+</html>
